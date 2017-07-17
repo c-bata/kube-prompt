@@ -5,8 +5,7 @@ import (
 	"github.com/c-bata/kube-prompt/kube"
 )
 
-func executor(b *prompt.Buffer) string {
-	s := b.Text()
+func executor(s string) string {
 	return s
 }
 

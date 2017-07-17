@@ -2,15 +2,10 @@ package kube
 
 import (
 	"strings"
-	"github.com/c-bata/go-prompt-toolkit/prompt"
 )
 
-const max = 10
-
-func Completer(b *prompt.Buffer) []string {
-	t := b.Text()
-
-	args := strings.Split(t, " ")
+func Completer(s string) []string {
+	args := strings.Split(s, " ")
 	if len(args) == 1 {
 		return filterHasPrefix(commands, args[0])
 	}
