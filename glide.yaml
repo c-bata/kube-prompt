@@ -3,5 +3,3 @@ import:
 - package: github.com/c-bata/go-prompt-toolkit
   subpackages:
   - prompt
-- package: github.com/kubernetes/client-go
-  version: ^4.0.0-beta.0
