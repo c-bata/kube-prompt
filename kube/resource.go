@@ -73,10 +73,7 @@ func fetchPods() {
 		return
 	}
 	client := getClient()
-	pod, err := client.Pods(api.NamespaceDefault).List(v1.ListOptions{})
-	if err != nil {
-		panic(err)
-	}
+	pod, _ := client.Pods(api.NamespaceDefault).List(v1.ListOptions{})
 	podList = pod.Items
 	return
 }
@@ -93,7 +90,7 @@ func getPodNames() []string {
 func describePod(podname string) string {
 	pod, err := client.Pods(api.NamespaceDefault).Get(podname)
 	if err != nil {
-		panic(err)
+		return err.Error()
 	}
 
 	var res string
