@@ -1,5 +1,11 @@
 package: github.com/c-bata/kube-prompt
 import:
 - package: github.com/c-bata/go-prompt-toolkit
+- package: k8s.io/client-go
+  version: v2.0.0
   subpackages:
-  - prompt
+  - kubernetes
+  - pkg/api
+  - pkg/api/v1
+  - pkg/apis/extensions/v1beta1
+  - tools/clientcmd
