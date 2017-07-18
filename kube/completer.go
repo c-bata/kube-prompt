@@ -7,6 +7,9 @@ import (
 )
 
 func Completer(s string) []string {
+	if s == "" {
+		return []string{}
+	}
 	args := strings.Split(s, " ")
 	if len(args) == 1 {
 		return prompt.FilterHasPrefix(commands, args[0], true)
