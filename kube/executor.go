@@ -13,8 +13,12 @@ func Executor(s string) string {
 }
 
 func thirdArgsExecutor(first, second, third string) string {
-	if first == "describe" && second == "pods" {
-		return describePod(third)
+	if first == "describe" {
+		if second == "pods" {
+			return describePod(third)
+		} else if second == "deployments" {
+			return describeDeployment(third)
+		}
 	}
 	return first + " " + second + " " + third
 }
