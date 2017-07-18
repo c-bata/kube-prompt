@@ -1,6 +1,7 @@
 package kube
 
 import (
+	"fmt"
 	"k8s.io/client-go/pkg/api"
 	"k8s.io/client-go/pkg/api/v1"
 )
@@ -75,4 +76,22 @@ func getPods() []string {
 		names[i] = cachedPods[i].Name
 	}
 	return names
+}
+
+func describePod(podname string) string {
+	pod, err := client.Pods(api.NamespaceDefault).Get(podname)
+	if err != nil {
+		panic(err)
+	}
+
+	var res string
+	res += "Status:\n"
+	res += fmt.Sprintf("  Phase   = %s\n", pod.Status.Phase)
+	res += fmt.Sprintf("  Message = %s\n", pod.Status.Message)
+	res += fmt.Sprintf("  Start   = %s\n", pod.Status.StartTime.String())
+	res += "\nLabels:\n"
+	for k := range pod.Labels {
+		res += fmt.Sprintf("  %s=%s\n", k, pod.Labels[k])
+	}
+	return res
 }

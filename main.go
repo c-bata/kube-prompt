@@ -5,14 +5,11 @@ import (
 	"github.com/c-bata/kube-prompt/kube"
 )
 
-func executor(s string) string {
-	return s
-}
-
 func main() {
 	pt := prompt.NewPrompt(
-		executor,
+		kube.Executor,
 		kube.Completer,
+		prompt.OptionTitle("kube-prompt: powerful kubernetes client"),
 	)
 	pt.Run()
 }

@@ -110,6 +110,9 @@ func thirdArgsCompleter(first, second, third string) []string {
 	if first == "get" && second == "pods" {
 		return prompt.FilterContains(getPods(), third, true)
 	}
+	if first == "describe" && second == "pods" {
+		return prompt.FilterContains(getPods(), third, true)
+	}
 	return []string{}
 }
 
