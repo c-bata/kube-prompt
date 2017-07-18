@@ -57,21 +57,14 @@ var commands = []string{
 	"convert",
 }
 
-var operationSpecies = []string{
-	"pods",
-	"replicationcontroller",
-	"rc",
-	"services",
-}
-
 func secondArgsCompleter(first, second string) []string {
 	switch first {
 	case "get":
-		return prompt.FilterHasPrefix(operationSpecies, second, true)
+		return prompt.FilterHasPrefix(resourceTypes, second, true)
 	case "describe":
-		return prompt.FilterHasPrefix(operationSpecies, second, true)
+		return prompt.FilterHasPrefix(resourceTypes, second, true)
 	case "create":
-		return prompt.FilterHasPrefix(operationSpecies, second, true)
+		return prompt.FilterHasPrefix(resourceTypes, second, true)
 	case "replace":
 	case "patch":
 	case "delete":
@@ -108,25 +101,10 @@ func secondArgsCompleter(first, second string) []string {
 
 func thirdArgsCompleter(first, second, third string) []string {
 	if first == "get" && second == "pods" {
-		return prompt.FilterContains(getPods(), third, true)
+		return prompt.FilterContains(getPodNames(), third, true)
 	}
 	if first == "describe" && second == "pods" {
-		return prompt.FilterContains(getPods(), third, true)
+		return prompt.FilterContains(getPodNames(), third, true)
 	}
 	return []string{}
-}
-
-// utilities
-
-func filterHasPrefix(completions []string, sub string) []string {
-	if sub == "" {
-		return completions
-	}
-	ret := make([]string, 0, len(completions))
-	for _, n := range completions {
-		if strings.HasPrefix(n, sub) {
-			ret = append(ret, n)
-		}
-	}
-	return ret
 }

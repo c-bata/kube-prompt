@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"k8s.io/client-go/pkg/api"
 	"k8s.io/client-go/pkg/api/v1"
+	"time"
 )
+
+const thresholdFetchInterval = 10 * time.Second
 
 var resourceTypes = []string{
 	"clusters",
@@ -60,20 +63,29 @@ var resourceTypes = []string{
 
 /* Pod */
 
-var cachedPods []v1.Pod
+var (
+	podList []v1.Pod
+	podLastFetchedAt time.Time
+)
 
-func getPods() []string {
-	if cachedPods == nil {
-		client := getClient()
-		pod, err := client.Pods(api.NamespaceDefault).List(v1.ListOptions{})
-		if err != nil {
-			panic(err)
-		}
-		cachedPods = pod.Items
+func fetchPods() {
+	if time.Since(podLastFetchedAt) < thresholdFetchInterval {
+		return
 	}
-	names := make([]string, len(cachedPods))
-	for i := range cachedPods {
-		names[i] = cachedPods[i].Name
+	client := getClient()
+	pod, err := client.Pods(api.NamespaceDefault).List(v1.ListOptions{})
+	if err != nil {
+		panic(err)
+	}
+	podList = pod.Items
+	return
+}
+
+func getPodNames() []string {
+	go fetchPods()
+	names := make([]string, len(podList))
+	for i := range podList {
+		names[i] = podList[i].Name
 	}
 	return names
 }
