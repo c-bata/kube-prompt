@@ -44,6 +44,37 @@ Commands:
 * [ ] **explain**        Documentation of resources.
 * [ ] **convert**        Convert config files between different API versions
 
+Resource Types:
+* [ ] clusters
+* [ ] componentstatuses
+* [ ] cs
+* [ ] configmaps aka 'cm'
+* [ ] daemonsets aka 'ds'
+* [x] deployments aka 'deploy'
+* [ ] endpoints aka 'ep'
+* [ ] events aka 'ev'
+* [ ] horizontalpodautoscalers aka 'hpa'
+* [ ] ingresses aka 'ing'
+* [ ] jobs
+* [ ] limitranges aka 'limits'
+* [ ] namespaces aka 'ns'
+* [ ] networkpolicies
+* [ ] nodes aka 'no'
+* [ ] persistentvolumeclaims aka 'pvc'
+* [ ] persistentvolumes aka 'pv'
+* [x] pods
+* [ ] podsecuritypolicies aka 'psp'
+* [ ] podtemplates
+* [ ] replicasets aka 'rs'
+* [ ] replicationcontrollers aka 'rc'
+* [ ] resourcequotas aka 'quota'
+* [ ] secrets
+* [ ] serviceaccounts aka 'sa'
+* [ ] services aka 'svc'
+* [ ] statefulsets
+* [ ] storageclasses
+* [ ] thirdpartyresources
+
 ## LICENSE
 
 This software is licensed under the MIT License (See [LICENSE](./LICENSE)).
