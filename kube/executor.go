@@ -6,6 +6,7 @@ import (
 )
 
 func Executor(s string) string {
+	s = strings.TrimSpace(s)
 	if s == "" {
 		return ""
 	}

@@ -100,11 +100,14 @@ func secondArgsCompleter(first, second string) []string {
 }
 
 func thirdArgsCompleter(first, second, third string) []string {
-	switch second {
-	case "pods":
-		return prompt.FilterContains(getPodNames(), third, true)
-	case "deployments":
-		return prompt.FilterContains(getDeploymentNames(), third, true)
+	switch first {
+	case "describe":
+		switch second {
+		case "pods":
+			return prompt.FilterContains(getPodNames(), third, true)
+		case "deployments":
+			return prompt.FilterContains(getDeploymentNames(), third, true)
+		}
 	}
 	return []string{}
 }
