@@ -38,9 +38,9 @@ Commands:
 * [ ] **label**          Update the labels on a resource
 * [ ] **annotate**       Update the annotations on a resource
 * [ ] **config**         config modifies kubeconfig files
-* [ ] **cluster-info**   Display cluster info
-* [ ] **api-versions**   Print the supported API versions on the server, in the form of "group/version".
-* [ ] **version**        Print the client and server version information.
+* [x] **cluster-info**   Display cluster info
+* [x] **api-versions**   Print the supported API versions on the server, in the form of "group/version".
+* [x] **version**        Print the client and server version information.
 * [ ] **explain**        Documentation of resources.
 * [ ] **convert**        Convert config files between different API versions
 
