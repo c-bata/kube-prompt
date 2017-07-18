@@ -64,7 +64,7 @@ var resourceTypes = []string{
 /* Pod */
 
 var (
-	podList []v1.Pod
+	podList *v1.PodList
 	podLastFetchedAt time.Time
 )
 
@@ -73,16 +73,19 @@ func fetchPods() {
 		return
 	}
 	client := getClient()
-	pod, _ := client.Pods(api.NamespaceDefault).List(v1.ListOptions{})
-	podList = pod.Items
+	p, _ := client.Pods(api.NamespaceDefault).List(v1.ListOptions{})
+	podList = p
 	return
 }
 
 func getPodNames() []string {
 	go fetchPods()
-	names := make([]string, len(podList))
-	for i := range podList {
-		names[i] = podList[i].Name
+	if podList == nil || len(podList.Items) == 0 {
+		return []string{}
+	}
+	names := make([]string, len(podList.Items))
+	for i := range podList.Items {
+		names[i] = podList.Items[i].Name
 	}
 	return names
 }
