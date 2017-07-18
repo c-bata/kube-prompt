@@ -2,23 +2,25 @@ package kube
 
 import (
 	"strings"
+
+	"github.com/c-bata/go-prompt-toolkit"
 )
 
 func Completer(s string) []string {
 	args := strings.Split(s, " ")
 	if len(args) == 1 {
-		return filterHasPrefix(commands, args[0])
+		return prompt.FilterHasPrefix(commands, args[0], true)
 	}
 
 	if len(args) == 2 {
 		return secondArgsCompleter(args[0], args[1])
 	}
 
-	return []string{
-		"foo",
-		"foo",
-		"foo",
+	if len(args) == 3 {
+		return thirdArgsCompleter(args[0], args[1], args[2])
 	}
+
+	return []string{}
 }
 
 var commands = []string{
@@ -65,11 +67,11 @@ var operationSpecies = []string{
 func secondArgsCompleter(first, second string) []string {
 	switch first {
 	case "get":
-		return filterHasPrefix(operationSpecies, second)
+		return prompt.FilterHasPrefix(operationSpecies, second, true)
 	case "describe":
-		return filterHasPrefix(operationSpecies, second)
+		return prompt.FilterHasPrefix(operationSpecies, second, true)
 	case "create":
-		return filterHasPrefix(operationSpecies, second)
+		return prompt.FilterHasPrefix(operationSpecies, second, true)
 	case "replace":
 	case "patch":
 	case "delete":
@@ -104,6 +106,13 @@ func secondArgsCompleter(first, second string) []string {
 	return []string{}
 }
 
+func thirdArgsCompleter(first, second, third string) []string {
+	if first == "get" && second == "pods" {
+		return prompt.FilterContains(getPods(), third, true)
+	}
+	return []string{}
+}
+
 // utilities
 
 func filterHasPrefix(completions []string, sub string) []string {
@@ -113,19 +122,6 @@ func filterHasPrefix(completions []string, sub string) []string {
 	ret := make([]string, 0, len(completions))
 	for _, n := range completions {
 		if strings.HasPrefix(n, sub) {
-			ret = append(ret, n)
-		}
-	}
-	return ret
-}
-
-func filterContains(completions []string, sub string) []string {
-	if sub == "" {
-		return completions
-	}
-	ret := make([]string, 0, len(completions))
-	for _, n := range completions {
-		if strings.Contains(n, sub) {
 			ret = append(ret, n)
 		}
 	}
