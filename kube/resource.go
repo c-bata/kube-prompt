@@ -3,7 +3,6 @@ package kube
 import (
 	"time"
 
-	"github.com/k0kubun/pp"
 	"k8s.io/client-go/pkg/api"
 	"k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/pkg/apis/extensions/v1beta1"
@@ -90,14 +89,6 @@ func getPodNames() []string {
 	return names
 }
 
-func describePod(name string) string {
-	pod, err := client.Pods(api.NamespaceDefault).Get(name)
-	if err != nil {
-		return err.Error()
-	}
-	return pp.Sprint(pod)
-}
-
 /* Deployment */
 
 var (
@@ -122,12 +113,4 @@ func getDeploymentNames() []string {
 		names[i] = deploymentList.Items[i].Name
 	}
 	return names
-}
-
-func describeDeployment(name string) string {
-	d, err := client.Deployments(api.NamespaceDefault).Get(name)
-	if err != nil {
-		return err.Error()
-	}
-	return formatDeployment(d)
 }

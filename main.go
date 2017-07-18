@@ -10,6 +10,8 @@ func main() {
 		kube.Executor,
 		kube.Completer,
 		prompt.OptionTitle("kube-prompt: powerful kubernetes client"),
+		prompt.OptionPrefix(">>> "),
+		prompt.OptionInputTextColor(prompt.Yellow),
 	)
 	pt.Run()
 }
