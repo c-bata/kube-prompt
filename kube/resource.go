@@ -39,7 +39,7 @@ var resourceTypes = []string{
 	"statefulsets",
 	"storageclasses",
 	"thirdpartyresources",
-	// shorten names
+	// shorten aliases
 	"cm",
 	"ds",
 	"deploy",

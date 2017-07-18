@@ -2,6 +2,8 @@
 
 **kube-prompt** is powerful interactive command lines for Kubernetes.
 
+![example](./_resources/kube-prompt.gif)
+
 ## Usage
 
 Binaries are available from:
