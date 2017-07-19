@@ -57,8 +57,8 @@ var commands = []prompt.Completion{
 	{Text: "cordon", Description: "Mark node as unschedulable"},
 	{Text: "drain", Description: "Drain node in preparation for maintenance"},
 	{Text: "uncordon", Description: "Mark node as schedulable"},
-	{Text: "attach", Description: "Attach to a running container."},
-	{Text: "exec", Description: "Execute a command in a container."},
+	// {Text: "attach", Description: "Attach to a running container."},  // still not supported
+	// {Text: "exec", Description: "Execute a command in a container."}, // still not supported
 	{Text: "port-forward", Description: "Forward one or more local ports to a pod."},
 	{Text: "proxy", Description: "Run a proxy to the Kubernetes API server"},
 	{Text: "run", Description: "Run a particular image on the cluster."},
@@ -105,8 +105,8 @@ func secondArgsCompleter(first, second string) []prompt.Completion {
 	case "cordon":
 	case "drain":
 	case "uncordon":
-	case "attach":
-	case "exec":
+	//case "attach": // still not supported
+	//case "exec":   // still not supported
 	case "port-forward":
 	case "proxy":
 	case "run":

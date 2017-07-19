@@ -7,6 +7,7 @@ import (
 
 var unSupportedCommand = []string{
 	"exec",
+	"attach",
 }
 
 func Executor(s string) string {
@@ -18,7 +19,7 @@ func Executor(s string) string {
 	args := strings.Split(s, " ")
 	for _, c := range unSupportedCommand {
 		if c == args[0] {
-			return "Sorry, this command still not supported."
+			return "Sorry, this command is still not supported... :-("
 		}
 	}
 
