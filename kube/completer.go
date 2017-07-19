@@ -107,6 +107,10 @@ func secondArgsCompleter(first, second string) []prompt.Completion {
 	case "annotate":
 	case "config":
 	case "cluster-info":
+		subCommands := []prompt.Completion{
+			{Text: "dump", Description: "Dump lots of relevant info for debugging and diagnosis"},
+		}
+		return prompt.FilterHasPrefix(subCommands, second, true)
 	case "api-versions":
 	case "version":
 	case "explain":

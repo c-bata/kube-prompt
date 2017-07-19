@@ -24,6 +24,24 @@ func optionCompleter(args []string, long bool) []prompt.Completion {
 			)
 		}
 		return prompt.FilterContains(optionGet, strings.TrimLeft(args[l-1], "-"), true)
+	case "describe":
+		if long {
+			return prompt.FilterContains(
+				prompt.FilterHasPrefix(optionDescribe, "--", false),
+				strings.TrimLeft(args[l-1], "--"),
+				true,
+			)
+		}
+		return prompt.FilterContains(optionDescribe, strings.TrimLeft(args[l-1], "-"), true)
+	case "cluster-info":
+		if long {
+			return prompt.FilterContains(
+				prompt.FilterHasPrefix(optionClusterInfo, "--", false),
+				strings.TrimLeft(args[l-1], "--"),
+				true,
+			)
+		}
+		return prompt.FilterContains(optionClusterInfo, strings.TrimLeft(args[l-1], "-"), true)
 	}
 	return []prompt.Completion{}
 }
@@ -72,4 +90,8 @@ var optionDescribe = []prompt.Completion{
 	{Text: "-l", Description: "Selector (label query) to filter on"},
 	{Text: "--selector", Description: "Selector (label query) to filter on"},
 	{Text: "--show-events", Description: "If true, display events related to the described object."},
+}
+
+var optionClusterInfo = []prompt.Completion{
+	{Text: "--include-extended-apis", Description: "If true, include definitions of new APIs via calls to the API server. [default true]"},
 }
