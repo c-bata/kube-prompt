@@ -82,7 +82,16 @@ func secondArgsCompleter(first, second string) []prompt.Completion {
 	case "describe":
 		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), second, true)
 	case "create":
-		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), second, true)
+		subcommands := []prompt.Completion{
+			{Text: "configmap", Description: "Create a configmap from a local file, directory or literal value"},
+			{Text: "deployment", Description: "Create a deployment with the specified name."},
+			{Text: "namespace", Description: "Create a namespace with the specified name"},
+			{Text: "quota", Description: "Create a quota with the specified name."},
+			{Text: "secret", Description: "Create a secret using specified subcommand"},
+			{Text: "service", Description: "Create a service using specified subcommand."},
+			{Text: "serviceaccount", Description: "Create a service account with the specified name"},
+		}
+		return prompt.FilterHasPrefix(subcommands, second, true)
 	case "replace":
 	case "patch":
 	case "delete":
