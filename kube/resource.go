@@ -13,8 +13,7 @@ const thresholdFetchInterval = 10 * time.Second
 
 var resourceTypes = []string{
 	"clusters",
-	"componentstatuses",
-	"cs",
+	"componentstatuses", // aka 'cs'
 	"configmaps",               // aka 'cm'
 	"daemonsets",               // aka 'ds'
 	"deployments",              // aka 'deploy'
@@ -42,6 +41,7 @@ var resourceTypes = []string{
 	"storageclasses",
 	"thirdpartyresources",
 	// shorten aliases
+	"cs",
 	"cm",
 	"ds",
 	"deploy",

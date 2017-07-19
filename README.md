@@ -46,8 +46,7 @@ Commands:
 
 Resource Types:
 * [ ] clusters
-* [ ] componentstatuses
-* [ ] cs
+* [ ] componentstatuses aka 'cs'
 * [ ] configmaps aka 'cm'
 * [ ] daemonsets aka 'ds'
 * [x] deployments aka 'deploy'

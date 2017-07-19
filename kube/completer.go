@@ -115,8 +115,12 @@ func thirdArgsCompleter(first, second, third string) []prompt.Completion {
 	switch first {
 	case "describe":
 		switch second {
+		case "po":
+			fallthrough
 		case "pods":
 			return prompt.FilterContains(getPodCompletions(), third, true)
+		case "deploy":
+			fallthrough
 		case "deployments":
 			return prompt.FilterContains(strToCompletionList(getDeploymentNames()), third, true)
 		}
