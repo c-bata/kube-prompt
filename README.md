@@ -41,7 +41,7 @@ Commands:
 * [x] **cluster-info**   Display cluster info
 * [x] **api-versions**   Print the supported API versions on the server, in the form of "group/version".
 * [x] **version**        Print the client and server version information.
-* [ ] **explain**        Documentation of resources.
+* [x] **explain**        Documentation of resources.
 * [ ] **convert**        Convert config files between different API versions
 
 Resource Types:

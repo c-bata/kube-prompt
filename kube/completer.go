@@ -95,6 +95,7 @@ func secondArgsCompleter(first, second string) []prompt.Completion {
 	case "replace":
 	case "patch":
 	case "delete":
+		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), second, true)
 	case "edit":
 	case "apply":
 	case "namespace":
@@ -123,6 +124,7 @@ func secondArgsCompleter(first, second string) []prompt.Completion {
 	case "api-versions":
 	case "version":
 	case "explain":
+		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), second, true)
 	case "convert":
 	default:
 		return []prompt.Completion{}

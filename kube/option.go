@@ -14,45 +14,30 @@ func optionCompleter(args []string, long bool) []prompt.Completion {
 		return optionHelp
 	}
 
+	var completions []prompt.Completion
 	switch args[0] {
 	case "get":
-		if long {
-			return prompt.FilterContains(
-				prompt.FilterHasPrefix(optionGet, "--", false),
-				strings.TrimLeft(args[l-1], "--"),
-				true,
-			)
-		}
-		return prompt.FilterContains(optionGet, strings.TrimLeft(args[l-1], "-"), true)
+		completions = optionGet
 	case "describe":
-		if long {
-			return prompt.FilterContains(
-				prompt.FilterHasPrefix(optionDescribe, "--", false),
-				strings.TrimLeft(args[l-1], "--"),
-				true,
-			)
-		}
-		return prompt.FilterContains(optionDescribe, strings.TrimLeft(args[l-1], "-"), true)
+		completions = optionDescribe
 	case "create":
-		if long {
-			return prompt.FilterContains(
-				prompt.FilterHasPrefix(optionCreate, "--", false),
-				strings.TrimLeft(args[l-1], "--"),
-				true,
-			)
-		}
-		return prompt.FilterContains(optionCreate, strings.TrimLeft(args[l-1], "-"), true)
+		completions = optionCreate
 	case "cluster-info":
-		if long {
-			return prompt.FilterContains(
-				prompt.FilterHasPrefix(optionClusterInfo, "--", false),
-				strings.TrimLeft(args[l-1], "--"),
-				true,
-			)
-		}
-		return prompt.FilterContains(optionClusterInfo, strings.TrimLeft(args[l-1], "-"), true)
+		completions = optionClusterInfo
+	case "explain":
+		completions = optionExplain
+	default:
+		completions = optionHelp
 	}
-	return []prompt.Completion{}
+
+	if long {
+		return prompt.FilterContains(
+			prompt.FilterHasPrefix(completions, "--", false),
+			strings.TrimLeft(args[l-1], "--"),
+			true,
+		)
+	}
+	return prompt.FilterContains(completions, strings.TrimLeft(args[l-1], "-"), true)
 }
 
 var optionHelp = []prompt.Completion{
@@ -128,4 +113,9 @@ var optionCreate = []prompt.Completion{
 
 var optionClusterInfo = []prompt.Completion{
 	{Text: "--include-extended-apis", Description: "If true, include definitions of new APIs via calls to the API server. [default true]"},
+}
+
+var optionExplain = []prompt.Completion{
+	{Text: "--include-extended-apis", Description: "If true, include definitions of new APIs via calls to the API server. [default true]"},
+	{Text: "--recursive", Description: "Print the fields of fields (Currently only 1 level deep)"},
 }
