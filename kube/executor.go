@@ -1,8 +1,8 @@
 package kube
 
 import (
-	"strings"
 	"os/exec"
+	"strings"
 )
 
 var unSupportedCommand = []string{

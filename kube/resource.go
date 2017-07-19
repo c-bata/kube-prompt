@@ -3,6 +3,7 @@ package kube
 import (
 	"time"
 
+	"github.com/c-bata/go-prompt-toolkit"
 	"k8s.io/client-go/pkg/api"
 	"k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/pkg/apis/extensions/v1beta1"
@@ -77,16 +78,19 @@ func fetchPods() {
 	return
 }
 
-func getPodNames() []string {
+func getPodCompletions() []prompt.Completion {
 	go fetchPods()
 	if podList == nil || len(podList.Items) == 0 {
-		return []string{}
+		return []prompt.Completion{}
 	}
-	names := make([]string, len(podList.Items))
+	completions := make([]prompt.Completion, len(podList.Items))
 	for i := range podList.Items {
-		names[i] = podList.Items[i].Name
+		completions[i] = prompt.Completion{
+			Text:        podList.Items[i].Name,
+			Description: string(podList.Items[i].Status.Phase),
+		}
 	}
-	return names
+	return completions
 }
 
 /* Deployment */
