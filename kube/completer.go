@@ -11,6 +11,12 @@ func Completer(s string) []prompt.Completion {
 		return []prompt.Completion{}
 	}
 	args := strings.Split(s, " ")
+	l := len(args)
+
+	if strings.HasPrefix(args[l-1], "-") {
+		return optionCompleter(args, strings.HasPrefix(args[l-1], "--"))
+	}
+
 	if len(args) == 1 {
 		return prompt.FilterHasPrefix(commands, args[0], true)
 	}

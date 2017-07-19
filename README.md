@@ -12,7 +12,7 @@ Binaries are available from:
 
 Commands:
 
-* [ ] **get**            Display one or many resources
+* [x] **get**            Display one or many resources
 * [ ] **describe**       Show details of a specific resource or group of resources
 * [ ] **create**         Create a resource by filename or stdin
 * [ ] **replace**        Replace a resource by filename or stdin.

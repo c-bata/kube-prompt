@@ -1,6 +1,37 @@
 package kube
 
-import "github.com/c-bata/go-prompt-toolkit"
+import (
+	"github.com/c-bata/go-prompt-toolkit"
+	"strings"
+)
+
+func optionCompleter(args []string, long bool) []prompt.Completion {
+	l := len(args)
+	if l <= 1 {
+		if long {
+			return prompt.FilterHasPrefix(optionHelp, "--", false)
+		}
+		return optionHelp
+	}
+
+	switch args[0] {
+	case "get":
+		if long {
+			return prompt.FilterContains(
+				prompt.FilterHasPrefix(optionGet, "--", false),
+				strings.TrimLeft(args[l-1], "--"),
+				true,
+			)
+		}
+		return prompt.FilterContains(optionGet, strings.TrimLeft(args[l-1], "-"), true)
+	}
+	return []prompt.Completion{}
+}
+
+var optionHelp = []prompt.Completion{
+	{Text: "-h"},
+	{Text: "--help"},
+}
 
 var optionGet = []prompt.Completion{
 	{Text: "--all-namespaces", Description: "If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace."},
