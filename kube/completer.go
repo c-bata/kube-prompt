@@ -18,18 +18,9 @@ func Completer(s string) []prompt.Completion {
 	}
 
 	if len(args) == 1 {
-		return prompt.FilterHasPrefix(commands, args[0], true)
 	}
 
-	if len(args) == 2 {
-		return secondArgsCompleter(args[0], args[1])
-	}
-
-	if len(args) == 3 {
-		return thirdArgsCompleter(args[0], args[1], args[2])
-	}
-
-	return []prompt.Completion{}
+	return argumentsCompleter(args)
 }
 
 func strToCompletionList(x []string) []prompt.Completion {
@@ -75,12 +66,38 @@ var commands = []prompt.Completion{
 	{Text: "convert", Description: "Convert config files between different API versions"},
 }
 
-func secondArgsCompleter(first, second string) []prompt.Completion {
+func argumentsCompleter(args []string) []prompt.Completion {
+	if len(args) <= 1 {
+		return prompt.FilterHasPrefix(commands, args[0], true)
+	}
+
+	first := args[0]
 	switch first {
 	case "get":
-		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), second, true)
+		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), args[1], true)
 	case "describe":
-		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), second, true)
+		second := args[1]
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), second, true)
+		}
+
+		third := args[2]
+		switch second {
+		case "po":
+			fallthrough
+		case "pod":
+			fallthrough
+		case "pods":
+			return prompt.FilterContains(getPodCompletions(), third, true)
+		case "deploy":
+			fallthrough
+		case "deployments":
+			return prompt.FilterContains(strToCompletionList(getDeploymentNames()), third, true)
+		case "no":
+			fallthrough
+		case "nodes":
+			return prompt.FilterContains(getNodeCompletions(), third, true)
+		}
 	case "create":
 		subcommands := []prompt.Completion{
 			{Text: "configmap", Description: "Create a configmap from a local file, directory or literal value"},
@@ -91,11 +108,11 @@ func secondArgsCompleter(first, second string) []prompt.Completion {
 			{Text: "service", Description: "Create a service using specified subcommand."},
 			{Text: "serviceaccount", Description: "Create a service account with the specified name"},
 		}
-		return prompt.FilterHasPrefix(subcommands, second, true)
+		return prompt.FilterHasPrefix(subcommands, args[1], true)
 	case "replace":
 	case "patch":
 	case "delete":
-		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), second, true)
+		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), args[1], true)
 	case "edit":
 	case "apply":
 	case "namespace":
@@ -107,7 +124,7 @@ func secondArgsCompleter(first, second string) []prompt.Completion {
 	case "drain":
 		fallthrough
 	case "uncordon":
-		return prompt.FilterHasPrefix(getNodeCompletions(), second, true)
+		return prompt.FilterHasPrefix(getNodeCompletions(), args[1], true)
 	//case "attach": // still not supported
 	//case "exec":   // still not supported
 	//case "port-forward": // still not supported
@@ -123,35 +140,14 @@ func secondArgsCompleter(first, second string) []prompt.Completion {
 		subCommands := []prompt.Completion{
 			{Text: "dump", Description: "Dump lots of relevant info for debugging and diagnosis"},
 		}
-		return prompt.FilterHasPrefix(subCommands, second, true)
+		return prompt.FilterHasPrefix(subCommands, args[1], true)
 	case "api-versions":
 	case "version":
 	case "explain":
-		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), second, true)
+		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), args[1], true)
 	case "convert":
 	default:
 		return []prompt.Completion{}
-	}
-	return []prompt.Completion{}
-}
-
-func thirdArgsCompleter(first, second, third string) []prompt.Completion {
-	switch first {
-	case "describe":
-		switch second {
-		case "po":
-			fallthrough
-		case "pods":
-			return prompt.FilterContains(getPodCompletions(), third, true)
-		case "deploy":
-			fallthrough
-		case "deployments":
-			return prompt.FilterContains(strToCompletionList(getDeploymentNames()), third, true)
-		case "no":
-			fallthrough
-		case "nodes":
-			return prompt.FilterContains(getNodeCompletions(), third, true)
-		}
 	}
 	return []prompt.Completion{}
 }

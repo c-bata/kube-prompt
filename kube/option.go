@@ -1,8 +1,9 @@
 package kube
 
 import (
-	"github.com/c-bata/go-prompt-toolkit"
 	"strings"
+
+	"github.com/c-bata/go-prompt-toolkit"
 )
 
 func optionCompleter(args []string, long bool) []prompt.Completion {

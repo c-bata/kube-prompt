@@ -12,7 +12,6 @@ var (
 	revision string
 )
 
-
 func main() {
 	fmt.Printf("kube-prompt: powerful interactive kubernetes client. (version: '%s', revision: '%s')\n", version, revision)
 	defer fmt.Println("Goodbye!")
