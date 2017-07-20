@@ -92,7 +92,7 @@ func argumentsCompleter(args []string) []prompt.Completion {
 		case "deploy":
 			fallthrough
 		case "deployments":
-			return prompt.FilterContains(strToCompletionList(getDeploymentNames()), third, true)
+			return prompt.FilterContains(getDeploymentNames(), third, true)
 		case "no":
 			fallthrough
 		case "nodes":

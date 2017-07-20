@@ -1,6 +1,7 @@
 package kube
 
 import (
+	"sync/atomic"
 	"time"
 
 	"github.com/c-bata/go-prompt-toolkit"
@@ -66,7 +67,7 @@ var resourceTypes = []string{
 /* Pod */
 
 var (
-	podList          *v1.PodList
+	podList          atomic.Value
 	podLastFetchedAt time.Time
 )
 
@@ -74,20 +75,22 @@ func fetchPods() {
 	if time.Since(podLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	podList, _ = getClient().Pods(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().Pods(api.NamespaceDefault).List(v1.ListOptions{})
+	podList.Store(l)
 	return
 }
 
 func getPodCompletions() []prompt.Completion {
 	go fetchPods()
-	if podList == nil || len(podList.Items) == 0 {
+	l, ok := podList.Load().(*v1.PodList)
+	if !ok || len(l.Items) == 0 {
 		return []prompt.Completion{}
 	}
-	completions := make([]prompt.Completion, len(podList.Items))
-	for i := range podList.Items {
+	completions := make([]prompt.Completion, len(l.Items))
+	for i := range l.Items {
 		completions[i] = prompt.Completion{
-			Text:        podList.Items[i].Name,
-			Description: string(podList.Items[i].Status.Phase),
+			Text:        l.Items[i].Name,
+			Description: string(l.Items[i].Status.Phase),
 		}
 	}
 	return completions
@@ -96,7 +99,7 @@ func getPodCompletions() []prompt.Completion {
 /* Deployment */
 
 var (
-	deploymentList          *v1beta1.DeploymentList
+	deploymentList          atomic.Value
 	deploymentLastFetchedAt time.Time
 )
 
@@ -104,25 +107,30 @@ func fetchDeployments() {
 	if time.Since(deploymentLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	deploymentList, _ = getClient().Deployments(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().Deployments(api.NamespaceDefault).List(v1.ListOptions{})
+	deploymentList.Store(l)
+	return
 }
 
-func getDeploymentNames() []string {
+func getDeploymentNames() []prompt.Completion {
 	go fetchDeployments()
-	if deploymentList == nil || len(deploymentList.Items) == 0 {
-		return []string{}
+	l, ok := podList.Load().(*v1beta1.DeploymentList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Completion{}
 	}
-	names := make([]string, len(deploymentList.Items))
-	for i := range deploymentList.Items {
-		names[i] = deploymentList.Items[i].Name
+	completions := make([]prompt.Completion, len(l.Items))
+	for i := range l.Items {
+		completions[i] = prompt.Completion{
+			Text: l.Items[i].Name,
+		}
 	}
-	return names
+	return completions
 }
 
 /* Node */
 
 var (
-	nodeList          *v1.NodeList
+	nodeList          atomic.Value
 	nodeLastFetchedAt time.Time
 )
 
@@ -130,18 +138,21 @@ func fetchNodeList() {
 	if time.Since(nodeLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	nodeList, _ = getClient().Nodes().List(v1.ListOptions{})
+	l, _ := getClient().Nodes().List(v1.ListOptions{})
+	nodeList.Store(l)
+	return
 }
 
 func getNodeCompletions() []prompt.Completion {
 	go fetchNodeList()
-	if nodeList == nil || len(nodeList.Items) == 0 {
+	l, ok := podList.Load().(*v1.NodeList)
+	if !ok || len(l.Items) == 0 {
 		return []prompt.Completion{}
 	}
-	completions := make([]prompt.Completion, len(nodeList.Items))
-	for i := range nodeList.Items {
+	completions := make([]prompt.Completion, len(l.Items))
+	for i := range l.Items {
 		completions[i] = prompt.Completion{
-			Text: nodeList.Items[i].Name,
+			Text: l.Items[i].Name,
 		}
 	}
 	return completions
