@@ -59,7 +59,7 @@ var commands = []prompt.Completion{
 	{Text: "uncordon", Description: "Mark node as schedulable"},
 	// {Text: "attach", Description: "Attach to a running container."},  // still not supported
 	// {Text: "exec", Description: "Execute a command in a container."}, // still not supported
-	{Text: "port-forward", Description: "Forward one or more local ports to a pod."},
+	// {Text: "port-forward", Description: "Forward one or more local ports to a pod."}, // still not supported
 	{Text: "proxy", Description: "Run a proxy to the Kubernetes API server"},
 	{Text: "run", Description: "Run a particular image on the cluster."},
 	{Text: "expose", Description: "Take a replication controller, service, or pod and expose it as a new Kubernetes Service"},
@@ -103,8 +103,11 @@ func secondArgsCompleter(first, second string) []prompt.Completion {
 	case "rolling-update":
 	case "scale":
 	case "cordon":
+		fallthrough
 	case "drain":
+		fallthrough
 	case "uncordon":
+		return prompt.FilterHasPrefix(getNodeCompletions(), second, true)
 	//case "attach": // still not supported
 	//case "exec":   // still not supported
 	case "port-forward":
@@ -144,6 +147,10 @@ func thirdArgsCompleter(first, second, third string) []prompt.Completion {
 			fallthrough
 		case "deployments":
 			return prompt.FilterContains(strToCompletionList(getDeploymentNames()), third, true)
+		case "no":
+			fallthrough
+		case "nodes":
+			return prompt.FilterContains(getNodeCompletions(), third, true)
 		}
 	}
 	return []prompt.Completion{}

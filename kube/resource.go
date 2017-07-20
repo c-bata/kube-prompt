@@ -118,3 +118,31 @@ func getDeploymentNames() []string {
 	}
 	return names
 }
+
+/* Node */
+
+var (
+	nodeList          *v1.NodeList
+	nodeLastFetchedAt time.Time
+)
+
+func fetchNodeList() {
+	if time.Since(nodeLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	nodeList, _ = getClient().Nodes().List(v1.ListOptions{})
+}
+
+func getNodeCompletions() []prompt.Completion {
+	go fetchNodeList()
+	if nodeList == nil || len(nodeList.Items) == 0 {
+		return []prompt.Completion{}
+	}
+	completions := make([]prompt.Completion, len(nodeList.Items))
+	for i := range nodeList.Items {
+		completions[i] = prompt.Completion{
+			Text: nodeList.Items[i].Name,
+		}
+	}
+	return completions
+}

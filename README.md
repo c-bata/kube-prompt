@@ -24,9 +24,9 @@ Commands:
 * [ ] **logs**           Print the logs for a container in a pod.
 * [ ] **rolling-update** Perform a rolling update of the given ReplicationController.
 * [ ] **scale**          Set a new size for a Deployment, ReplicaSet, Replication Controller, or Job.
-* [ ] **cordon**         Mark node as unschedulable
-* [ ] **drain**          Drain node in preparation for maintenance
-* [ ] **uncordon**       Mark node as schedulable
+* [x] **cordon**         Mark node as unschedulable
+* [x] **drain**          Drain node in preparation for maintenance
+* [x] **uncordon**       Mark node as schedulable
 * [ ] **attach**         Attach to a running container.
 * [ ] **exec**           Execute a command in a container.
 * [ ] **port-forward**   Forward one or more local ports to a pod.
@@ -58,7 +58,7 @@ Resource Types:
 * [ ] limitranges aka 'limits'
 * [ ] namespaces aka 'ns'
 * [ ] networkpolicies
-* [ ] nodes aka 'no'
+* [x] nodes aka 'no'
 * [ ] persistentvolumeclaims aka 'pvc'
 * [ ] persistentvolumes aka 'pv'
 * [x] pods
