@@ -26,6 +26,12 @@ func optionCompleter(args []string, long bool) []prompt.Completion {
 		completions = optionClusterInfo
 	case "explain":
 		completions = optionExplain
+	case "cordon":
+		completions = optionCordon
+	case "drain":
+		completions = optionDrain
+	case "uncordon":
+		completions = optionHelp
 	default:
 		completions = optionHelp
 	}
@@ -109,6 +115,59 @@ var optionCreate = []prompt.Completion{
 	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
 	{Text: "--validate", Description: "If true, use a schema to validate the input before sending it"},
 	{Text: "--windows-line-endings", Description: "Only relevant if --edit=true. Use Windows line-endings (default Unix line-endings)"},
+}
+
+var optionCordon = []prompt.Completion{
+	{Text: "--alsologtostderr", Description: "log to standard error as well as files"},
+	{Text: "--certificate-authority", Description: "Path to a cert. file for the certificate authority."},
+	{Text: "--client-certificate", Description: "Path to a client certificate file for TLS."},
+	{Text: "--client-key", Description: "Path to a client key file for TLS."},
+	{Text: "--cluster", Description: "The name of the kubeconfig cluster to use"},
+	{Text: "--context", Description: "The name of the kubeconfig context to use"},
+	{Text: "--insecure-skip-tls-verify", Description: "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure."},
+	{Text: "--kubeconfig", Description: "Path to the kubeconfig file to use for CLI requests."},
+	{Text: "--log-backtrace-at", Description: "when logging hits line file:N, emit a stack trace"},
+	{Text: "--log-dir", Description: "If non-empty, write log files in this directory"},
+	{Text: "--log-flush-frequency", Description: "Maximum number of seconds between log flushes"},
+	{Text: "--logtostderr", Description: "log to standard error instead of files"},
+	{Text: "--match-server-version", Description: "Require server version to match client version"},
+	{Text: "--namespace", Description: "If present, the namespace scope for this CLI request."},
+	{Text: "--password", Description: "Password for basic authentication to the API server."},
+	{Text: "--server", Description: "The address and port of the Kubernetes API server"},
+	{Text: "--stderrthreshold", Description: "logs at or above this threshold go to stderr"},
+	{Text: "--token", Description: "Bearer token for authentication to the API server."},
+	{Text: "--user", Description: "The name of the kubeconfig user to use"},
+	{Text: "--username", Description: "Username for basic authentication to the API server."},
+	{Text: "--v", Description: "log level for V logs"},
+	{Text: "--vmodule", Description: "comma-separated list of pattern=N settings for file-filtered logging"},
+}
+
+var optionDrain = []prompt.Completion{
+	{Text: "--force", Description: "Continue even if there are pods not managed by a ReplicationController, ReplicaSet, Job, or DaemonSet."},
+	{Text: "--grace-period", Description: "Period of time in seconds given to each pod to terminate gracefully. If negative, the default value specified in the pod will be used."},
+	{Text: "--ignore-daemonsets", Description: "Ignore DaemonSet-managed pods."},
+	{Text: "--alsologtostderr", Description: "log to standard error as well as files"},
+	{Text: "--certificate-authority", Description: "Path to a cert. file for the certificate authority."},
+	{Text: "--client-certificate", Description: "Path to a client certificate file for TLS."},
+	{Text: "--client-key", Description: "Path to a client key file for TLS."},
+	{Text: "--cluster", Description: "The name of the kubeconfig cluster to use"},
+	{Text: "--context", Description: "The name of the kubeconfig context to use"},
+	{Text: "--insecure-skip-tls-verify", Description: "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure."},
+	{Text: "--kubeconfig", Description: "Path to the kubeconfig file to use for CLI requests."},
+	{Text: "--log-backtrace-at", Description: "when logging hits line file:N, emit a stack trace"},
+	{Text: "--log-dir", Description: "If non-empty, write log files in this directory"},
+	{Text: "--log-flush-frequency", Description: "Maximum number of seconds between log flushes"},
+	{Text: "--logtostderr", Description: "log to standard error instead of files"},
+	{Text: "--match-server-version", Description: "Require server version to match client version"},
+	{Text: "--namespace", Description: "If present, the namespace scope for this CLI request."},
+	{Text: "--password", Description: "Password for basic authentication to the API server."},
+	{Text: "--server", Description: "The address and port of the Kubernetes API server"},
+	{Text: "--stderrthreshold", Description: "logs at or above this threshold go to stderr"},
+	{Text: "--token", Description: "Bearer token for authentication to the API server."},
+	{Text: "--user", Description: "The name of the kubeconfig user to use"},
+	{Text: "--username", Description: "Username for basic authentication to the API server."},
+	{Text: "--v", Description: "log level for V logs"},
+	{Text: "--vmodule", Description: "comma-separated list of pattern=N settings for file-filtered logging"},
 }
 
 var optionClusterInfo = []prompt.Completion{
