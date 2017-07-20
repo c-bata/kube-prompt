@@ -110,7 +110,7 @@ func secondArgsCompleter(first, second string) []prompt.Completion {
 		return prompt.FilterHasPrefix(getNodeCompletions(), second, true)
 	//case "attach": // still not supported
 	//case "exec":   // still not supported
-	case "port-forward":
+	//case "port-forward": // still not supported
 	case "proxy":
 	case "run":
 	case "expose":

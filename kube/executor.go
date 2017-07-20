@@ -8,6 +8,7 @@ import (
 var unSupportedCommand = []string{
 	"exec",
 	"attach",
+	"port-forward",
 }
 
 func Executor(s string) string {
