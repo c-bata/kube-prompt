@@ -4,7 +4,7 @@
 
 ## Usage
 
-![example](./_resources/kube-prompt.gif)
+[![asciicast](https://asciinema.org/a/DQNCOFpUeQayrYlhq2OD1jbqZ.png)](https://asciinema.org/a/DQNCOFpUeQayrYlhq2OD1jbqZ)
 
 Basically, kube-prompt wraps kubectl. So if you know the usage of kubectl, you can also use kube-prompt.
 Binaries are available from:
