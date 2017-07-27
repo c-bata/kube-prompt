@@ -207,7 +207,38 @@ func fetchDeployments() {
 
 func getDeploymentNames() []prompt.Completion {
 	go fetchDeployments()
-	l, ok := podList.Load().(*v1beta1.DeploymentList)
+	l, ok := deploymentList.Load().(*v1beta1.DeploymentList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Completion{}
+	}
+	completions := make([]prompt.Completion, len(l.Items))
+	for i := range l.Items {
+		completions[i] = prompt.Completion{
+			Text: l.Items[i].Name,
+		}
+	}
+	return completions
+}
+
+/* Endpoint */
+
+var (
+	endpointList          atomic.Value
+	endpointLastFetchedAt time.Time
+)
+
+func fetchEndpoints() {
+	if time.Since(endpointLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().Endpoints(api.NamespaceDefault).List(v1.ListOptions{})
+	endpointList.Store(l)
+	return
+}
+
+func getEndpointsCompletion() []prompt.Completion {
+	go fetchEndpoints()
+	l, ok := endpointList.Load().(*v1.EndpointsList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Completion{}
 	}
@@ -238,7 +269,7 @@ func fetchNodeList() {
 
 func getNodeCompletions() []prompt.Completion {
 	go fetchNodeList()
-	l, ok := podList.Load().(*v1.NodeList)
+	l, ok := nodeList.Load().(*v1.NodeList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Completion{}
 	}

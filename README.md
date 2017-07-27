@@ -59,7 +59,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `configmaps` aka `cm`
 * [x] `daemonsets` aka `ds`
 * [x] `deployments` aka `deploy`
-* [ ] `endpoints` aka `ep`
+* [x] `endpoints` aka `ep`
 * [ ] `events` aka `ev`
 * [ ] `horizontalpodautoscalers` aka `hpa`
 * [ ] `ingresses` aka `ing`

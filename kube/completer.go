@@ -90,6 +90,8 @@ func argumentsCompleter(args []string) []prompt.Completion {
 			return prompt.FilterContains(getDaemonSetCompletions(), third, true)
 		case "deploy", "deployments":
 			return prompt.FilterContains(getDeploymentNames(), third, true)
+		case "endpoints", "ep":
+			return prompt.FilterContains(getEndpointsCompletion(), third, true)
 		case "no", "nodes":
 			return prompt.FilterContains(getNodeCompletions(), third, true)
 		case "po", "pod", "pods":
