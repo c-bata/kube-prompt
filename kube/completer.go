@@ -17,10 +17,7 @@ func Completer(s string) []prompt.Completion {
 		return optionCompleter(args, strings.HasPrefix(args[l-1], "--"))
 	}
 
-	if len(args) == 1 {
-	}
-
-	return argumentsCompleter(args)
+	return argumentsCompleter(excludeOptions(args))
 }
 
 func strToCompletionList(x []string) []prompt.Completion {
@@ -74,7 +71,9 @@ func argumentsCompleter(args []string) []prompt.Completion {
 	first := args[0]
 	switch first {
 	case "get":
-		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), args[1], true)
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), args[1], true)
+		}
 	case "describe":
 		second := args[1]
 		if len(args) == 2 {
@@ -140,7 +139,9 @@ func argumentsCompleter(args []string) []prompt.Completion {
 		subCommands := []prompt.Completion{
 			{Text: "dump", Description: "Dump lots of relevant info for debugging and diagnosis"},
 		}
-		return prompt.FilterHasPrefix(subCommands, args[1], true)
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(subCommands, args[1], true)
+		}
 	case "api-versions":
 	case "version":
 	case "explain":
@@ -151,3 +152,4 @@ func argumentsCompleter(args []string) []prompt.Completion {
 	}
 	return []prompt.Completion{}
 }
+
