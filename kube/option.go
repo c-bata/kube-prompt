@@ -35,9 +35,9 @@ func optionCompleter(args []string, long bool) []prompt.Completion {
 	case "uncordon":
 		completions = optionHelp
 	case "config":
-		if len(commandArgs) != 2 {
-			switch args {
-			case "view" :
+		if len(commandArgs) == 2 {
+			switch commandArgs[1] {
+			case "view":
 				completions = optionConfigView
 			}
 		}
