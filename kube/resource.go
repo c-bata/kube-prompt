@@ -157,3 +157,34 @@ func getNodeCompletions() []prompt.Completion {
 	}
 	return completions
 }
+
+/* Secret */
+
+var (
+	secretList       atomic.Value
+	secretLastFetchedAt time.Time
+)
+
+func fetchSecretList() {
+	if time.Since(secretLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().Secrets(api.NamespaceDefault).List(v1.ListOptions{})
+	secretList.Store(l)
+	return
+}
+
+func getSecretCompletions() []prompt.Completion {
+	go fetchSecretList()
+	l, ok := secretList.Load().(*v1.SecretList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Completion{}
+	}
+	completions := make([]prompt.Completion, len(l.Items))
+	for i := range l.Items {
+		completions[i] = prompt.Completion{
+			Text: l.Items[i].Name,
+		}
+	}
+	return completions
+}

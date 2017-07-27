@@ -96,6 +96,8 @@ func argumentsCompleter(args []string) []prompt.Completion {
 			fallthrough
 		case "nodes":
 			return prompt.FilterContains(getNodeCompletions(), third, true)
+		case "secrets":
+			return prompt.FilterContains(getSecretCompletions(), third, true)
 		}
 	case "create":
 		subcommands := []prompt.Completion{
