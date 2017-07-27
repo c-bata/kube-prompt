@@ -55,9 +55,9 @@ Hopefully support following commands and resource types enough to operate kubern
 #### Resource Types:
 
 * [ ] `clusters`
-* [ ] `componentstatuses` aka `cs`
+* [x] `componentstatuses` aka `cs`
 * [x] `configmaps` aka `cm`
-* [ ] `daemonsets` aka `ds`
+* [x] `daemonsets` aka `ds`
 * [x] `deployments` aka `deploy`
 * [ ] `endpoints` aka `ep`
 * [ ] `events` aka `ev`

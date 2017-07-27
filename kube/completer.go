@@ -82,14 +82,18 @@ func argumentsCompleter(args []string) []prompt.Completion {
 
 		third := args[2]
 		switch second {
+		case "componentstatuses", "cs":
+			return prompt.FilterContains(getComponentStatusCompletions(), third, true)
 		case "configmaps", "cm":
 			return prompt.FilterContains(getConfigMapCompletions(), third, true)
-		case "po", "pod", "pods":
-			return prompt.FilterContains(getPodCompletions(), third, true)
+		case "daemonsets", "ds":
+			return prompt.FilterContains(getDaemonSetCompletions(), third, true)
 		case "deploy", "deployments":
 			return prompt.FilterContains(getDeploymentNames(), third, true)
 		case "no", "nodes":
 			return prompt.FilterContains(getNodeCompletions(), third, true)
+		case "po", "pod", "pods":
+			return prompt.FilterContains(getPodCompletions(), third, true)
 		case "secrets":
 			return prompt.FilterContains(getSecretCompletions(), third, true)
 		case "sa", "serviceaccounts":

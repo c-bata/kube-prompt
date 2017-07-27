@@ -64,6 +64,37 @@ var resourceTypes = []string{
 	"svc",
 }
 
+/* Component Status */
+
+var (
+	componentStatusList       atomic.Value
+	componentStatusLastFetchedAt time.Time
+)
+
+func fetchComponentStatusList() {
+	if time.Since(componentStatusLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().ComponentStatuses().List(v1.ListOptions{})
+	componentStatusList.Store(l)
+	return
+}
+
+func getComponentStatusCompletions() []prompt.Completion {
+	go fetchComponentStatusList()
+	l, ok := componentStatusList.Load().(*v1.ComponentStatusList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Completion{}
+	}
+	completions := make([]prompt.Completion, len(l.Items))
+	for i := range l.Items {
+		completions[i] = prompt.Completion{
+			Text: l.Items[i].Name,
+		}
+	}
+	return completions
+}
+
 /* Config Maps */
 
 var (
@@ -122,6 +153,37 @@ func getPodCompletions() []prompt.Completion {
 		completions[i] = prompt.Completion{
 			Text:        l.Items[i].Name,
 			Description: string(l.Items[i].Status.Phase),
+		}
+	}
+	return completions
+}
+
+/* Daemon Sets */
+
+var (
+	daemonSetList          atomic.Value
+	daemonSetLastFetchedAt time.Time
+)
+
+func fetchDaemonSetList() {
+	if time.Since(daemonSetLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().DaemonSets(api.NamespaceDefault).List(v1.ListOptions{})
+	daemonSetList.Store(l)
+	return
+}
+
+func getDaemonSetCompletions() []prompt.Completion {
+	go fetchDaemonSetList()
+	l, ok := daemonSetList.Load().(*v1beta1.DaemonSetList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Completion{}
+	}
+	completions := make([]prompt.Completion, len(l.Items))
+	for i := range l.Items {
+		completions[i] = prompt.Completion{
+			Text: l.Items[i].Name,
 		}
 	}
 	return completions
