@@ -77,7 +77,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [ ] `replicationcontrollers` aka `rc`
 * [ ] `resourcequotas` aka `quota`
 * [x] `secrets`
-* [ ] `serviceaccounts` aka `sa`
+* [x] `serviceaccounts` aka `sa`
 * [ ] `services` aka `svc`
 * [ ] `statefulsets`
 * [ ] `storageclasses`

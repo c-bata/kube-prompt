@@ -82,22 +82,16 @@ func argumentsCompleter(args []string) []prompt.Completion {
 
 		third := args[2]
 		switch second {
-		case "po":
-			fallthrough
-		case "pod":
-			fallthrough
-		case "pods":
+		case "po", "pod", "pods":
 			return prompt.FilterContains(getPodCompletions(), third, true)
-		case "deploy":
-			fallthrough
-		case "deployments":
+		case "deploy", "deployments":
 			return prompt.FilterContains(getDeploymentNames(), third, true)
-		case "no":
-			fallthrough
-		case "nodes":
+		case "no", "nodes":
 			return prompt.FilterContains(getNodeCompletions(), third, true)
 		case "secrets":
 			return prompt.FilterContains(getSecretCompletions(), third, true)
+		case "sa", "serviceaccounts":
+			return prompt.FilterContains(getServiceAccountCompletions(), third, true)
 		}
 	case "create":
 		subcommands := []prompt.Completion{

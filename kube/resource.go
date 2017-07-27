@@ -188,3 +188,34 @@ func getSecretCompletions() []prompt.Completion {
 	}
 	return completions
 }
+
+/* Service Account */
+
+var (
+	serviceAccountList       atomic.Value
+	serviceAccountLastFetchedAt time.Time
+)
+
+func fetchServiceAccountList() {
+	if time.Since(serviceAccountLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().ServiceAccounts(api.NamespaceDefault).List(v1.ListOptions{})
+	serviceAccountList.Store(l)
+	return
+}
+
+func getServiceAccountCompletions() []prompt.Completion {
+	go fetchServiceAccountList()
+	l, ok := serviceAccountList.Load().(*v1.ServiceAccountList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Completion{}
+	}
+	completions := make([]prompt.Completion, len(l.Items))
+	for i := range l.Items {
+		completions[i] = prompt.Completion{
+			Text: l.Items[i].Name,
+		}
+	}
+	return completions
+}
