@@ -16,7 +16,8 @@ func optionCompleter(args []string, long bool) []prompt.Completion {
 	}
 
 	var completions []prompt.Completion
-	switch args[0] {
+	commandArgs := excludeOptions(args)
+	switch commandArgs[0] {
 	case "get":
 		completions = optionGet
 	case "describe":
@@ -33,6 +34,13 @@ func optionCompleter(args []string, long bool) []prompt.Completion {
 		completions = optionDrain
 	case "uncordon":
 		completions = optionHelp
+	case "config":
+		if len(commandArgs) != 2 {
+			switch args {
+			case "view" :
+				completions = optionConfigView
+			}
+		}
 	default:
 		completions = optionHelp
 	}
@@ -179,3 +187,21 @@ var optionExplain = []prompt.Completion{
 	{Text: "--include-extended-apis", Description: "If true, include definitions of new APIs via calls to the API server. [default true]"},
 	{Text: "--recursive", Description: "Print the fields of fields (Currently only 1 level deep)"},
 }
+
+var optionConfigView = []prompt.Completion{
+	{Text: "--allow-missing-template-keys", Description: "If true, ignore any errors in templates when a field or map key is missing in the template. Only applies to golang and jsonpath output formats."},
+	{Text: "--flatten", Description: "flatten the resulting kubeconfig file into self-contained output (useful for creating portable kubeconfig files)"},
+	{Text: "--merge", Description: "merge the full hierarchy of kubeconfig files"},
+	{Text: "--minify", Description: "remove all information not used by current-context from the output"},
+	{Text: "--no-headers", Description: "When using the default or custom-column output format, don't print headers."},
+	{Text: "-o", Description: "Output format. One of: json|yaml|wide|name|custom-columns=...|custom-columns-file=...|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=..."},
+	{Text: "--output", Description: "Output format. One of: json|yaml|wide|name|custom-columns=...|custom-columns-file=...|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=..."},
+	{Text: "--output-version", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
+	{Text: "--raw", Description: "display raw byte data"},
+	{Text: "--show-all", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "-a", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
+	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
+	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
+}
+

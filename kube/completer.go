@@ -135,6 +135,23 @@ func argumentsCompleter(args []string) []prompt.Completion {
 	case "label":
 	case "annotate":
 	case "config":
+		subCommands := []prompt.Completion{
+			{Text: "current-context", Description: "Displays the current-context"},
+			{Text: "delete-cluster", Description: "Delete the specified cluster from the kubeconfig"},
+			{Text: "delete-context", Description: "Delete the specified context from the kubeconfig"},
+			{Text: "get-clusters", Description: "Display clusters defined in the kubeconfig"},
+			{Text: "get-contexts", Description: "Describe one or many contexts"},
+			{Text: "set", Description: "Sets an individual value in a kubeconfig file"},
+			{Text: "set-cluster", Description: "Sets a cluster entry in kubeconfig"},
+			{Text: "set-context", Description: "Sets a context entry in kubeconfig"},
+			{Text: "set-credentials", Description: "Sets a user entry in kubeconfig"},
+			{Text: "unset", Description: "Unsets an individual value in a kubeconfig file"},
+			{Text: "use-context", Description: "Sets the current-context in a kubeconfig file"},
+			{Text: "view", Description: "Display merged kubeconfig settings or a specified kubeconfig file"},
+		}
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(subCommands, args[1], true)
+		}
 	case "cluster-info":
 		subCommands := []prompt.Completion{
 			{Text: "dump", Description: "Dump lots of relevant info for debugging and diagnosis"},
