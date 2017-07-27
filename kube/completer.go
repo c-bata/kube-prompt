@@ -82,6 +82,8 @@ func argumentsCompleter(args []string) []prompt.Completion {
 
 		third := args[2]
 		switch second {
+		case "configmaps", "cm":
+			return prompt.FilterContains(getConfigMapCompletions(), third, true)
 		case "po", "pod", "pods":
 			return prompt.FilterContains(getPodCompletions(), third, true)
 		case "deploy", "deployments":

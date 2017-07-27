@@ -64,6 +64,37 @@ var resourceTypes = []string{
 	"svc",
 }
 
+/* Config Maps */
+
+var (
+	configMapsList       atomic.Value
+	configMapsLastFetchedAt time.Time
+)
+
+func fetchConfigMapList() {
+	if time.Since(configMapsLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().ConfigMaps(api.NamespaceDefault).List(v1.ListOptions{})
+	configMapsList.Store(l)
+	return
+}
+
+func getConfigMapCompletions() []prompt.Completion {
+	go fetchConfigMapList()
+	l, ok := configMapsList.Load().(*v1.ConfigMapList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Completion{}
+	}
+	completions := make([]prompt.Completion, len(l.Items))
+	for i := range l.Items {
+		completions[i] = prompt.Completion{
+			Text: l.Items[i].Name,
+		}
+	}
+	return completions
+}
+
 /* Pod */
 
 var (
