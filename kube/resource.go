@@ -19,7 +19,7 @@ var resourceTypes = []string{
 	"daemonsets",               // aka 'ds'
 	"deployments",              // aka 'deploy'
 	"endpoints",                // aka 'ep'
-	"events",                   // aka 'ev'
+	//"events",                   // aka 'ev'
 	"horizontalpodautoscalers", // aka 'hpa'
 	"ingresses",                // aka 'ing'
 	"jobs",
@@ -41,13 +41,14 @@ var resourceTypes = []string{
 	"statefulsets",
 	"storageclasses",
 	"thirdpartyresources",
+
 	// shorten aliases
 	"cs",
 	"cm",
 	"ds",
 	"deploy",
 	"ep",
-	"ev",
+	//"ev",
 	"hpa",
 	"ing",
 	"limits",
@@ -239,6 +240,37 @@ func fetchEndpoints() {
 func getEndpointsCompletion() []prompt.Completion {
 	go fetchEndpoints()
 	l, ok := endpointList.Load().(*v1.EndpointsList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Completion{}
+	}
+	completions := make([]prompt.Completion, len(l.Items))
+	for i := range l.Items {
+		completions[i] = prompt.Completion{
+			Text: l.Items[i].Name,
+		}
+	}
+	return completions
+}
+
+/* Events */
+
+var (
+	eventList          atomic.Value
+	eventLastFetchedAt time.Time
+)
+
+func fetchEvents() {
+	if time.Since(eventLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().Events(api.NamespaceDefault).List(v1.ListOptions{})
+	eventList.Store(l)
+	return
+}
+
+func getEventsCompletion() []prompt.Completion {
+	go fetchEvents()
+	l, ok := eventList.Load().(*v1.EventList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Completion{}
 	}

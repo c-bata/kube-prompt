@@ -60,7 +60,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `daemonsets` aka `ds`
 * [x] `deployments` aka `deploy`
 * [x] `endpoints` aka `ep`
-* [ ] `events` aka `ev`
+* [x] `events` aka `ev`
 * [ ] `horizontalpodautoscalers` aka `hpa`
 * [ ] `ingresses` aka `ing`
 * [ ] `jobs`
