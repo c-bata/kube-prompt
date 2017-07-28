@@ -25,9 +25,6 @@ func Executor(s string) string {
 	}
 
 	cmd := exec.Command("kubectl", args...)
-	out, err := cmd.Output()
-	if err != nil {
-		return err.Error()
-	}
+	out, _ := cmd.CombinedOutput()
 	return string(out)
 }
