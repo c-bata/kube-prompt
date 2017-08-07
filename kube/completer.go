@@ -3,12 +3,12 @@ package kube
 import (
 	"strings"
 
-	"github.com/c-bata/go-prompt-toolkit"
+	"github.com/c-bata/go-prompt"
 )
 
-func Completer(s string) []prompt.Completion {
+func Completer(s string) []prompt.Suggest {
 	if s == "" {
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
 	args := strings.Split(s, " ")
 	l := len(args)
@@ -20,16 +20,16 @@ func Completer(s string) []prompt.Completion {
 	return argumentsCompleter(excludeOptions(args))
 }
 
-func strToCompletionList(x []string) []prompt.Completion {
+func strToCompletionList(x []string) []prompt.Suggest {
 	l := len(x)
-	y := make([]prompt.Completion, l)
+	y := make([]prompt.Suggest, l)
 	for i := 0; i < l; i++ {
-		y[i] = prompt.Completion{Text: x[i]}
+		y[i] = prompt.Suggest{Text: x[i]}
 	}
 	return y
 }
 
-var commands = []prompt.Completion{
+var commands = []prompt.Suggest{
 	{Text: "get", Description: "Display one or many resources"},
 	{Text: "describe", Description: "Show details of a specific resource or group of resources"},
 	{Text: "create", Description: "Create a resource by filename or stdin"},
@@ -45,9 +45,9 @@ var commands = []prompt.Completion{
 	{Text: "cordon", Description: "Mark node as unschedulable"},
 	{Text: "drain", Description: "Drain node in preparation for maintenance"},
 	{Text: "uncordon", Description: "Mark node as schedulable"},
-	// {Text: "attach", Description: "Attach to a running container."},  // still not supported
-	// {Text: "exec", Description: "Execute a command in a container."}, // still not supported
-	// {Text: "port-forward", Description: "Forward one or more local ports to a pod."}, // still not supported
+	{Text: "attach", Description: "Attach to a running container."},
+	{Text: "exec", Description: "Execute a command in a container."},
+	{Text: "port-forward", Description: "Forward one or more local ports to a pod."},
 	{Text: "proxy", Description: "Run a proxy to the Kubernetes API server"},
 	{Text: "run", Description: "Run a particular image on the cluster."},
 	{Text: "expose", Description: "Take a replication controller, service, or pod and expose it as a new Kubernetes Service"},
@@ -63,7 +63,7 @@ var commands = []prompt.Completion{
 	{Text: "convert", Description: "Convert config files between different API versions"},
 }
 
-func argumentsCompleter(args []string) []prompt.Completion {
+func argumentsCompleter(args []string) []prompt.Suggest {
 	if len(args) <= 1 {
 		return prompt.FilterHasPrefix(commands, args[0], true)
 	}
@@ -102,7 +102,7 @@ func argumentsCompleter(args []string) []prompt.Completion {
 			return prompt.FilterContains(getServiceAccountCompletions(), third, true)
 		}
 	case "create":
-		subcommands := []prompt.Completion{
+		subcommands := []prompt.Suggest{
 			{Text: "configmap", Description: "Create a configmap from a local file, directory or literal value"},
 			{Text: "deployment", Description: "Create a deployment with the specified name."},
 			{Text: "namespace", Description: "Create a namespace with the specified name"},
@@ -120,6 +120,9 @@ func argumentsCompleter(args []string) []prompt.Completion {
 	case "apply":
 	case "namespace":
 	case "logs":
+		if len(args) == 2 {
+			return prompt.FilterContains(getPodCompletions(), args[1], true)
+		}
 	case "rolling-update":
 	case "scale":
 	case "cordon":
@@ -128,9 +131,12 @@ func argumentsCompleter(args []string) []prompt.Completion {
 		fallthrough
 	case "uncordon":
 		return prompt.FilterHasPrefix(getNodeCompletions(), args[1], true)
-	//case "attach": // still not supported
-	//case "exec":   // still not supported
-	//case "port-forward": // still not supported
+	case "attach":
+	case "exec":
+		if len(args) == 2 {
+			return prompt.FilterContains(getPodCompletions(), args[1], true)
+		}
+	case "port-forward":
 	case "proxy":
 	case "run":
 	case "expose":
@@ -139,7 +145,7 @@ func argumentsCompleter(args []string) []prompt.Completion {
 	case "label":
 	case "annotate":
 	case "config":
-		subCommands := []prompt.Completion{
+		subCommands := []prompt.Suggest{
 			{Text: "current-context", Description: "Displays the current-context"},
 			{Text: "delete-cluster", Description: "Delete the specified cluster from the kubeconfig"},
 			{Text: "delete-context", Description: "Delete the specified context from the kubeconfig"},
@@ -157,7 +163,7 @@ func argumentsCompleter(args []string) []prompt.Completion {
 			return prompt.FilterHasPrefix(subCommands, args[1], true)
 		}
 	case "cluster-info":
-		subCommands := []prompt.Completion{
+		subCommands := []prompt.Suggest{
 			{Text: "dump", Description: "Dump lots of relevant info for debugging and diagnosis"},
 		}
 		if len(args) == 2 {
@@ -169,8 +175,7 @@ func argumentsCompleter(args []string) []prompt.Completion {
 		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), args[1], true)
 	case "convert":
 	default:
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
-	return []prompt.Completion{}
+	return []prompt.Suggest{}
 }
-

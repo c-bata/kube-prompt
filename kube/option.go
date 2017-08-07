@@ -3,10 +3,10 @@ package kube
 import (
 	"strings"
 
-	"github.com/c-bata/go-prompt-toolkit"
+	"github.com/c-bata/go-prompt"
 )
 
-func optionCompleter(args []string, long bool) []prompt.Completion {
+func optionCompleter(args []string, long bool) []prompt.Suggest {
 	l := len(args)
 	if l <= 1 {
 		if long {
@@ -15,52 +15,52 @@ func optionCompleter(args []string, long bool) []prompt.Completion {
 		return optionHelp
 	}
 
-	var completions []prompt.Completion
+	var suggests []prompt.Suggest
 	commandArgs := excludeOptions(args)
 	switch commandArgs[0] {
 	case "get":
-		completions = optionGet
+		suggests = optionGet
 	case "describe":
-		completions = optionDescribe
+		suggests = optionDescribe
 	case "create":
-		completions = optionCreate
+		suggests = optionCreate
 	case "cluster-info":
-		completions = optionClusterInfo
+		suggests = optionClusterInfo
 	case "explain":
-		completions = optionExplain
+		suggests = optionExplain
 	case "cordon":
-		completions = optionCordon
+		suggests = optionCordon
 	case "drain":
-		completions = optionDrain
+		suggests = optionDrain
 	case "uncordon":
-		completions = optionHelp
+		suggests = optionHelp
 	case "config":
 		if len(commandArgs) == 2 {
 			switch commandArgs[1] {
 			case "view":
-				completions = optionConfigView
+				suggests = optionConfigView
 			}
 		}
 	default:
-		completions = optionHelp
+		suggests = optionHelp
 	}
 
 	if long {
 		return prompt.FilterContains(
-			prompt.FilterHasPrefix(completions, "--", false),
+			prompt.FilterHasPrefix(suggests, "--", false),
 			strings.TrimLeft(args[l-1], "--"),
 			true,
 		)
 	}
-	return prompt.FilterContains(completions, strings.TrimLeft(args[l-1], "-"), true)
+	return prompt.FilterContains(suggests, strings.TrimLeft(args[l-1], "-"), true)
 }
 
-var optionHelp = []prompt.Completion{
+var optionHelp = []prompt.Suggest{
 	{Text: "-h"},
 	{Text: "--help"},
 }
 
-var optionGet = []prompt.Completion{
+var optionGet = []prompt.Suggest{
 	{Text: "--all-namespaces", Description: "If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace."},
 	{Text: "--allow-missing-template-keys", Description: "If true, ignore any errors in templates when a field or map key is missing in the template. Only applies to golang and jsonpath output formats."},
 	{Text: "--export", Description: "If true, use 'export' for the resources.  Exported resources are stripped of cluster-specific information."},
@@ -89,7 +89,7 @@ var optionGet = []prompt.Completion{
 	{Text: "--watch-only", Description: "Watch for changes to the requested object(s), without listing/getting first."},
 }
 
-var optionDescribe = []prompt.Completion{
+var optionDescribe = []prompt.Suggest{
 	{Text: "--all-namespaces", Description: "If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace."},
 	{Text: "-f", Description: "Filename, directory, or URL to files containing the resource to describe"},
 	{Text: "--filename", Description: "Filename, directory, or URL to files containing the resource to describe"},
@@ -101,7 +101,7 @@ var optionDescribe = []prompt.Completion{
 	{Text: "--show-events", Description: "If true, display events related to the described object."},
 }
 
-var optionCreate = []prompt.Completion{
+var optionCreate = []prompt.Suggest{
 	{Text: "--allow-missing-template-keys", Description: "If true, ignore any errors in templates when a field or map key is missing in the template. Only applies to golang and jsonpath output formats."},
 	{Text: "--dry-run", Description: "If true, only print the object that would be sent, without sending it."},
 	{Text: "--edit", Description: "Edit the API resource before creating"},
@@ -126,7 +126,7 @@ var optionCreate = []prompt.Completion{
 	{Text: "--windows-line-endings", Description: "Only relevant if --edit=true. Use Windows line-endings (default Unix line-endings)"},
 }
 
-var optionCordon = []prompt.Completion{
+var optionCordon = []prompt.Suggest{
 	{Text: "--alsologtostderr", Description: "log to standard error as well as files"},
 	{Text: "--certificate-authority", Description: "Path to a cert. file for the certificate authority."},
 	{Text: "--client-certificate", Description: "Path to a client certificate file for TLS."},
@@ -151,7 +151,7 @@ var optionCordon = []prompt.Completion{
 	{Text: "--vmodule", Description: "comma-separated list of pattern=N settings for file-filtered logging"},
 }
 
-var optionDrain = []prompt.Completion{
+var optionDrain = []prompt.Suggest{
 	{Text: "--force", Description: "Continue even if there are pods not managed by a ReplicationController, ReplicaSet, Job, or DaemonSet."},
 	{Text: "--grace-period", Description: "Period of time in seconds given to each pod to terminate gracefully. If negative, the default value specified in the pod will be used."},
 	{Text: "--ignore-daemonsets", Description: "Ignore DaemonSet-managed pods."},
@@ -179,16 +179,16 @@ var optionDrain = []prompt.Completion{
 	{Text: "--vmodule", Description: "comma-separated list of pattern=N settings for file-filtered logging"},
 }
 
-var optionClusterInfo = []prompt.Completion{
+var optionClusterInfo = []prompt.Suggest{
 	{Text: "--include-extended-apis", Description: "If true, include definitions of new APIs via calls to the API server. [default true]"},
 }
 
-var optionExplain = []prompt.Completion{
+var optionExplain = []prompt.Suggest{
 	{Text: "--include-extended-apis", Description: "If true, include definitions of new APIs via calls to the API server. [default true]"},
 	{Text: "--recursive", Description: "Print the fields of fields (Currently only 1 level deep)"},
 }
 
-var optionConfigView = []prompt.Completion{
+var optionConfigView = []prompt.Suggest{
 	{Text: "--allow-missing-template-keys", Description: "If true, ignore any errors in templates when a field or map key is missing in the template. Only applies to golang and jsonpath output formats."},
 	{Text: "--flatten", Description: "flatten the resulting kubeconfig file into self-contained output (useful for creating portable kubeconfig files)"},
 	{Text: "--merge", Description: "merge the full hierarchy of kubeconfig files"},
@@ -204,4 +204,3 @@ var optionConfigView = []prompt.Completion{
 	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
 	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
 }
-

@@ -1,30 +1,25 @@
 package kube
 
 import (
+	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 )
 
-var unSupportedCommand = []string{
-	"exec",
-	"attach",
-	"port-forward",
-}
-
-func Executor(s string) string {
+func Executor(s string) {
 	s = strings.TrimSpace(s)
 	if s == "" {
-		return ""
+		return
 	}
 
 	args := strings.Split(s, " ")
-	for _, c := range unSupportedCommand {
-		if c == args[0] {
-			return "Sorry, this command is still not supported... :-("
-		}
-	}
-
 	cmd := exec.Command("kubectl", args...)
-	out, _ := cmd.CombinedOutput()
-	return string(out)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		fmt.Printf("Got error: %s\n", err.Error())
+	}
+	return
 }

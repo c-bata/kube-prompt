@@ -4,7 +4,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/c-bata/go-prompt-toolkit"
+	"github.com/c-bata/go-prompt"
 	"k8s.io/client-go/pkg/api"
 	"k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/pkg/apis/extensions/v1beta1"
@@ -14,11 +14,11 @@ const thresholdFetchInterval = 10 * time.Second
 
 var resourceTypes = []string{
 	"clusters",
-	"componentstatuses",        // aka 'cs'
-	"configmaps",               // aka 'cm'
-	"daemonsets",               // aka 'ds'
-	"deployments",              // aka 'deploy'
-	"endpoints",                // aka 'ep'
+	"componentstatuses", // aka 'cs'
+	"configmaps",        // aka 'cm'
+	"daemonsets",        // aka 'ds'
+	"deployments",       // aka 'deploy'
+	"endpoints",         // aka 'ep'
 	//"events",                   // aka 'ev'
 	"horizontalpodautoscalers", // aka 'hpa'
 	"ingresses",                // aka 'ing'
@@ -68,7 +68,7 @@ var resourceTypes = []string{
 /* Component Status */
 
 var (
-	componentStatusList       atomic.Value
+	componentStatusList          atomic.Value
 	componentStatusLastFetchedAt time.Time
 )
 
@@ -81,25 +81,25 @@ func fetchComponentStatusList() {
 	return
 }
 
-func getComponentStatusCompletions() []prompt.Completion {
+func getComponentStatusCompletions() []prompt.Suggest {
 	go fetchComponentStatusList()
 	l, ok := componentStatusList.Load().(*v1.ComponentStatusList)
 	if !ok || len(l.Items) == 0 {
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
-	completions := make([]prompt.Completion, len(l.Items))
+	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
-		completions[i] = prompt.Completion{
+		s[i] = prompt.Suggest{
 			Text: l.Items[i].Name,
 		}
 	}
-	return completions
+	return s
 }
 
 /* Config Maps */
 
 var (
-	configMapsList       atomic.Value
+	configMapsList          atomic.Value
 	configMapsLastFetchedAt time.Time
 )
 
@@ -112,19 +112,19 @@ func fetchConfigMapList() {
 	return
 }
 
-func getConfigMapCompletions() []prompt.Completion {
+func getConfigMapCompletions() []prompt.Suggest {
 	go fetchConfigMapList()
 	l, ok := configMapsList.Load().(*v1.ConfigMapList)
 	if !ok || len(l.Items) == 0 {
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
-	completions := make([]prompt.Completion, len(l.Items))
+	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
-		completions[i] = prompt.Completion{
+		s[i] = prompt.Suggest{
 			Text: l.Items[i].Name,
 		}
 	}
-	return completions
+	return s
 }
 
 /* Pod */
@@ -143,20 +143,20 @@ func fetchPods() {
 	return
 }
 
-func getPodCompletions() []prompt.Completion {
+func getPodCompletions() []prompt.Suggest {
 	go fetchPods()
 	l, ok := podList.Load().(*v1.PodList)
 	if !ok || len(l.Items) == 0 {
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
-	completions := make([]prompt.Completion, len(l.Items))
+	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
-		completions[i] = prompt.Completion{
+		s[i] = prompt.Suggest{
 			Text:        l.Items[i].Name,
 			Description: string(l.Items[i].Status.Phase),
 		}
 	}
-	return completions
+	return s
 }
 
 /* Daemon Sets */
@@ -175,19 +175,19 @@ func fetchDaemonSetList() {
 	return
 }
 
-func getDaemonSetCompletions() []prompt.Completion {
+func getDaemonSetCompletions() []prompt.Suggest {
 	go fetchDaemonSetList()
 	l, ok := daemonSetList.Load().(*v1beta1.DaemonSetList)
 	if !ok || len(l.Items) == 0 {
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
-	completions := make([]prompt.Completion, len(l.Items))
+	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
-		completions[i] = prompt.Completion{
+		s[i] = prompt.Suggest{
 			Text: l.Items[i].Name,
 		}
 	}
-	return completions
+	return s
 }
 
 /* Deployment */
@@ -206,19 +206,19 @@ func fetchDeployments() {
 	return
 }
 
-func getDeploymentNames() []prompt.Completion {
+func getDeploymentNames() []prompt.Suggest {
 	go fetchDeployments()
 	l, ok := deploymentList.Load().(*v1beta1.DeploymentList)
 	if !ok || len(l.Items) == 0 {
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
-	completions := make([]prompt.Completion, len(l.Items))
+	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
-		completions[i] = prompt.Completion{
+		s[i] = prompt.Suggest{
 			Text: l.Items[i].Name,
 		}
 	}
-	return completions
+	return s
 }
 
 /* Endpoint */
@@ -237,19 +237,19 @@ func fetchEndpoints() {
 	return
 }
 
-func getEndpointsCompletion() []prompt.Completion {
+func getEndpointsCompletion() []prompt.Suggest {
 	go fetchEndpoints()
 	l, ok := endpointList.Load().(*v1.EndpointsList)
 	if !ok || len(l.Items) == 0 {
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
-	completions := make([]prompt.Completion, len(l.Items))
+	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
-		completions[i] = prompt.Completion{
+		s[i] = prompt.Suggest{
 			Text: l.Items[i].Name,
 		}
 	}
-	return completions
+	return s
 }
 
 /* Events */
@@ -268,19 +268,19 @@ func fetchEvents() {
 	return
 }
 
-func getEventsCompletion() []prompt.Completion {
+func getEventsCompletion() []prompt.Suggest {
 	go fetchEvents()
 	l, ok := eventList.Load().(*v1.EventList)
 	if !ok || len(l.Items) == 0 {
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
-	completions := make([]prompt.Completion, len(l.Items))
+	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
-		completions[i] = prompt.Completion{
+		s[i] = prompt.Suggest{
 			Text: l.Items[i].Name,
 		}
 	}
-	return completions
+	return s
 }
 
 /* Node */
@@ -299,25 +299,25 @@ func fetchNodeList() {
 	return
 }
 
-func getNodeCompletions() []prompt.Completion {
+func getNodeCompletions() []prompt.Suggest {
 	go fetchNodeList()
 	l, ok := nodeList.Load().(*v1.NodeList)
 	if !ok || len(l.Items) == 0 {
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
-	completions := make([]prompt.Completion, len(l.Items))
+	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
-		completions[i] = prompt.Completion{
+		s[i] = prompt.Suggest{
 			Text: l.Items[i].Name,
 		}
 	}
-	return completions
+	return s
 }
 
 /* Secret */
 
 var (
-	secretList       atomic.Value
+	secretList          atomic.Value
 	secretLastFetchedAt time.Time
 )
 
@@ -330,25 +330,25 @@ func fetchSecretList() {
 	return
 }
 
-func getSecretCompletions() []prompt.Completion {
+func getSecretCompletions() []prompt.Suggest {
 	go fetchSecretList()
 	l, ok := secretList.Load().(*v1.SecretList)
 	if !ok || len(l.Items) == 0 {
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
-	completions := make([]prompt.Completion, len(l.Items))
+	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
-		completions[i] = prompt.Completion{
+		s[i] = prompt.Suggest{
 			Text: l.Items[i].Name,
 		}
 	}
-	return completions
+	return s
 }
 
 /* Service Account */
 
 var (
-	serviceAccountList       atomic.Value
+	serviceAccountList          atomic.Value
 	serviceAccountLastFetchedAt time.Time
 )
 
@@ -361,17 +361,17 @@ func fetchServiceAccountList() {
 	return
 }
 
-func getServiceAccountCompletions() []prompt.Completion {
+func getServiceAccountCompletions() []prompt.Suggest {
 	go fetchServiceAccountList()
 	l, ok := serviceAccountList.Load().(*v1.ServiceAccountList)
 	if !ok || len(l.Items) == 0 {
-		return []prompt.Completion{}
+		return []prompt.Suggest{}
 	}
-	completions := make([]prompt.Completion, len(l.Items))
+	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
-		completions[i] = prompt.Completion{
+		s[i] = prompt.Suggest{
 			Text: l.Items[i].Name,
 		}
 	}
-	return completions
+	return s
 }
