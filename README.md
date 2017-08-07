@@ -1,18 +1,20 @@
 # kube-prompt
 
-**kube-prompt** is powerful interactive command lines for Kubernetes.
+An interactive kubernetes client featuring auto-complete written in Go.
 
-## Usage
+<a href="https://asciinema.org/a/DQNCOFpUeQayrYlhq2OD1jbqZ" target="_blank">
+  <img src="https://asciinema.org/a/DQNCOFpUeQayrYlhq2OD1jbqZ.png" alt="asciicast">
+</a>
 
-[![asciicast](https://asciinema.org/a/DQNCOFpUeQayrYlhq2OD1jbqZ.png)](https://asciinema.org/a/DQNCOFpUeQayrYlhq2OD1jbqZ)
+Recently, I found kube-shell which same as kube-prompt but written in python and python-prompt-toolkit.
+If you don't need your effort to set up python environment, maybe kube-shell is great.
 
-Basically, kube-prompt wraps kubectl. So if you know the usage of kubectl, you can also use kube-prompt.
-Binaries are available from:
+kube-prompt written in go and go-prompt, So Binaries are available from:
 
 * macOS (darwin)
 * Linux
 
-Windows support is still not because [go-prompt-toolkit](https://github.com/c-bata/go-prompt-toolkit) is only supports VT100 console emulator now.
+Windows support is still not because [go-prompt](https://github.com/c-bata/go-prompt) is only supports VT100 console emulator now.
 
 ## Goal
 
