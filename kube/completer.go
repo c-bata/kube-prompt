@@ -85,21 +85,21 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		case "componentstatuses", "cs":
 			return prompt.FilterContains(getComponentStatusCompletions(), third, true)
 		case "configmaps", "cm":
-			return prompt.FilterContains(getConfigMapCompletions(), third, true)
+			return prompt.FilterContains(getConfigMapSuggestions(), third, true)
 		case "daemonsets", "ds":
-			return prompt.FilterContains(getDaemonSetCompletions(), third, true)
+			return prompt.FilterContains(getDaemonSetSuggestions(), third, true)
 		case "deploy", "deployments":
 			return prompt.FilterContains(getDeploymentNames(), third, true)
 		case "endpoints", "ep":
-			return prompt.FilterContains(getEndpointsCompletion(), third, true)
+			return prompt.FilterContains(getEndpointsSuggestions(), third, true)
 		case "no", "nodes":
-			return prompt.FilterContains(getNodeCompletions(), third, true)
+			return prompt.FilterContains(getNodeSuggestions(), third, true)
 		case "po", "pod", "pods":
-			return prompt.FilterContains(getPodCompletions(), third, true)
+			return prompt.FilterContains(getPodSuggestions(), third, true)
 		case "secrets":
-			return prompt.FilterContains(getSecretCompletions(), third, true)
+			return prompt.FilterContains(getSecretSuggestions(), third, true)
 		case "sa", "serviceaccounts":
-			return prompt.FilterContains(getServiceAccountCompletions(), third, true)
+			return prompt.FilterContains(getServiceAccountSuggestions(), third, true)
 		}
 	case "create":
 		subcommands := []prompt.Suggest{
@@ -121,7 +121,7 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 	case "namespace":
 	case "logs":
 		if len(args) == 2 {
-			return prompt.FilterContains(getPodCompletions(), args[1], true)
+			return prompt.FilterContains(getPodSuggestions(), args[1], true)
 		}
 	case "rolling-update":
 	case "scale":
@@ -130,11 +130,11 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 	case "drain":
 		fallthrough
 	case "uncordon":
-		return prompt.FilterHasPrefix(getNodeCompletions(), args[1], true)
+		return prompt.FilterHasPrefix(getNodeSuggestions(), args[1], true)
 	case "attach":
 	case "exec":
 		if len(args) == 2 {
-			return prompt.FilterContains(getPodCompletions(), args[1], true)
+			return prompt.FilterContains(getPodSuggestions(), args[1], true)
 		}
 	case "port-forward":
 	case "proxy":

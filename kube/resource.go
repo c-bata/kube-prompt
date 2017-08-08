@@ -112,7 +112,7 @@ func fetchConfigMapList() {
 	return
 }
 
-func getConfigMapCompletions() []prompt.Suggest {
+func getConfigMapSuggestions() []prompt.Suggest {
 	go fetchConfigMapList()
 	l, ok := configMapsList.Load().(*v1.ConfigMapList)
 	if !ok || len(l.Items) == 0 {
@@ -143,7 +143,7 @@ func fetchPods() {
 	return
 }
 
-func getPodCompletions() []prompt.Suggest {
+func getPodSuggestions() []prompt.Suggest {
 	go fetchPods()
 	l, ok := podList.Load().(*v1.PodList)
 	if !ok || len(l.Items) == 0 {
@@ -175,7 +175,7 @@ func fetchDaemonSetList() {
 	return
 }
 
-func getDaemonSetCompletions() []prompt.Suggest {
+func getDaemonSetSuggestions() []prompt.Suggest {
 	go fetchDaemonSetList()
 	l, ok := daemonSetList.Load().(*v1beta1.DaemonSetList)
 	if !ok || len(l.Items) == 0 {
@@ -237,7 +237,7 @@ func fetchEndpoints() {
 	return
 }
 
-func getEndpointsCompletion() []prompt.Suggest {
+func getEndpointsSuggestions() []prompt.Suggest {
 	go fetchEndpoints()
 	l, ok := endpointList.Load().(*v1.EndpointsList)
 	if !ok || len(l.Items) == 0 {
@@ -268,7 +268,7 @@ func fetchEvents() {
 	return
 }
 
-func getEventsCompletion() []prompt.Suggest {
+func getEventsSuggestions() []prompt.Suggest {
 	go fetchEvents()
 	l, ok := eventList.Load().(*v1.EventList)
 	if !ok || len(l.Items) == 0 {
@@ -299,7 +299,7 @@ func fetchNodeList() {
 	return
 }
 
-func getNodeCompletions() []prompt.Suggest {
+func getNodeSuggestions() []prompt.Suggest {
 	go fetchNodeList()
 	l, ok := nodeList.Load().(*v1.NodeList)
 	if !ok || len(l.Items) == 0 {
@@ -330,7 +330,7 @@ func fetchSecretList() {
 	return
 }
 
-func getSecretCompletions() []prompt.Suggest {
+func getSecretSuggestions() []prompt.Suggest {
 	go fetchSecretList()
 	l, ok := secretList.Load().(*v1.SecretList)
 	if !ok || len(l.Items) == 0 {
@@ -361,7 +361,7 @@ func fetchServiceAccountList() {
 	return
 }
 
-func getServiceAccountCompletions() []prompt.Suggest {
+func getServiceAccountSuggestions() []prompt.Suggest {
 	go fetchServiceAccountList()
 	l, ok := serviceAccountList.Load().(*v1.ServiceAccountList)
 	if !ok || len(l.Items) == 0 {
