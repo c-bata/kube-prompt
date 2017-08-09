@@ -20,15 +20,6 @@ func Completer(s string) []prompt.Suggest {
 	return argumentsCompleter(excludeOptions(args))
 }
 
-func strToCompletionList(x []string) []prompt.Suggest {
-	l := len(x)
-	y := make([]prompt.Suggest, l)
-	for i := 0; i < l; i++ {
-		y[i] = prompt.Suggest{Text: x[i]}
-	}
-	return y
-}
-
 var commands = []prompt.Suggest{
 	{Text: "get", Description: "Display one or many resources"},
 	{Text: "describe", Description: "Show details of a specific resource or group of resources"},
@@ -72,12 +63,62 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 	switch first {
 	case "get":
 		if len(args) == 2 {
-			return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), args[1], true)
+			subcommands := []prompt.Suggest{
+				//{Text: "clusters"},  // valid only for federation apiservers
+				{Text: "componentstatuses"},
+				{Text: "configmaps"},
+				{Text: "daemonsets"},
+				{Text: "deployments"},
+				{Text: "endpoints"},
+				{Text: "events"},
+				{Text: "horizontalpodautoscalers"},
+				{Text: "ingresses"},
+				{Text: "jobs"},
+				{Text: "limitranges"},
+				{Text: "namespaces"},
+				{Text: "networkpolicies"},
+				{Text: "nodes"},
+				{Text: "persistentvolumeclaims"},
+				{Text: "persistentvolumes"},
+				{Text: "pods"},
+				{Text: "podsecuritypolicies"},
+				{Text: "podtemplates"},
+				{Text: "replicasets"},
+				{Text: "replicationcontrollers"},
+				{Text: "resourcequotas"},
+				{Text: "secrets"},
+				{Text: "serviceaccounts"},
+				{Text: "services"},
+				{Text: "statefulsets"},
+				{Text: "storageclasses"},
+				{Text: "thirdpartyresources"},
+				// aliases
+				{Text: "cs"},
+				{Text: "cm"},
+				{Text: "ds"},
+				{Text: "deploy"},
+				{Text: "ep"},
+				{Text: "hpa"},
+				{Text: "ing"},
+				{Text: "limits"},
+				{Text: "ns"},
+				{Text: "no"},
+				{Text: "pvc"},
+				{Text: "pv"},
+				{Text: "po"},
+				{Text: "psp"},
+				{Text: "rs"},
+				{Text: "rc"},
+				{Text: "quota"},
+				{Text: "sa"},
+				{Text: "svc"},
+			}
+			return prompt.FilterHasPrefix(subcommands, args[1], true)
 		}
 	case "describe":
 		second := args[1]
 		if len(args) == 2 {
-			return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), second, true)
+			return prompt.FilterHasPrefix(resourceTypes, second, true)
 		}
 
 		third := args[2]
@@ -115,7 +156,7 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 	case "replace":
 	case "patch":
 	case "delete":
-		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), args[1], true)
+		return prompt.FilterHasPrefix(resourceTypes, args[1], true)
 	case "edit":
 	case "apply":
 	case "namespace":
@@ -172,7 +213,7 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 	case "api-versions":
 	case "version":
 	case "explain":
-		return prompt.FilterHasPrefix(strToCompletionList(resourceTypes), args[1], true)
+		return prompt.FilterHasPrefix(resourceTypes, args[1], true)
 	case "convert":
 	default:
 		return []prompt.Suggest{}

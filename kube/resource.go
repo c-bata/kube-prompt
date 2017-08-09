@@ -12,57 +12,56 @@ import (
 
 const thresholdFetchInterval = 10 * time.Second
 
-var resourceTypes = []string{
-	"clusters",
-	"componentstatuses", // aka 'cs'
-	"configmaps",        // aka 'cm'
-	"daemonsets",        // aka 'ds'
-	"deployments",       // aka 'deploy'
-	"endpoints",         // aka 'ep'
-	//"events",                   // aka 'ev'
-	"horizontalpodautoscalers", // aka 'hpa'
-	"ingresses",                // aka 'ing'
-	"jobs",
-	"limitranges", // aka 'limits'
-	"namespaces",  // aka 'ns'
-	"networkpolicies",
-	"nodes",                  // aka 'no'
-	"persistentvolumeclaims", // aka 'pvc'
-	"persistentvolumes",      // aka 'pv'
-	"pods",                   // aka 'po'
-	"podsecuritypolicies",    // aka 'psp'
-	"podtemplates",
-	"replicasets",            // aka 'rs'
-	"replicationcontrollers", // aka 'rc'
-	"resourcequotas",         // aka 'quota'
-	"secrets",
-	"serviceaccounts", // aka 'sa'
-	"services",        // aka 'svc'
-	"statefulsets",
-	"storageclasses",
-	"thirdpartyresources",
+var resourceTypes = []prompt.Suggest{
+	//{Text: "clusters"},  // valid only for federation apiservers
+	{Text: "componentstatuses"},
+	{Text: "configmaps"},
+	{Text: "daemonsets"},
+	{Text: "deployments"},
+	{Text: "endpoints"},
+	{Text: "events"},
+	{Text: "horizontalpodautoscalers"},
+	{Text: "ingresses"},
+	{Text: "jobs"},
+	{Text: "limitranges"},
+	{Text: "namespaces"},
+	{Text: "networkpolicies"},
+	{Text: "nodes"},
+	{Text: "persistentvolumeclaims"},
+	{Text: "persistentvolumes"},
+	{Text: "pods"},
+	{Text: "podsecuritypolicies"},
+	{Text: "podtemplates"},
+	{Text: "replicasets"},
+	{Text: "replicationcontrollers"},
+	{Text: "resourcequotas"},
+	{Text: "secrets"},
+	{Text: "serviceaccounts"},
+	{Text: "services"},
+	{Text: "statefulsets"},
+	{Text: "storageclasses"},
+	{Text: "thirdpartyresources"},
 
-	// shorten aliases
-	"cs",
-	"cm",
-	"ds",
-	"deploy",
-	"ep",
-	//"ev",
-	"hpa",
-	"ing",
-	"limits",
-	"ns",
-	"no",
-	"pvc",
-	"pv",
-	"po",
-	"psp",
-	"rs",
-	"rc",
-	"quota",
-	"sa",
-	"svc",
+	// aliases
+	{Text: "cs"},
+	{Text: "cm"},
+	{Text: "ds"},
+	{Text: "deploy"},
+	{Text: "ep"},
+	{Text: "hpa"},
+	{Text: "ing"},
+	{Text: "limits"},
+	{Text: "ns"},
+	{Text: "no"},
+	{Text: "pvc"},
+	{Text: "pv"},
+	{Text: "po"},
+	{Text: "psp"},
+	{Text: "rs"},
+	{Text: "rc"},
+	{Text: "quota"},
+	{Text: "sa"},
+	{Text: "svc"},
 }
 
 /* Component Status */
