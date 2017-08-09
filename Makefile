@@ -7,20 +7,19 @@ LDFLAGS := -X 'main.version=$(VERSION)' \
 .DEFAULT_GOAL := help
 
 setup:  ## Setup for required tools.
-	go get github.com/Masterminds/glide
 	go get github.com/golang/lint/golint
 	go get golang.org/x/tools/cmd/goimports
-	glide install
+	go get -u github.com/golang/dep/cmd/dep
 
 fmt: ## Formatting source codes.
-	@goimports -w $$(glide nv -x)
+	@goimports -w ./kube
 
 lint: ## Run golint and go vet.
-	@golint $$(glide novendor)
-	@go vet $$(glide novendor)
+	@golint ./kube/...
+	@go vet ./kube/...
 
 test:  ## Run the tests.
-	@go test $$(glide novendor)
+	@go test ./kube/...
 
 build: main.go  ## Build a binary.
 	go build -ldflags "$(LDFLAGS)"
