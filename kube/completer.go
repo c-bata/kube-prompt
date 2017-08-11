@@ -227,6 +227,12 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 			return prompt.FilterContains(getPodSuggestions(), args[1], true)
 		}
 	case "port-forward":
+		if len(args) < 2 {
+			return []prompt.Suggest{}
+		}
+		if args[len(args)-2] == "-p" || args[len(args)-2] == "--port" {
+			return prompt.FilterContains(getPodSuggestions(), args[len(args)-1], true)
+		}
 	case "proxy":
 	case "run":
 	case "expose":

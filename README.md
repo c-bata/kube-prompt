@@ -39,7 +39,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `uncordon`       Mark node as schedulable
 * [x] `attach`         Attach to a running container.
 * [x] `exec`           Execute a command in a container.
-* [ ] `port-forward`   Forward one or more local ports to a pod.
+* [x] `port-forward`   Forward one or more local ports to a pod.
 * [ ] `proxy`          Run a proxy to the Kubernetes API server
 * [ ] `run`            Run a particular image on the cluster.
 * [ ] `expose`         Take a replication controller, service, or pod and expose it as a new Kubernetes Service

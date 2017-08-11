@@ -46,6 +46,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagAttach, flagGlobal...)
 	case "exec":
 		suggests = append(flagExec, flagGlobal...)
+	case "port-forward":
+		suggests = append(flagPortForward, flagGlobal...)
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":
@@ -309,6 +311,11 @@ var flagExec = []prompt.Suggest{
 	{Text: "--stdin", Description: "Pass stdin to the container"},
 	{Text: "-t", Description: "Stdin is a TTY"},
 	{Text: "--tty", Description: "Stdin is a TTY"},
+}
+
+var flagPortForward = []prompt.Suggest{
+	{Text: "-p", Description: "Pod name"},
+	{Text: "--pod", Description: "Pod name"},
 }
 
 var flagClusterInfo = []prompt.Suggest{
