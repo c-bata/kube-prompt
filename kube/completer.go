@@ -130,7 +130,7 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 			case "daemonsets", "ds":
 				return prompt.FilterContains(getDaemonSetSuggestions(), third, true)
 			case "deploy", "deployments":
-				return prompt.FilterContains(getDeploymentNames(), third, true)
+				return prompt.FilterContains(getDeploymentSuggestions(), third, true)
 			case "endpoints", "ep":
 				return prompt.FilterContains(getEndpointsSuggestions(), third, true)
 			case "ingresses", "ing":
@@ -203,7 +203,14 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		} else if len(args) == 3 {
 			return prompt.FilterContains(getReplicationControllerSuggestions(), args[2], true)
 		}
-	case "scale":
+	case "scale", "resize":
+		if len(args) == 2 {
+			// Deployment, ReplicaSet, Replication Controller, or Job.
+			r := getDeploymentSuggestions()
+			r = append(r, getReplicaSetSuggestions()...)
+			r = append(r, getReplicationControllerSuggestions()...)
+			return prompt.FilterContains(r, args[1], true)
+		}
 	case "cordon":
 		fallthrough
 	case "drain":

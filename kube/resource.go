@@ -205,7 +205,7 @@ func fetchDeployments() {
 	return
 }
 
-func getDeploymentNames() []prompt.Suggest {
+func getDeploymentSuggestions() []prompt.Suggest {
 	go fetchDeployments()
 	l, ok := deploymentList.Load().(*v1beta1.DeploymentList)
 	if !ok || len(l.Items) == 0 {

@@ -40,6 +40,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagLogs, flagGlobal...)
 	case "rolling-update", "rollingupdate":
 		suggests = append(flagRollingUpdate, flagGlobal...)
+	case "scale", "resize":
+		suggests = append(flagScale, flagGlobal...)
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":
@@ -271,6 +273,18 @@ var flagCordon = []prompt.Suggest{
 	{Text: "--force", Description: "Continue even if there are pods not managed by a ReplicationController, ReplicaSet, Job, or DaemonSet."},
 	{Text: "--grace-period", Description: "Period of time in seconds given to each pod to terminate gracefully. If negative, the default value specified in the pod will be used."},
 	{Text: "--ignore-daemonsets", Description: "Ignore DaemonSet-managed pods."},
+}
+
+var flagScale = []prompt.Suggest{
+	{Text: "--current-replicas", Description: "Precondition for current size. Requires that the current size of the resource match this value in order to scale."},
+	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to set a new size"},
+	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to set a new size"},
+	{Text: "-o", Description: "Output mode. Use '-o name' for shorter output (resource/name)."},
+	{Text: "--output", Description: "Output mode. Use '-o name' for shorter output (resource/name)."},
+	{Text: "--record", Description: "Record current kubectl command in the resource annotation."},
+	{Text: "--replicas", Description: "The new desired number of replicas. Required."},
+	{Text: "--resource-version", Description: "Precondition for resource version. Requires that the current resource version match this value in order to scale."},
+	{Text: "--timeout", Description: "The length of time to wait before giving up on a scale operation, zero means don't wait."},
 }
 
 var flagClusterInfo = []prompt.Suggest{
