@@ -38,6 +38,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = flagGlobal
 	case "logs":
 		suggests = append(flagLogs, flagGlobal...)
+	case "rolling-update", "rollingupdate":
+		suggests = append(flagRollingUpdate, flagGlobal...)
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":
@@ -239,6 +241,30 @@ var flagLogs = []prompt.Suggest{
 	{Text: "--since-time", Description: "Only return logs after a specific date (RFC3339). Defaults to all logs. Only one of since-time / since may be used."},
 	{Text: "--tail", Description: "Lines of recent log file to display. Defaults to -1, showing all log lines."},
 	{Text: "--timestamps", Description: "Include timestamps on each line in the log output"},
+}
+
+var flagRollingUpdate = []prompt.Suggest{
+	{Text: "--container", Description: "Container name which will have its image upgraded. Only relevant when --image is specified, ignored otherwise. Required when using --image on a multi-container pod"},
+	{Text: "--deployment-label-key", Description: "The key to use to differentiate between two different controllers, default 'deployment'.  Only relevant when --image is specified, ignored otherwise"},
+	{Text: "--dry-run", Description: "If true, print out the changes that would be made, but don't actually make them."},
+	{Text: "-f", Description: "Filename or URL to file to use to create the new replication controller."},
+	{Text: "--filename", Description: "Filename or URL to file to use to create the new replication controller."},
+	{Text: "--image", Description: "Image to use for upgrading the replication controller. Must be distinct from the existing image (either new image or new image tag).  Can not be used with --filename/-f"},
+	{Text: "--no-headers", Description: "When using the default output, don't print headers."},
+	{Text: "-o", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template and jsonpath template."},
+	{Text: "--output", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template and jsonpath template."},
+	{Text: "--output-version", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
+	{Text: "--poll-interval", Description: "Time delay between polling for replication controller status after the update. Valid time units are 'ns', 'us' (or 'µs'), 'ms', 's', 'm', 'h'."},
+	{Text: "--rollback", Description: "If true, this is a request to abort an existing rollout that is partially rolled out. It effectively reverses current and next and runs a rollout"},
+	{Text: "--schema-cache-dir", Description: "If non-empty, load/store cached API schemas in this directory, default is '$HOME/.kube/schema'"},
+	{Text: "-a", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--show-all", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
+	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
+	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
+	{Text: "--timeout", Description: "Max time to wait for a replication controller to update before giving up. Valid time units are 'ns', 'us' (or 'µs'), 'ms', 's', 'm', 'h'."},
+	{Text: "--update-period", Description: "Time to wait between updating pods. Valid time units are 'ns', 'us' (or 'µs'), 'ms', 's', 'm', 'h'."},
+	{Text: "--validate", Description: "If true, use a schema to validate the input before sending it"},
 }
 
 var flagCordon = []prompt.Suggest{

@@ -121,47 +121,49 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		}
 
 		third := args[2]
-		switch second {
-		case "componentstatuses", "cs":
-			return prompt.FilterContains(getComponentStatusCompletions(), third, true)
-		case "configmaps", "cm":
-			return prompt.FilterContains(getConfigMapSuggestions(), third, true)
-		case "daemonsets", "ds":
-			return prompt.FilterContains(getDaemonSetSuggestions(), third, true)
-		case "deploy", "deployments":
-			return prompt.FilterContains(getDeploymentNames(), third, true)
-		case "endpoints", "ep":
-			return prompt.FilterContains(getEndpointsSuggestions(), third, true)
-		case "ingresses", "ing":
-			return prompt.FilterContains(getIngressSuggestions(), third, true)
-		case "limitranges", "limits":
-			return prompt.FilterContains(getLimitRangeSuggestions(), third, true)
-		case "namespaces", "ns":
-			return prompt.FilterContains(getNameSpaceSuggestions(), third, true)
-		case "no", "nodes":
-			return prompt.FilterContains(getNodeSuggestions(), third, true)
-		case "po", "pod", "pods":
-			return prompt.FilterContains(getPodSuggestions(), third, true)
-		case "persistentvolumeclaims", "pvc":
-			return prompt.FilterContains(getPersistentVolumeClaimSuggestions(), third, true)
-		case "persistentvolumes", "pv":
-			return prompt.FilterContains(getPersistentVolumeSuggestions(), third, true)
-		case "podsecuritypolicies", "psp":
-			return prompt.FilterContains(getPodSecurityPolicySuggestions(), third, true)
-		case "podtemplates":
-			return prompt.FilterContains(getPodTemplateSuggestions(), third, true)
-		case "replicasets", "rs":
-			return prompt.FilterContains(getReplicaSetSuggestions(), third, true)
-		case "replicationcontrollers", "rc":
-			return prompt.FilterContains(getReplicationControllerSuggestions(), third, true)
-		case "resourcequotas", "quota":
-			return prompt.FilterContains(getResourceQuotasSuggestions(), third, true)
-		case "secrets":
-			return prompt.FilterContains(getSecretSuggestions(), third, true)
-		case "sa", "serviceaccounts":
-			return prompt.FilterContains(getServiceAccountSuggestions(), third, true)
-		case "svc", "services":
-			return prompt.FilterContains(getServiceSuggestions(), third, true)
+		if len(args) == 3 {
+			switch second {
+			case "componentstatuses", "cs":
+				return prompt.FilterContains(getComponentStatusCompletions(), third, true)
+			case "configmaps", "cm":
+				return prompt.FilterContains(getConfigMapSuggestions(), third, true)
+			case "daemonsets", "ds":
+				return prompt.FilterContains(getDaemonSetSuggestions(), third, true)
+			case "deploy", "deployments":
+				return prompt.FilterContains(getDeploymentNames(), third, true)
+			case "endpoints", "ep":
+				return prompt.FilterContains(getEndpointsSuggestions(), third, true)
+			case "ingresses", "ing":
+				return prompt.FilterContains(getIngressSuggestions(), third, true)
+			case "limitranges", "limits":
+				return prompt.FilterContains(getLimitRangeSuggestions(), third, true)
+			case "namespaces", "ns":
+				return prompt.FilterContains(getNameSpaceSuggestions(), third, true)
+			case "no", "nodes":
+				return prompt.FilterContains(getNodeSuggestions(), third, true)
+			case "po", "pod", "pods":
+				return prompt.FilterContains(getPodSuggestions(), third, true)
+			case "persistentvolumeclaims", "pvc":
+				return prompt.FilterContains(getPersistentVolumeClaimSuggestions(), third, true)
+			case "persistentvolumes", "pv":
+				return prompt.FilterContains(getPersistentVolumeSuggestions(), third, true)
+			case "podsecuritypolicies", "psp":
+				return prompt.FilterContains(getPodSecurityPolicySuggestions(), third, true)
+			case "podtemplates":
+				return prompt.FilterContains(getPodTemplateSuggestions(), third, true)
+			case "replicasets", "rs":
+				return prompt.FilterContains(getReplicaSetSuggestions(), third, true)
+			case "replicationcontrollers", "rc":
+				return prompt.FilterContains(getReplicationControllerSuggestions(), third, true)
+			case "resourcequotas", "quota":
+				return prompt.FilterContains(getResourceQuotasSuggestions(), third, true)
+			case "secrets":
+				return prompt.FilterContains(getSecretSuggestions(), third, true)
+			case "sa", "serviceaccounts":
+				return prompt.FilterContains(getServiceAccountSuggestions(), third, true)
+			case "svc", "services":
+				return prompt.FilterContains(getServiceSuggestions(), third, true)
+			}
 		}
 	case "create":
 		subcommands := []prompt.Suggest{
@@ -173,13 +175,19 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 			{Text: "service", Description: "Create a service using specified subcommand."},
 			{Text: "serviceaccount", Description: "Create a service account with the specified name"},
 		}
-		return prompt.FilterHasPrefix(subcommands, args[1], true)
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(subcommands, args[1], true)
+		}
 	case "replace":
 	case "patch":
 	case "delete":
-		return prompt.FilterHasPrefix(resourceTypes, args[1], true)
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(resourceTypes, args[1], true)
+		}
 	case "edit":
-		return prompt.FilterHasPrefix(resourceTypes, args[1], true)
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(resourceTypes, args[1], true)
+		}
 	case "apply":
 	case "namespace":
 		if len(args) == 2 {
@@ -189,7 +197,12 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		if len(args) == 2 {
 			return prompt.FilterContains(getPodSuggestions(), args[1], true)
 		}
-	case "rolling-update":
+	case "rolling-update", "rollingupdate":
+		if len(args) == 2 {
+			return prompt.FilterContains(getReplicationControllerSuggestions(), args[1], true)
+		} else if len(args) == 3 {
+			return prompt.FilterContains(getReplicationControllerSuggestions(), args[2], true)
+		}
 	case "scale":
 	case "cordon":
 		fallthrough
