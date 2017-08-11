@@ -52,6 +52,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagProxy, flagGlobal...)
 	case "run", "run-container":
 		suggests = append(flagRun, flagGlobal...)
+	case "expose":
+		suggests = append(flagExpose, flagGlobal...)
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":
@@ -376,6 +378,37 @@ var flagRun = []prompt.Suggest{
 	{Text: "--stdin", Description: "Keep stdin open on the container(s) in the pod, even if nothing is attached."},
 	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
 	{Text: "--tty", Description: "Allocated a TTY for each container in the pod.  Because -t is currently shorthand for --template, -t is not supported for --tty. This shorthand is deprecated and we expect to adopt -t for --tty soon."},
+}
+
+var flagExpose = []prompt.Suggest{
+	{Text: "--container-port", Description: "IP to assign to to the Load Balancer. If empty, an ephemeral IP will be created and used (cloud-provider specific)."},
+	{Text: "--dry-run", Description: "The name for the newly created object."},
+	{Text: "--external-ip", Description: "When using the default output, don't print headers."},
+	{Text: "-f", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--filename", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--generator", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
+	{Text: "-l", Description: "An inline JSON override for the generated object. If this is non-empty, it is used to override the generated object. Requires that the object supply a valid apiVersion field."},
+	{Text: "--labels", Description: "The port that the service should serve on. Copied from the resource being exposed, if unspecified"},
+	{Text: "--load-balancer-ip", Description: "The network protocol for the service to be created. Default is 'tcp'."},
+	{Text: "--name", Description: "Record current kubectl command in the resource annotation."},
+	{Text: "--no-headers", Description: "If true, the configuration of current object will be saved in its annotation. This is useful when you want to perform kubectl apply on this object in the future."},
+	{Text: "-o", Description: "A label selector to use for this service. Only equality-based selector requirements are supported. If empty (the default) infer the selector from the replication controller or replica set."},
+	{Text: "--output", Description: "If non-empty, set the session affinity for the service to this; legal values: 'None', 'ClientIP'"},
+	{Text: "--output-version", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--overrides", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--port", Description: "When printing, show all labels as the last column (default hide labels column)"},
+	{Text: "--protocol", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
+	{Text: "--record", Description: "Name or number for the port on the container that the service should direct traffic to. Optional."},
+	{Text: "--save-config", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
+	{Text: "--selector", Description: "Type for this service: ClusterIP, NodePort, or LoadBalancer. Default is 'ClusterIP'."},
+	{Text: "--session-affinity", Description: "Synonym for --target-port"},
+	{Text: "-a", Description: "If true, only print the object that would be sent, without creating it."},
+	{Text: "--show-all", Description: "Additional external IP address (not managed by Kubernetes) to accept for the service. If this IP is routed to a node, the service can be accessed by this IP in addition to its generated service IP."},
+	{Text: "--show-labels", Description: "Filename, directory, or URL to a file identifying the resource to expose a service"},
+	{Text: "--sort-by", Description: "Filename, directory, or URL to a file identifying the resource to expose a service"},
+	{Text: "--target-port", Description: "The name of the API generator to use. There are 2 generators: 'service/v1' and 'service/v2'. The only difference between them is that service port in v1 is named 'default', while it is left unnamed in v2. Default is 'service/v2'."},
+	{Text: "--template", Description: "Labels to apply to the service created by this call."},
+	{Text: "--type", Description: "Labels to apply to the service created by this call."},
 }
 
 var flagClusterInfo = []prompt.Suggest{

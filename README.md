@@ -42,7 +42,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `port-forward`   Forward one or more local ports to a pod.
 * [x] `proxy`          Run a proxy to the Kubernetes API server
 * [x] `run`            Run a particular image on the cluster.
-* [ ] `expose`         Take a replication controller, service, or pod and expose it as a new Kubernetes Service
+* [x] `expose`         Take a replication controller, service, or pod and expose it as a new Kubernetes Service
 * [ ] `autoscale`      Auto-scale a Deployment, ReplicaSet, or ReplicationController
 * [ ] `rollout`        rollout manages a deployment
 * [ ] `label`          Update the labels on a resource
