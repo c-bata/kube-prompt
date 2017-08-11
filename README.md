@@ -70,7 +70,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [ ] `namespaces` aka `ns`
 * [ ] `networkpolicies`
 * [x] `nodes` aka `no`
-* [ ] `persistentvolumeclaims` aka `pvc`
+* [x] `persistentvolumeclaims` aka `pvc`
 * [x] `persistentvolumes` aka `pv`
 * [x] `pods`
 * [x] `podsecuritypolicies` aka `psp`

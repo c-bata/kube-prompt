@@ -344,6 +344,37 @@ func getSecretSuggestions() []prompt.Suggest {
 	return s
 }
 
+/* Persistent Volume Claims */
+
+var (
+	persistentVolumeClaimsList          atomic.Value
+	persistentVolumeClaimsLastFetchedAt time.Time
+)
+
+func fetchPersistentVolumeClaimsList() {
+	if time.Since(persistentVolumeClaimsLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().PersistentVolumeClaims(api.NamespaceDefault).List(v1.ListOptions{})
+	persistentVolumeClaimsList.Store(l)
+	return
+}
+
+func getPersistentVolumeClaimSuggestions() []prompt.Suggest {
+	go fetchPersistentVolumeClaimsList()
+	l, ok := persistentVolumeClaimsList.Load().(*v1.PersistentVolumeClaimList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
 /* Persistent Volumes */
 
 var (
@@ -355,7 +386,7 @@ func fetchPersistentVolumeList() {
 	if time.Since(persistentVolumesLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().PersistentVolumes(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().PersistentVolumes().List(v1.ListOptions{})
 	persistentVolumesList.Store(l)
 	return
 }
