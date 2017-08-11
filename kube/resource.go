@@ -344,6 +344,37 @@ func getSecretSuggestions() []prompt.Suggest {
 	return s
 }
 
+/* Pod Templates */
+
+var (
+	podTemplateList          atomic.Value
+	podTemplateLastFetchedAt time.Time
+)
+
+func fetchPodTemplateList() {
+	if time.Since(podTemplateLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().PodTemplates(api.NamespaceDefault).List(v1.ListOptions{})
+	podTemplateList.Store(l)
+	return
+}
+
+func getPodTemplateSuggestions() []prompt.Suggest {
+	go fetchPodTemplateList()
+	l, ok := podTemplateList.Load().(*v1.PodTemplateList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
 /* Replica Sets */
 
 var (
