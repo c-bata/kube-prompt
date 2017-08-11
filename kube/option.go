@@ -42,6 +42,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagRollingUpdate, flagGlobal...)
 	case "scale", "resize":
 		suggests = append(flagScale, flagGlobal...)
+	case "attach":
+		suggests = append(flagAttach, flagGlobal...)
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":
@@ -285,6 +287,15 @@ var flagScale = []prompt.Suggest{
 	{Text: "--replicas", Description: "The new desired number of replicas. Required."},
 	{Text: "--resource-version", Description: "Precondition for resource version. Requires that the current resource version match this value in order to scale."},
 	{Text: "--timeout", Description: "The length of time to wait before giving up on a scale operation, zero means don't wait."},
+}
+
+var flagAttach = []prompt.Suggest{
+	{Text: "-c", Description: "Container name. If omitted, the first container in the pod will be chosen"},
+	{Text: "--container", Description: "Container name. If omitted, the first container in the pod will be chosen"},
+	{Text: "-i", Description: "Pass stdin to the container"},
+	{Text: "--stdin", Description: "Pass stdin to the container"},
+	{Text: "-t", Description: "Stdin is a TTY"},
+	{Text: "--tty", Description: "Stdin is a TTY"},
 }
 
 var flagClusterInfo = []prompt.Suggest{

@@ -188,7 +188,6 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(resourceTypes, args[1], true)
 		}
-	case "apply":
 	case "namespace":
 		if len(args) == 2 {
 			return prompt.FilterContains(getNameSpaceSuggestions(), args[1], true)
@@ -216,8 +215,13 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 	case "drain":
 		fallthrough
 	case "uncordon":
-		return prompt.FilterHasPrefix(getNodeSuggestions(), args[1], true)
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(getNodeSuggestions(), args[1], true)
+		}
 	case "attach":
+		if len(args) == 2 {
+			return prompt.FilterContains(getPodSuggestions(), args[1], true)
+		}
 	case "exec":
 		if len(args) == 2 {
 			return prompt.FilterContains(getPodSuggestions(), args[1], true)

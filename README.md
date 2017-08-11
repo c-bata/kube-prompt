@@ -37,7 +37,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `cordon`         Mark node as unschedulable
 * [x] `drain`          Drain node in preparation for maintenance
 * [x] `uncordon`       Mark node as schedulable
-* [ ] `attach`         Attach to a running container.
+* [x] `attach`         Attach to a running container.
 * [ ] `exec`           Execute a command in a container.
 * [ ] `port-forward`   Forward one or more local ports to a pod.
 * [ ] `proxy`          Run a proxy to the Kubernetes API server
