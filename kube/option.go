@@ -36,6 +36,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagApply, flagGlobal...)
 	case "namespace":
 		suggests = flagGlobal
+	case "logs":
+		suggests = append(flagLogs, flagGlobal...)
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":
@@ -223,6 +225,20 @@ var flagApply = []prompt.Suggest{
 	{Text: "--record", Description: "Record current kubectl command in the resource annotation."},
 	{Text: "--schema-cache-dir", Description: "If non-empty, load/store cached API schemas in this directory, default is '$HOME/.kube/schema'"},
 	{Text: "--validate", Description: "If true, use a schema to validate the input before sending it"},
+}
+
+var flagLogs = []prompt.Suggest{
+	{Text: "-c", Description: "Print the logs of this container"},
+	{Text: "--container", Description: "Print the logs of this container"},
+	{Text: "-f", Description: "Specify if the logs should be streamed."},
+	{Text: "--follow", Description: "Specify if the logs should be streamed."},
+	{Text: "--limit-bytes", Description: "Maximum bytes of logs to return. Defaults to no limit."},
+	{Text: "-p", Description: "If true, print the logs for the previous instance of the container in a pod if it exists."},
+	{Text: "--previous", Description: "If true, print the logs for the previous instance of the container in a pod if it exists."},
+	{Text: "--since", Description: "Only return logs newer than a relative duration like 5s, 2m, or 3h. Defaults to all logs. Only one of since-time / since may be used."},
+	{Text: "--since-time", Description: "Only return logs after a specific date (RFC3339). Defaults to all logs. Only one of since-time / since may be used."},
+	{Text: "--tail", Description: "Lines of recent log file to display. Defaults to -1, showing all log lines."},
+	{Text: "--timestamps", Description: "Include timestamps on each line in the log output"},
 }
 
 var flagCordon = []prompt.Suggest{

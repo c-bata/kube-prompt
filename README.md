@@ -31,7 +31,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `edit`           Edit a resource on the server
 * [x] `apply`          Apply a configuration to a resource by filename or stdin
 * [x] `namespace`      SUPERSEDED: Set and view the current Kubernetes namespace
-* [ ] `logs`           Print the logs for a container in a pod.
+* [x] `logs`           Print the logs for a container in a pod.
 * [ ] `rolling-update` Perform a rolling update of the given ReplicationController.
 * [ ] `scale`          Set a new size for a Deployment, ReplicaSet, Replication Controller, or Job.
 * [x] `cordon`         Mark node as unschedulable
