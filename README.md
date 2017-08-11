@@ -67,7 +67,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [ ] `ingresses` aka `ing`
 * [ ] `jobs`
 * [ ] `limitranges` aka `limits`
-* [ ] `namespaces` aka `ns`
+* [x] `namespaces` aka `ns`
 * [ ] `networkpolicies`
 * [x] `nodes` aka `no`
 * [x] `persistentvolumeclaims` aka `pvc`

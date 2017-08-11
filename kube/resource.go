@@ -344,6 +344,37 @@ func getSecretSuggestions() []prompt.Suggest {
 	return s
 }
 
+/* NameSpaces */
+
+var (
+	namespaceList          atomic.Value
+	namespaceLastFetchedAt time.Time
+)
+
+func fetchNameSpaceList() {
+	if time.Since(namespaceLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().Namespaces().List(v1.ListOptions{})
+	namespaceList.Store(l)
+	return
+}
+
+func getNameSpaceSuggestions() []prompt.Suggest {
+	go fetchNameSpaceList()
+	l, ok := namespaceList.Load().(*v1.NamespaceList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
 /* Persistent Volume Claims */
 
 var (
