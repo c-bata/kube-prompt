@@ -344,6 +344,37 @@ func getSecretSuggestions() []prompt.Suggest {
 	return s
 }
 
+/* Pod Security Policies */
+
+var (
+	podSecurityPolicyList          atomic.Value
+	podSecurityPolicyLastFetchedAt time.Time
+)
+
+func fetchPodSecurityPolicyList() {
+	if time.Since(podSecurityPolicyLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().PodSecurityPolicies().List(v1.ListOptions{})
+	podSecurityPolicyList.Store(l)
+	return
+}
+
+func getPodSecurityPolicySuggestions() []prompt.Suggest {
+	go fetchPodSecurityPolicyList()
+	l, ok := podSecurityPolicyList.Load().(*v1beta1.PodSecurityPolicyList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
 /* Pod Templates */
 
 var (

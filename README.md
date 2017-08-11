@@ -73,7 +73,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [ ] `persistentvolumeclaims` aka `pvc`
 * [ ] `persistentvolumes` aka `pv`
 * [x] `pods`
-* [ ] `podsecuritypolicies` aka `psp`
+* [x] `podsecuritypolicies` aka `psp`
 * [x] `podtemplates`
 * [x] `replicasets` aka `rs`
 * [x] `replicationcontrollers` aka `rc`
