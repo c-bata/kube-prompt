@@ -182,6 +182,9 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		return prompt.FilterHasPrefix(resourceTypes, args[1], true)
 	case "apply":
 	case "namespace":
+		if len(args) == 2 {
+			return prompt.FilterContains(getNameSpaceSuggestions(), args[1], true)
+		}
 	case "logs":
 		if len(args) == 2 {
 			return prompt.FilterContains(getPodSuggestions(), args[1], true)
