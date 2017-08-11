@@ -28,7 +28,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `replace`        Replace a resource by filename or stdin.
 * [x] `patch`          Update field(s) of a resource using strategic merge patch.
 * [x] `delete`         Delete resources by filenames, stdin, resources and names, or by resources and label selector.
-* [ ] `edit`           Edit a resource on the server
+* [x] `edit`           Edit a resource on the server
 * [ ] `apply`          Apply a configuration to a resource by filename or stdin
 * [ ] `namespace`      SUPERSEDED: Set and view the current Kubernetes namespace
 * [ ] `logs`           Print the logs for a container in a pod.

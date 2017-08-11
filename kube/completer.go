@@ -179,6 +179,7 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 	case "delete":
 		return prompt.FilterHasPrefix(resourceTypes, args[1], true)
 	case "edit":
+		return prompt.FilterHasPrefix(resourceTypes, args[1], true)
 	case "apply":
 	case "namespace":
 	case "logs":

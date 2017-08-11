@@ -30,6 +30,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = optionPatch
 	case "delete":
 		suggests = optionDelete
+	case "edit":
+		suggests = optionEdit
 	case "cluster-info":
 		suggests = optionClusterInfo
 	case "explain":
@@ -216,6 +218,40 @@ var optionDelete = []prompt.Suggest{
 	{Text: "-l", Description: "Selector (label query) to filter on."},
 	{Text: "--selector", Description: "Selector (label query) to filter on."},
 	{Text: "--timeout", Description: "The length of time to wait before giving up on a delete, zero means determine a timeout from the size of the object"},
+	{Text: "--alsologtostderr", Description: "log to standard error as well as files"},
+	{Text: "--certificate-authority", Description: "Path to a cert. file for the certificate authority."},
+	{Text: "--client-certificate", Description: "Path to a client certificate file for TLS."},
+	{Text: "--client-key", Description: "Path to a client key file for TLS."},
+	{Text: "--cluster", Description: "The name of the kubeconfig cluster to use"},
+	{Text: "--context", Description: "The name of the kubeconfig context to use"},
+	{Text: "--insecure-skip-tls-verify", Description: "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure."},
+	{Text: "--kubeconfig", Description: "Path to the kubeconfig file to use for CLI requests."},
+	{Text: "--log-backtrace-at", Description: "when logging hits line file:N, emit a stack trace"},
+	{Text: "--log-dir", Description: "If non-empty, write log files in this directory"},
+	{Text: "--log-flush-frequency", Description: "Maximum number of seconds between log flushes"},
+	{Text: "--logtostderr", Description: "log to standard error instead of files"},
+	{Text: "--match-server-version", Description: "Require server version to match client version"},
+	{Text: "--namespace", Description: "If present, the namespace scope for this CLI request."},
+	{Text: "--password", Description: "Password for basic authentication to the API server."},
+	{Text: "-s", Description: "The address and port of the Kubernetes API server"},
+	{Text: "--server", Description: "The address and port of the Kubernetes API server"},
+	{Text: "--stderrthreshold", Description: "logs at or above this threshold go to stderr"},
+	{Text: "--token", Description: "Bearer token for authentication to the API server."},
+	{Text: "--user", Description: "The name of the kubeconfig user to use"},
+	{Text: "--username", Description: "Username for basic authentication to the API server."},
+	{Text: "--v", Description: "log level for V logs"},
+	{Text: "--vmodule", Description: "comma-separated list of pattern=N settings for file-filtered logging"},
+}
+
+var optionEdit = []prompt.Suggest{
+	{Text: "-f", Description: "Filename, directory, or URL to file to use to edit the resource"},
+	{Text: "--filename", Description: "Filename, directory, or URL to file to use to edit the resource"},
+	{Text: "-o", Description: "Output format. One of: yaml|json."},
+	{Text: "--output", Description: "Output format. One of: yaml|json."},
+	{Text: "--output-version", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
+	{Text: "--record", Description: "Record current kubectl command in the resource annotation."},
+	{Text: "--save-config", Description: "If true, the configuration of current object will be saved in its annotation. This is useful when you want to perform kubectl apply on this object in the future."},
+	{Text: "--windows-line-endings", Description: "Use Windows line-endings (default Unix line-endings)"},
 	{Text: "--alsologtostderr", Description: "log to standard error as well as files"},
 	{Text: "--certificate-authority", Description: "Path to a cert. file for the certificate authority."},
 	{Text: "--client-certificate", Description: "Path to a client certificate file for TLS."},
