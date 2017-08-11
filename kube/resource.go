@@ -374,3 +374,34 @@ func getServiceAccountSuggestions() []prompt.Suggest {
 	}
 	return s
 }
+
+/* Service */
+
+var (
+	serviceList          atomic.Value
+	serviceLastFetchedAt time.Time
+)
+
+func fetchServiceList() {
+	if time.Since(serviceLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().Services(api.NamespaceDefault).List(v1.ListOptions{})
+	serviceList.Store(l)
+	return
+}
+
+func getServiceSuggestions() []prompt.Suggest {
+	go fetchServiceList()
+	l, ok := serviceList.Load().(*v1.ServiceAccountList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}

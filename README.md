@@ -80,7 +80,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [ ] `resourcequotas` aka `quota`
 * [x] `secrets`
 * [x] `serviceaccounts` aka `sa`
-* [ ] `services` aka `svc`
+* [x] `services` aka `svc`
 * [ ] `statefulsets`
 * [ ] `storageclasses`
 * [ ] `thirdpartyresources`

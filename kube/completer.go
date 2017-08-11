@@ -141,6 +141,8 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 			return prompt.FilterContains(getSecretSuggestions(), third, true)
 		case "sa", "serviceaccounts":
 			return prompt.FilterContains(getServiceAccountSuggestions(), third, true)
+		case "svc", "services":
+			return prompt.FilterContains(getServiceSuggestions(), third, true)
 		}
 	case "create":
 		subcommands := []prompt.Suggest{
