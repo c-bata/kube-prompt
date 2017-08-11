@@ -58,6 +58,18 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagAutoScale, flagGlobal...)
 	case "rollout":
 		suggests = flagGlobal
+		if len(commandArgs) == 2 {
+			switch commandArgs[1] {
+			case "history":
+				suggests = append(suggests, flagRolloutHistory...)
+			case "pause":
+				suggests = append(suggests, flagRolloutPause...)
+			case "resume":
+				suggests = append(suggests, flagRolloutResume...)
+			case "undo":
+				suggests = append(suggests, flagRolloutUndo...)
+			}
+		}
 	case "label":
 		suggests = append(flagLabel, flagGlobal...)
 	case "cluster-info":
@@ -417,6 +429,28 @@ var flagExpose = []prompt.Suggest{
 	{Text: "--target-port", Description: "The name of the API generator to use. There are 2 generators: 'service/v1' and 'service/v2'. The only difference between them is that service port in v1 is named 'default', while it is left unnamed in v2. Default is 'service/v2'."},
 	{Text: "--template", Description: "Labels to apply to the service created by this call."},
 	{Text: "--type", Description: "Labels to apply to the service created by this call."},
+}
+
+var flagRolloutHistory = []prompt.Suggest{
+	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
+	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
+	{Text: "--revision", Description: "See the details, including podTemplate of the revision specified"},
+}
+
+var flagRolloutPause = []prompt.Suggest{
+	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
+	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
+}
+
+var flagRolloutResume = []prompt.Suggest{
+	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
+	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
+}
+
+var flagRolloutUndo = []prompt.Suggest{
+	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
+	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
+	{Text: "--to-revision", Description: "The revision to rollback to. Default to 0 (last revision)."},
 }
 
 var flagLabel = []prompt.Suggest{
