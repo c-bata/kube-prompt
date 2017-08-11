@@ -344,6 +344,37 @@ func getSecretSuggestions() []prompt.Suggest {
 	return s
 }
 
+/* Resource quotas */
+
+var (
+	resourceQuotaList          atomic.Value
+	resourceQuotaLastFetchedAt time.Time
+)
+
+func fetchResourceQuotaList() {
+	if time.Since(resourceQuotaLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().ResourceQuotas(api.NamespaceDefault).List(v1.ListOptions{})
+	resourceQuotaList.Store(l)
+	return
+}
+
+func getResourceQuotasSuggestions() []prompt.Suggest {
+	go fetchResourceQuotaList()
+	l, ok := resourceQuotaList.Load().(*v1.ResourceQuotaList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
 /* Service Account */
 
 var (

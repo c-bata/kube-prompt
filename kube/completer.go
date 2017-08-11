@@ -137,6 +137,8 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 			return prompt.FilterContains(getNodeSuggestions(), third, true)
 		case "po", "pod", "pods":
 			return prompt.FilterContains(getPodSuggestions(), third, true)
+		case "resourcequotas", "quota":
+			return prompt.FilterContains(getResourceQuotasSuggestions(), third, true)
 		case "secrets":
 			return prompt.FilterContains(getSecretSuggestions(), third, true)
 		case "sa", "serviceaccounts":
