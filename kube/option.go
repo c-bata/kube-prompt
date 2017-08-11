@@ -58,6 +58,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagAutoScale, flagGlobal...)
 	case "rollout":
 		suggests = flagGlobal
+	case "label":
+		suggests = append(flagLabel, flagGlobal...)
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":
@@ -413,6 +415,26 @@ var flagExpose = []prompt.Suggest{
 	{Text: "--target-port", Description: "The name of the API generator to use. There are 2 generators: 'service/v1' and 'service/v2'. The only difference between them is that service port in v1 is named 'default', while it is left unnamed in v2. Default is 'service/v2'."},
 	{Text: "--template", Description: "Labels to apply to the service created by this call."},
 	{Text: "--type", Description: "Labels to apply to the service created by this call."},
+}
+
+var flagLabel = []prompt.Suggest{
+	{Text: "--all", Description: "select all resources in the namespace of the specified resource types"},
+	{Text: "--dry-run", Description: "If true, only print the object that would be sent, without sending it."},
+	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to update the labels"},
+	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to update the labels"},
+	{Text: "--no-headers", Description: "When using the default output, don't print headers."},
+	{Text: "-o", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--output", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--output-version", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
+	{Text: "--overwrite", Description: "If true, allow labels to be overwritten, otherwise reject label updates that overwrite existing labels."},
+	{Text: "--record", Description: "Record current kubectl command in the resource annotation."},
+	{Text: "--resource-version", Description: "If non-empty, the labels update will only succeed if this is the current resource-version for the object. Only valid when specifying a single resource."},
+	{Text: "-l", Description: "Selector (label query) to filter on"},
+	{Text: "--selector", Description: "Selector (label query) to filter on"},
+	{Text: "-a", Description: "When printing, show all labels as the last column (default hide labels column)"},
+	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
+	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
+	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
 }
 
 var flagClusterInfo = []prompt.Suggest{

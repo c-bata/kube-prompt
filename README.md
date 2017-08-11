@@ -45,7 +45,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `expose`         Take a replication controller, service, or pod and expose it as a new Kubernetes Service
 * [x] `autoscale`      Auto-scale a Deployment, ReplicaSet, or ReplicationController
 * [x] `rollout`        rollout manages a deployment
-* [ ] `label`          Update the labels on a resource
+* [x] `label`          Update the labels on a resource
 * [ ] `annotate`       Update the annotations on a resource
 * [ ] `config`         config modifies kubeconfig files
 * [x] `cluster-info`   Display cluster info

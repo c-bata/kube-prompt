@@ -178,8 +178,6 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(subcommands, args[1], true)
 		}
-	case "replace":
-	case "patch":
 	case "delete":
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(resourceTypes, args[1], true)
@@ -233,10 +231,6 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		if args[len(args)-2] == "-p" || args[len(args)-2] == "--port" {
 			return prompt.FilterContains(getPodSuggestions(), args[len(args)-1], true)
 		}
-	case "proxy":
-	case "run", "run-container":
-	case "expose":
-	case "autoscale":
 	case "rollout":
 		subCommands := []prompt.Suggest{
 			{Text: "history", Description: "view rollout history"},
@@ -247,7 +241,6 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(subCommands, args[1], true)
 		}
-	case "label":
 	case "annotate":
 	case "config":
 		subCommands := []prompt.Suggest{
@@ -274,8 +267,6 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(subCommands, args[1], true)
 		}
-	case "api-versions":
-	case "version":
 	case "explain":
 		return prompt.FilterHasPrefix(resourceTypes, args[1], true)
 	case "convert":
