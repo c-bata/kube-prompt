@@ -13,7 +13,7 @@ import (
 const thresholdFetchInterval = 10 * time.Second
 
 var resourceTypes = []prompt.Suggest{
-	{Text: "clusters"},  // valid only for federation apiservers
+	{Text: "clusters"}, // valid only for federation apiservers
 	{Text: "componentstatuses"},
 	{Text: "configmaps"},
 	{Text: "daemonsets"},
@@ -595,7 +595,7 @@ func getReplicaSetSuggestions() []prompt.Suggest {
 /* Replication Controller */
 
 var (
-	replicationControllerList atomic.Value
+	replicationControllerList          atomic.Value
 	replicationControllerLastFetchedAt time.Time
 )
 

@@ -91,6 +91,20 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 			switch commandArgs[1] {
 			case "view":
 				suggests = flagConfigView
+			case "set-cluster":
+				suggests = flagConfigSetCluster
+			case "set-credentials":
+				suggests = flagConfigSetCredentials
+			case "set-context":
+				suggests = flagConfigSetContext
+			case "set":
+				suggests = flagConfigSet
+			case "unset":
+				suggests = flagConfigUnset
+			case "current-context":
+				suggests = flagConfigCurrentContext
+			case "use-context":
+				suggests = flagConfigUseContext
 			}
 		}
 	default:
@@ -559,3 +573,34 @@ var flagConfigView = []prompt.Suggest{
 	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
 	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
 }
+
+var flagConfigSetCluster = []prompt.Suggest{
+	{Text: "--api-version", Description: "api-version for the cluster entry in kubeconfig"},
+	{Text: "--certificate-authority", Description: "path to certificate-authority for the cluster entry in kubeconfig"},
+	{Text: "--embed-certs", Description: "embed-certs for the cluster entry in kubeconfig"},
+	{Text: "--insecure-skip-tls-verify", Description: "insecure-skip-tls-verify for the cluster entry in kubeconfig"},
+	{Text: "--server", Description: "server for the cluster entry in kubeconfig"},
+}
+
+var flagConfigSetCredentials = []prompt.Suggest{
+	{Text: "--client-certificate", Description: "path to client-certificate for the user entry in kubeconfig"},
+	{Text: "--client-key", Description: "path to client-key for the user entry in kubeconfig"},
+	{Text: "--embed-certs", Description: "embed client cert/key for the user entry in kubeconfig"},
+	{Text: "--password", Description: "password for the user entry in kubeconfig"},
+	{Text: "--token", Description: "token for the user entry in kubeconfig"},
+	{Text: "--username", Description: "username for the user entry in kubeconfig"},
+}
+
+var flagConfigSetContext = []prompt.Suggest{
+	{Text: "--cluster", Description: "cluster for the context entry in kubeconfig"},
+	{Text: "--namespace", Description: "namespace for the context entry in kubeconfig"},
+	{Text: "--user", Description: "user for the context entry in kubeconfig"},
+}
+
+var flagConfigSet = []prompt.Suggest{}
+
+var flagConfigUnset = []prompt.Suggest{}
+
+var flagConfigCurrentContext = []prompt.Suggest{}
+
+var flagConfigUseContext = []prompt.Suggest{}

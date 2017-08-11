@@ -47,7 +47,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `rollout`        rollout manages a deployment
 * [x] `label`          Update the labels on a resource
 * [x] `annotate`       Update the annotations on a resource
-* [ ] `config`         config modifies kubeconfig files
+* [x] `config`         config modifies kubeconfig files
 * [x] `cluster-info`   Display cluster info
 * [x] `api-versions`   Print the supported API versions on the server, in the form of "group/version".
 * [x] `version`        Print the client and server version information.

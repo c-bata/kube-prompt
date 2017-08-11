@@ -13,7 +13,7 @@ func Executor(s string) {
 		return
 	}
 
-	cmd := exec.Command("/bin/sh", "-c", "kubectl " + s)
+	cmd := exec.Command("/bin/sh", "-c", "kubectl "+s)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
