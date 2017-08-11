@@ -64,7 +64,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `endpoints` aka `ep`
 * [x] `events` aka `ev`
 * [ ] `horizontalpodautoscalers` aka `hpa`
-* [ ] `ingresses` aka `ing`
+* [x] `ingresses` aka `ing`
 * [ ] `jobs`
 * [x] `limitranges` aka `limits`
 * [x] `namespaces` aka `ns`

@@ -133,6 +133,8 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 			return prompt.FilterContains(getDeploymentNames(), third, true)
 		case "endpoints", "ep":
 			return prompt.FilterContains(getEndpointsSuggestions(), third, true)
+		case "ingresses", "ing":
+			return prompt.FilterContains(getIngressSuggestions(), third, true)
 		case "limitranges", "limits":
 			return prompt.FilterContains(getLimitRangeSuggestions(), third, true)
 		case "namespaces", "ns":

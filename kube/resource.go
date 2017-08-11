@@ -344,6 +344,37 @@ func getSecretSuggestions() []prompt.Suggest {
 	return s
 }
 
+/* Ingress */
+
+var (
+	ingressList          atomic.Value
+	ingressLastFetchedAt time.Time
+)
+
+func fetchIngressList() {
+	if time.Since(ingressLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().Ingresses(api.NamespaceDefault).List(v1.ListOptions{})
+	ingressList.Store(l)
+	return
+}
+
+func getIngressSuggestions() []prompt.Suggest {
+	go fetchIngressList()
+	l, ok := ingressList.Load().(*v1.NamespaceList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
 /* LimitRange */
 
 var (
