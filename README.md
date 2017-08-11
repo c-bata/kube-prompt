@@ -52,7 +52,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `api-versions`   Print the supported API versions on the server, in the form of "group/version".
 * [x] `version`        Print the client and server version information.
 * [x] `explain`        Documentation of resources.
-* [ ] `convert`        Convert config files between different API versions
+* [x] `convert`        Convert config files between different API versions
 
 ## LICENSE
 

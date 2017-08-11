@@ -269,7 +269,6 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		}
 	case "explain":
 		return prompt.FilterHasPrefix(resourceTypes, args[1], true)
-	case "convert":
 	default:
 		return []prompt.Suggest{}
 	}

@@ -84,6 +84,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = optionHelp
 	case "annotate":
 		suggests = flagAnnotate
+	case "convert":
+		suggests = append(flagConvert, flagGlobal...)
 	case "config":
 		if len(commandArgs) == 2 {
 			switch commandArgs[1] {
@@ -522,6 +524,23 @@ var flagAutoScale = []prompt.Suggest{
 	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
 	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
 	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
+}
+
+var flagConvert = []prompt.Suggest{
+	{Text: "-f", Description: "Filename, directory, or URL to file to need to get converted."},
+	{Text: "--filename", Description: "Filename, directory, or URL to file to need to get converted."},
+	{Text: "--local", Description: "If true, convert will NOT try to contact api-server but run locally."},
+	{Text: "--no-headers", Description: "When using the default output, don't print headers."},
+	{Text: "-o", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--output", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--output-version", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
+	{Text: "--schema-cache-dir", Description: "If non-empty, load/store cached API schemas in this directory, default is '$HOME/.kube/schema'"},
+	{Text: "-a", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--show-all", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
+	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
+	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
+	{Text: "--validate", Description: "If true, use a schema to validate the input before sending it"},
 }
 
 var flagConfigView = []prompt.Suggest{
