@@ -238,6 +238,15 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 	case "expose":
 	case "autoscale":
 	case "rollout":
+		subCommands := []prompt.Suggest{
+			{Text: "history", Description: "view rollout history"},
+			{Text: "pause", Description: "Mark the provided resource as paused"},
+			{Text: "resume", Description: "Resume a paused resource"},
+			{Text: "undo", Description: "undoes a previous rollout"},
+		}
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(subCommands, args[1], true)
+		}
 	case "label":
 	case "annotate":
 	case "config":

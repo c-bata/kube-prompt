@@ -56,6 +56,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagExpose, flagGlobal...)
 	case "auto-scale":
 		suggests = append(flagAutoScale, flagGlobal...)
+	case "rollout":
+		suggests = flagGlobal
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":

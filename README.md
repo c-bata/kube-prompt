@@ -44,7 +44,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `run`            Run a particular image on the cluster.
 * [x] `expose`         Take a replication controller, service, or pod and expose it as a new Kubernetes Service
 * [x] `autoscale`      Auto-scale a Deployment, ReplicaSet, or ReplicationController
-* [ ] `rollout`        rollout manages a deployment
+* [x] `rollout`        rollout manages a deployment
 * [ ] `label`          Update the labels on a resource
 * [ ] `annotate`       Update the annotations on a resource
 * [ ] `config`         config modifies kubeconfig files
