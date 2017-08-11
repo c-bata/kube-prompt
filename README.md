@@ -26,7 +26,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `describe`       Show details of a specific resource or group of resources
 * [x] `create`         Create a resource by filename or stdin
 * [x] `replace`        Replace a resource by filename or stdin.
-* [ ] `patch`          Update field(s) of a resource using strategic merge patch.
+* [x] `patch`          Update field(s) of a resource using strategic merge patch.
 * [ ] `delete`         Delete resources by filenames, stdin, resources and names, or by resources and label selector.
 * [ ] `edit`           Edit a resource on the server
 * [ ] `apply`          Apply a configuration to a resource by filename or stdin
