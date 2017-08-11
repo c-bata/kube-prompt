@@ -70,6 +70,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = flagCordon
 	case "uncordon":
 		suggests = optionHelp
+	case "annotate":
+		suggests = flagAnnotate
 	case "config":
 		if len(commandArgs) == 2 {
 			switch commandArgs[1] {
@@ -432,6 +434,26 @@ var flagLabel = []prompt.Suggest{
 	{Text: "-l", Description: "Selector (label query) to filter on"},
 	{Text: "--selector", Description: "Selector (label query) to filter on"},
 	{Text: "-a", Description: "When printing, show all labels as the last column (default hide labels column)"},
+	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
+	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
+	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
+}
+
+var flagAnnotate = []prompt.Suggest{
+	{Text: "--all", Description: "select all resources in the namespace of the specified resource types"},
+	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to update the annotation"},
+	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to update the annotation"},
+	{Text: "--no-headers", Description: "When using the default output, don't print headers."},
+	{Text: "-o", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--output", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--output-version", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
+	{Text: "--overwrite", Description: "If true, allow annotations to be overwritten, otherwise reject annotation updates that overwrite existing annotations."},
+	{Text: "--record", Description: "Record current kubectl command in the resource annotation."},
+	{Text: "--resource-version", Description: "If non-empty, the annotation update will only succeed if this is the current resource-version for the object. Only valid when specifying a single resource."},
+	{Text: "-l", Description: "Selector (label query) to filter on"},
+	{Text: "--selector", Description: "Selector (label query) to filter on"},
+	{Text: "-a", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--show-all", Description: "When printing, show all resources (default hide terminated pods.)"},
 	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
 	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
 	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
