@@ -44,6 +44,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagScale, flagGlobal...)
 	case "attach":
 		suggests = append(flagAttach, flagGlobal...)
+	case "exec":
+		suggests = append(flagExec, flagGlobal...)
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":
@@ -292,6 +294,17 @@ var flagScale = []prompt.Suggest{
 var flagAttach = []prompt.Suggest{
 	{Text: "-c", Description: "Container name. If omitted, the first container in the pod will be chosen"},
 	{Text: "--container", Description: "Container name. If omitted, the first container in the pod will be chosen"},
+	{Text: "-i", Description: "Pass stdin to the container"},
+	{Text: "--stdin", Description: "Pass stdin to the container"},
+	{Text: "-t", Description: "Stdin is a TTY"},
+	{Text: "--tty", Description: "Stdin is a TTY"},
+}
+
+var flagExec = []prompt.Suggest{
+	{Text: "-c", Description: "Container name. If omitted, the first container in the pod will be chosen"},
+	{Text: "--container", Description: "Container name. If omitted, the first container in the pod will be chosen"},
+	{Text: "-p", Description: "Pod name"},
+	{Text: "--pod", Description: "Pod name"},
 	{Text: "-i", Description: "Pass stdin to the container"},
 	{Text: "--stdin", Description: "Pass stdin to the container"},
 	{Text: "-t", Description: "Stdin is a TTY"},
