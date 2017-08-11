@@ -344,12 +344,42 @@ func getSecretSuggestions() []prompt.Suggest {
 	return s
 }
 
+/* Replica Sets */
+
+var (
+	replicaSetList          atomic.Value
+	replicaSetLastFetchedAt time.Time
+)
+
+func fetchReplicaSetList() {
+	if time.Since(replicaSetLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().ReplicaSets(api.NamespaceDefault).List(v1.ListOptions{})
+	replicaSetList.Store(l)
+	return
+}
+
+func getReplicaSetSuggestions() []prompt.Suggest {
+	go fetchReplicaSetList()
+	l, ok := replicaSetList.Load().(*v1beta1.ReplicaSetList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
 /* Replication Controller */
 
 var (
 	replicationControllerList atomic.Value
 	replicationControllerLastFetchedAt time.Time
-
 )
 
 func fetchReplicationControllerList() {

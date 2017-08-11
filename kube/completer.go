@@ -137,6 +137,8 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 			return prompt.FilterContains(getNodeSuggestions(), third, true)
 		case "po", "pod", "pods":
 			return prompt.FilterContains(getPodSuggestions(), third, true)
+		case "replicasets", "rs":
+			return prompt.FilterContains(getReplicaSetSuggestions(), third, true)
 		case "replicationcontrollers", "rc":
 			return prompt.FilterContains(getReplicationControllerSuggestions(), third, true)
 		case "resourcequotas", "quota":
