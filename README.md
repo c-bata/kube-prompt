@@ -66,7 +66,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [ ] `horizontalpodautoscalers` aka `hpa`
 * [ ] `ingresses` aka `ing`
 * [ ] `jobs`
-* [ ] `limitranges` aka `limits`
+* [x] `limitranges` aka `limits`
 * [x] `namespaces` aka `ns`
 * [ ] `networkpolicies`
 * [x] `nodes` aka `no`

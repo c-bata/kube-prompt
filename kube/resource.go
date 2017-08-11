@@ -344,6 +344,37 @@ func getSecretSuggestions() []prompt.Suggest {
 	return s
 }
 
+/* LimitRange */
+
+var (
+	limitRangeList          atomic.Value
+	limitRangeLastFetchedAt time.Time
+)
+
+func fetchLimitRangeList() {
+	if time.Since(limitRangeLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().LimitRanges(api.NamespaceDefault).List(v1.ListOptions{})
+	limitRangeList.Store(l)
+	return
+}
+
+func getLimitRangeSuggestions() []prompt.Suggest {
+	go fetchLimitRangeList()
+	l, ok := limitRangeList.Load().(*v1.NamespaceList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
 /* NameSpaces */
 
 var (
