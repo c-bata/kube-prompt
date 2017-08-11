@@ -344,6 +344,38 @@ func getSecretSuggestions() []prompt.Suggest {
 	return s
 }
 
+/* Replication Controller */
+
+var (
+	replicationControllerList atomic.Value
+	replicationControllerLastFetchedAt time.Time
+
+)
+
+func fetchReplicationControllerList() {
+	if time.Since(replicationControllerLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().ReplicationControllers(api.NamespaceDefault).List(v1.ListOptions{})
+	replicationControllerList.Store(l)
+	return
+}
+
+func getReplicationControllerSuggestions() []prompt.Suggest {
+	go fetchReplicationControllerList()
+	l, ok := replicationControllerList.Load().(*v1.ReplicationControllerList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
 /* Resource quotas */
 
 var (

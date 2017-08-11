@@ -76,7 +76,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [ ] `podsecuritypolicies` aka `psp`
 * [ ] `podtemplates`
 * [ ] `replicasets` aka `rs`
-* [ ] `replicationcontrollers` aka `rc`
+* [x] `replicationcontrollers` aka `rc`
 * [x] `resourcequotas` aka `quota`
 * [x] `secrets`
 * [x] `serviceaccounts` aka `sa`
