@@ -344,6 +344,37 @@ func getSecretSuggestions() []prompt.Suggest {
 	return s
 }
 
+/* Persistent Volumes */
+
+var (
+	persistentVolumesList          atomic.Value
+	persistentVolumesLastFetchedAt time.Time
+)
+
+func fetchPersistentVolumeList() {
+	if time.Since(persistentVolumesLastFetchedAt) < thresholdFetchInterval {
+		return
+	}
+	l, _ := getClient().PersistentVolumes(api.NamespaceDefault).List(v1.ListOptions{})
+	persistentVolumesList.Store(l)
+	return
+}
+
+func getPersistentVolumeSuggestions() []prompt.Suggest {
+	go fetchPersistentVolumeList()
+	l, ok := persistentVolumesList.Load().(*v1.PersistentVolumeList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
 /* Pod Security Policies */
 
 var (

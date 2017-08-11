@@ -71,7 +71,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [ ] `networkpolicies`
 * [x] `nodes` aka `no`
 * [ ] `persistentvolumeclaims` aka `pvc`
-* [ ] `persistentvolumes` aka `pv`
+* [x] `persistentvolumes` aka `pv`
 * [x] `pods`
 * [x] `podsecuritypolicies` aka `psp`
 * [x] `podtemplates`
