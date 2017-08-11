@@ -54,6 +54,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagRun, flagGlobal...)
 	case "expose":
 		suggests = append(flagExpose, flagGlobal...)
+	case "auto-scale":
+		suggests = append(flagAutoScale, flagGlobal...)
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":
@@ -418,6 +420,28 @@ var flagClusterInfo = []prompt.Suggest{
 var flagExplain = []prompt.Suggest{
 	{Text: "--include-extended-apis", Description: "If true, include definitions of new APIs via calls to the API server. [default true]"},
 	{Text: "--recursive", Description: "Print the fields of fields (Currently only 1 level deep)"},
+}
+
+var flagAutoScale = []prompt.Suggest{
+	{Text: "--cpu-percent", Description: "The target average CPU utilization (represented as a percent of requested CPU) over all the pods. If it's not specified or negative, the server will apply a default value."},
+	{Text: "--dry-run", Description: "If true, only print the object that would be sent, without creating it."},
+	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to autoscale."},
+	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to autoscale."},
+	{Text: "--generator", Description: "The name of the API generator to use. Currently there is only 1 generator."},
+	{Text: "--max", Description: "The upper limit for the number of pods that can be set by the autoscaler. Required."},
+	{Text: "--min", Description: "The lower limit for the number of pods that can be set by the autoscaler. If it's not specified or negative, the server will apply a default value."},
+	{Text: "--name", Description: "The name for the newly created object. If not specified, the name of the input resource will be used."},
+	{Text: "--no-headers", Description: "When using the default output, don't print headers."},
+	{Text: "-o", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--output", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--output-version", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
+	{Text: "--record", Description: "Record current kubectl command in the resource annotation."},
+	{Text: "--save-config", Description: "If true, the configuration of current object will be saved in its annotation. This is useful when you want to perform kubectl apply on this object in the future."},
+	{Text: "-a", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--show-all", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
+	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
+	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
 }
 
 var flagConfigView = []prompt.Suggest{

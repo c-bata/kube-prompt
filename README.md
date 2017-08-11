@@ -43,7 +43,7 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `proxy`          Run a proxy to the Kubernetes API server
 * [x] `run`            Run a particular image on the cluster.
 * [x] `expose`         Take a replication controller, service, or pod and expose it as a new Kubernetes Service
-* [ ] `autoscale`      Auto-scale a Deployment, ReplicaSet, or ReplicationController
+* [x] `autoscale`      Auto-scale a Deployment, ReplicaSet, or ReplicationController
 * [ ] `rollout`        rollout manages a deployment
 * [ ] `label`          Update the labels on a resource
 * [ ] `annotate`       Update the annotations on a resource
