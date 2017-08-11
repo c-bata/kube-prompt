@@ -54,37 +54,6 @@ Hopefully support following commands and resource types enough to operate kubern
 * [x] `explain`        Documentation of resources.
 * [ ] `convert`        Convert config files between different API versions
 
-#### Resource Types:
-
-* [ ] `clusters`
-* [x] `componentstatuses` aka `cs`
-* [x] `configmaps` aka `cm`
-* [x] `daemonsets` aka `ds`
-* [x] `deployments` aka `deploy`
-* [x] `endpoints` aka `ep`
-* [x] `events` aka `ev`
-* [ ] `horizontalpodautoscalers` aka `hpa`
-* [x] `ingresses` aka `ing`
-* [ ] `jobs`
-* [x] `limitranges` aka `limits`
-* [x] `namespaces` aka `ns`
-* [ ] `networkpolicies`
-* [x] `nodes` aka `no`
-* [x] `persistentvolumeclaims` aka `pvc`
-* [x] `persistentvolumes` aka `pv`
-* [x] `pods`
-* [x] `podsecuritypolicies` aka `psp`
-* [x] `podtemplates`
-* [x] `replicasets` aka `rs`
-* [x] `replicationcontrollers` aka `rc`
-* [x] `resourcequotas` aka `quota`
-* [x] `secrets`
-* [x] `serviceaccounts` aka `sa`
-* [x] `services` aka `svc`
-* [ ] `statefulsets`
-* [ ] `storageclasses`
-* [ ] `thirdpartyresources`
-
 ## LICENSE
 
 This software is licensed under the MIT License (See [LICENSE](./LICENSE)).
