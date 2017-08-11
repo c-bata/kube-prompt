@@ -234,7 +234,7 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 			return prompt.FilterContains(getPodSuggestions(), args[len(args)-1], true)
 		}
 	case "proxy":
-	case "run":
+	case "run", "run-container":
 	case "expose":
 	case "autoscale":
 	case "rollout":

@@ -50,6 +50,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagPortForward, flagGlobal...)
 	case "proxy":
 		suggests = append(flagProxy, flagGlobal...)
+	case "run", "run-container":
+		suggests = append(flagRun, flagGlobal...)
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":
@@ -336,6 +338,44 @@ var flagProxy = []prompt.Suggest{
 	{Text: "--www", Description: "Also serve static files from the given directory under the specified prefix."},
 	{Text: "-P", Description: "Prefix to serve static files under, if static file directory is specified. (default '/static/')"},
 	{Text: "--www-prefix", Description: "Prefix to serve static files under, if static file directory is specified. (default '/static/')"},
+}
+
+var flagRun = []prompt.Suggest{
+	{Text: "--attach", Description: "If true, wait for the Pod to start running, and then attach to the Pod as if 'kubectl attach ...' were called.  Default false, unless '-i/--interactive' is set, in which case the default is true."},
+	{Text: "--command", Description: "If true and extra arguments are present, use them as the 'command' field in the container, rather than the 'args' field which is the default."},
+	{Text: "--dry-run", Description: "If true, only print the object that would be sent, without sending it."},
+	{Text: "--env", Description: "Environment variables to set in the container"},
+	{Text: "--expose", Description: "If true, a public, external service is created for the container(s) which are run"},
+	{Text: "--generator", Description: "The name of the API generator to use.  Default is 'deployment/v1beta1' if --restart=Always, otherwise the default is 'job/v1'.  This will happen only for cluster version at least 1.2, for olders we will fallback to 'run/v1' for --restart=Always, 'run-pod/v1' for others."},
+	{Text: "--hostport", Description: "The host port mapping for the container port. To demonstrate a single-machine container."},
+	{Text: "--image", Description: "The image for the container to run."},
+	{Text: "-l", Description: "Labels to apply to the pod(s)."},
+	{Text: "--labels", Description: "Labels to apply to the pod(s)."},
+	{Text: "--leave-stdin-open ", Description: "If the pod is started in interactive mode or with stdin, leave stdin open after the first attach completes. By default, stdin will be closed after the first attach completes."},
+	{Text: "--limits", Description: "The resource requirement limits for this container.  For example, 'cpu=200m,memory=512Mi'"},
+	{Text: "--no-headers", Description: "When using the default output, don't print headers."},
+	{Text: "-o", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--output", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
+	{Text: "--output-version", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
+	{Text: "--overrides", Description: "An inline JSON override for the generated object. If this is non-empty, it is used to override the generated object. Requires that the object supply a valid apiVersion field."},
+	{Text: "--port", Description: "The port that this container exposes.  If --expose is true, this is also the port used by the service that is created."},
+	{Text: "--record", Description: "Record current kubectl command in the resource annotation."},
+	{Text: "-r", Description: "Number of replicas to create for this container. Default is 1."},
+	{Text: "--replicas", Description: "Number of replicas to create for this container. Default is 1."},
+	{Text: "--requests", Description: "The resource requirement requests for this container.  For example, 'cpu=100m,memory=256Mi'"},
+	{Text: "--restart", Description: "The restart policy for this Pod.  Legal values [Always, OnFailure, Never].  If set to 'Always' a deployment is created for this pod, if set to OnFailure or Never, a job is created for this pod and --replicas must be 1.  Default 'Always'"},
+	{Text: "--rm", Description: "If true, delete resources created in this command for attached containers."},
+	{Text: "--save-config", Description: "If true, the configuration of current object will be saved in its annotation. This is useful when you want to perform kubectl apply on this object in the future."},
+	{Text: "--service-generator", Description: "The name of the generator to use for creating a service.  Only used if --expose is true"},
+	{Text: "--service-overrides", Description: "An inline JSON override for the generated service object. If this is non-empty, it is used to override the generated object. Requires that the object supply a valid apiVersion field.  Only used if --expose is true."},
+	{Text: "-a", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--show-all", Description: "When printing, show all resources (default hide terminated pods.)"},
+	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
+	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
+	{Text: "-i", Description: "Keep stdin open on the container(s) in the pod, even if nothing is attached."},
+	{Text: "--stdin", Description: "Keep stdin open on the container(s) in the pod, even if nothing is attached."},
+	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
+	{Text: "--tty", Description: "Allocated a TTY for each container in the pod.  Because -t is currently shorthand for --template, -t is not supported for --tty. This shorthand is deprecated and we expect to adopt -t for --tty soon."},
 }
 
 var flagClusterInfo = []prompt.Suggest{
