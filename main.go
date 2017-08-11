@@ -13,7 +13,6 @@ var (
 )
 
 func main() {
-	fmt.Printf("kube-prompt: interactive kubernetes client. (version: '%s', revision: '%s')\n", version, revision)
 	defer fmt.Println("Goodbye!")
 	p := prompt.New(
 		kube.Executor,

@@ -29,7 +29,7 @@ var resourceTypes = []prompt.Suggest{
 	{Text: "nodes"},
 	{Text: "persistentvolumeclaims"},
 	{Text: "persistentvolumes"},
-	{Text: "pods"},
+	{Text: "pod"},
 	{Text: "podsecuritypolicies"},
 	{Text: "podtemplates"},
 	{Text: "replicasets"},

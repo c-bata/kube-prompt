@@ -2,25 +2,19 @@
 
 An interactive kubernetes client featuring auto-complete written in Go.
 
-<a href="https://asciinema.org/a/DQNCOFpUeQayrYlhq2OD1jbqZ" target="_blank">
-  <img src="https://asciinema.org/a/DQNCOFpUeQayrYlhq2OD1jbqZ.png" alt="asciicast">
-</a>
+![demo](./_resources/kube-prompt.gif)
 
-Recently, I found kube-shell which same as kube-prompt but written in python and python-prompt-toolkit.
-If you don't need your effort to set up python environment, maybe kube-shell is great.
+kube-prompt's command is same with kubectl (because basically this is just wrapper).
+So it doesn't require the additional cost to learn the usage of kube-prompt.
 
-kube-prompt written in go and go-prompt, So Binaries are available from:
+Binaries are available from github releases:
 
 * macOS (darwin)
 * Linux
 
-Windows support is still not because [go-prompt](https://github.com/c-bata/go-prompt) is only supports VT100 console emulator now.
-
 ## Goal
 
 Hopefully support following commands and resource types enough to operate kubernetes as kubectl.
-
-#### Commands:
 
 * [x] `get`            Display one or many resources
 * [x] `describe`       Show details of a specific resource or group of resources
