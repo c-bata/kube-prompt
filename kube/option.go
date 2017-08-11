@@ -24,6 +24,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = optionDescribe
 	case "create":
 		suggests = optionCreate
+	case "replace":
+		suggests = optionReplace
 	case "cluster-info":
 		suggests = optionClusterInfo
 	case "explain":
@@ -124,6 +126,44 @@ var optionCreate = []prompt.Suggest{
 	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
 	{Text: "--validate", Description: "If true, use a schema to validate the input before sending it"},
 	{Text: "--windows-line-endings", Description: "Only relevant if --edit=true. Use Windows line-endings (default Unix line-endings)"},
+}
+
+var optionReplace = []prompt.Suggest{
+	{Text: "--cascade", Description: "Only relevant during a force replace. If true, cascade the deletion of the resources managed by this resource (e.g. Pods created by a ReplicationController)."},
+	{Text: "-f", Description: "Filename, directory, or URL to file to use to replace the resource."},
+	{Text: "--filename", Description: "Filename, directory, or URL to file to use to replace the resource."},
+	{Text: "--force", Description: "Delete and re-create the specified resource"},
+	{Text: "--grace-period", Description: "Only relevant during a force replace. Period of time in seconds given to the old resource to terminate gracefully. Ignored if negative."},
+	{Text: "-o", Description: "Output mode. Use '-o name' for shorter output (resource/name)."},
+	{Text: "--output", Description: "Output mode. Use '-o name' for shorter output (resource/name)."},
+	{Text: "--record", Description: "Record current kubectl command in the resource annotation."},
+	{Text: "--save-config", Description: "If true, the configuration of current object will be saved in its annotation. This is useful when you want to perform kubectl apply on this object in the future."},
+	{Text: "--schema-cache-dir", Description: "If non-empty, load/store cached API schemas in this directory, default is '$HOME/.kube/schema'"},
+	{Text: "--timeout", Description: "Only relevant during a force replace. The length of time to wait before giving up on a delete of the old resource, zero means determine a timeout from the size of the object"},
+	{Text: "--validate", Description: "If true, use a schema to validate the input before sending it"},
+	{Text: "--alsologtostderr", Description: "log to standard error as well as files"},
+	{Text: "--certificate-authority", Description: "Path to a cert. file for the certificate authority."},
+	{Text: "--client-certificate", Description: "Path to a client certificate file for TLS."},
+	{Text: "--client-key", Description: "Path to a client key file for TLS."},
+	{Text: "--cluster", Description: "The name of the kubeconfig cluster to use"},
+	{Text: "--context", Description: "The name of the kubeconfig context to use"},
+	{Text: "--insecure-skip-tls-verify", Description: "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure."},
+	{Text: "--kubeconfig", Description: "Path to the kubeconfig file to use for CLI requests."},
+	{Text: "--log-backtrace-at", Description: "when logging hits line file:N, emit a stack trace"},
+	{Text: "--log-dir", Description: "If non-empty, write log files in this directory"},
+	{Text: "--log-flush-frequency", Description: "Maximum number of seconds between log flushes"},
+	{Text: "--logtostderr", Description: "log to standard error instead of files"},
+	{Text: "--match-server-version", Description: "Require server version to match client version"},
+	{Text: "--namespace", Description: "If present, the namespace scope for this CLI request."},
+	{Text: "--password", Description: "Password for basic authentication to the API server."},
+	{Text: "-s", Description: "The address and port of the Kubernetes API server"},
+	{Text: "--server", Description: "The address and port of the Kubernetes API server"},
+	{Text: "--stderrthreshold", Description: "logs at or above this threshold go to stderr"},
+	{Text: "--token", Description: "Bearer token for authentication to the API server."},
+	{Text: "--user", Description: "The name of the kubeconfig user to use"},
+	{Text: "--username", Description: "Username for basic authentication to the API server."},
+	{Text: "--v", Description: "log level for V logs"},
+	{Text: "--vmodule", Description: "comma-separated list of pattern=N settings for file-filtered logging"},
 }
 
 var optionCordon = []prompt.Suggest{
