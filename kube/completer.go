@@ -64,7 +64,6 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 	case "get":
 		if len(args) == 2 {
 			subcommands := []prompt.Suggest{
-				//{Text: "clusters"},  // valid only for federation apiservers
 				{Text: "componentstatuses"},
 				{Text: "configmaps"},
 				{Text: "daemonsets"},
