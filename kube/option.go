@@ -48,6 +48,8 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = append(flagExec, flagGlobal...)
 	case "port-forward":
 		suggests = append(flagPortForward, flagGlobal...)
+	case "proxy":
+		suggests = append(flagProxy, flagGlobal...)
 	case "cluster-info":
 		suggests = flagClusterInfo
 	case "explain":
@@ -316,6 +318,24 @@ var flagExec = []prompt.Suggest{
 var flagPortForward = []prompt.Suggest{
 	{Text: "-p", Description: "Pod name"},
 	{Text: "--pod", Description: "Pod name"},
+}
+
+var flagProxy = []prompt.Suggest{
+	{Text: "--accept-hosts", Description: "Regular expression for hosts that the proxy should accept."},
+	{Text: "--accept-paths", Description: "Regular expression for paths that the proxy should accept. (default '^/.*')"},
+	{Text: "--address", Description: "The IP address on which to serve on. (default '127.0.0.1')"},
+	{Text: "--api-prefix", Description: "Prefix to serve the proxied API under. (default '/')"},
+	{Text: "--disable-filter", Description: "If true, disable request filtering in the proxy. This is dangerous, and can leave you vulnerable to XSRF attacks, when used with an accessible port."},
+	{Text: "-p", Description: "The port on which to run the proxy. Set to 0 to pick a random port. (default: 8001)"},
+	{Text: "--port", Description: "The port on which to run the proxy. Set to 0 to pick a random port. (default: 8001)"},
+	{Text: "--reject-methods", Description: "Regular expression for HTTP methods that the proxy should reject. (default 'POST,PUT,PATCH')"},
+	{Text: "--reject-paths", Description: "Regular expression for paths that the proxy should reject. (default '^/api/.*/exec,^/api/.*/run,^/api/.*/attach')"},
+	{Text: "-u", Description: "Unix socket on which to run the proxy."},
+	{Text: "--unix-socket", Description: "Unix socket on which to run the proxy."},
+	{Text: "-w", Description: "Also serve static files from the given directory under the specified prefix."},
+	{Text: "--www", Description: "Also serve static files from the given directory under the specified prefix."},
+	{Text: "-P", Description: "Prefix to serve static files under, if static file directory is specified. (default '/static/')"},
+	{Text: "--www-prefix", Description: "Prefix to serve static files under, if static file directory is specified. (default '/static/')"},
 }
 
 var flagClusterInfo = []prompt.Suggest{
