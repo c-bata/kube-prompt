@@ -1,20 +1,49 @@
 # kube-prompt
 
-An interactive kubernetes client featuring auto-complete written in Go.
+An interactive kubernetes client featuring auto-complete using [go-prompt](https://github.com/c-bata/go-prompt).
 
 ![demo](./_resources/kube-prompt.gif)
 
 kube-prompt's command is same with kubectl (because basically this is just wrapper).
 So it doesn't require the additional cost to learn the usage of kube-prompt.
 
-Binaries are available from github releases:
+## Installation
 
-* macOS (darwin)
-* Linux
+#### Binary installation
+
+Binaries are available from [github release](https://github.com/c-bata/kube-prompt/releases).
+
+```
+# macOS (darwin)
+curl -L https://github.com/c-bata/kube-prompt/releases/download/v1.0.0/kube-prompt_v0.1.0_darwin_amd64.zip
+unzip kube-prompt_v1.0.0_darwin_amd64.zip
+
+# Linux
+curl -L https://github.com/c-bata/kube-prompt/releases/download/v1.0.0/kube-prompt_v0.1.0_linux_amd64.zip
+unzip kube-prompt_v1.0.0_linux_amd64.zip
+
+# After that please put executable to your PATH:
+chmod +x kube-prompt
+sudo mv ./kube-prompt /usr/local/bin/kube-prompt
+```
+
+#### Build from source
+
+```console
+$ go get -u github.com/golang/dep/cmd/dep
+$ dep ensure # download dependency package
+$ go build .
+```
+
+To create a multi-platform binary, use the cross command via make:
+
+```console
+$ make cross
+```
 
 ## Goal
 
-Hopefully support following commands and resource types enough to operate kubernetes as kubectl.
+Hopefully support following commands enough to operate kubernetes.
 
 * [x] `get`            Display one or many resources
 * [x] `describe`       Show details of a specific resource or group of resources
