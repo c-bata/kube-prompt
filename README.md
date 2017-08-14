@@ -2,24 +2,21 @@
 
 An interactive kubernetes client featuring auto-complete using [go-prompt](https://github.com/c-bata/go-prompt).
 
-![demo](./_resources/kube-prompt.gif)
-
-kube-prompt's command is same with kubectl (because basically this is just wrapper).
-So it doesn't require the additional cost to learn the usage of kube-prompt.
+![demo](https://github.com/c-bata/assets/raw/master/kube-prompt/kube-prompt.gif)
 
 ## Installation
 
-#### Binary installation
+#### Binary installation (Recommended)
 
 Binaries are available from [github release](https://github.com/c-bata/kube-prompt/releases).
 
 ```
 # macOS (darwin)
-curl -L https://github.com/c-bata/kube-prompt/releases/download/v1.0.0/kube-prompt_v0.1.0_darwin_amd64.zip
+curl -L https://github.com/c-bata/kube-prompt/releases/download/v1.0.0/kube-prompt_v1.0.0_darwin_amd64.zip
 unzip kube-prompt_v1.0.0_darwin_amd64.zip
 
 # Linux
-curl -L https://github.com/c-bata/kube-prompt/releases/download/v1.0.0/kube-prompt_v0.1.0_linux_amd64.zip
+curl -L https://github.com/c-bata/kube-prompt/releases/download/v1.0.0/kube-prompt_v1.0.0_linux_amd64.zip
 unzip kube-prompt_v1.0.0_linux_amd64.zip
 
 # After that please put executable to your PATH:
@@ -39,6 +36,22 @@ To create a multi-platform binary, use the cross command via make:
 
 ```console
 $ make cross
+```
+
+## Usage
+
+kube-prompt accepts the same commands as the kubectl, except you don't need to provide the `kubectl` prefix.
+So it doesn't require the additional cost to use this cli.
+
+![usage](https://github.com/c-bata/assets/raw/master/kube-prompt/usage.png)
+
+And you can integrate other commands via pipe (`|`).
+
+```
+>>> get pod | grep web
+web-1144924021-2spbr        1/1     Running     4       25d
+web-1144924021-5r1fg        1/1     Running     4       25d
+web-1144924021-pqmfq        1/1     Running     4       25d
 ```
 
 ## Goal
@@ -76,6 +89,13 @@ Hopefully support following commands enough to operate kubernetes.
 * [x] `version`        Print the client and server version information.
 * [x] `explain`        Documentation of resources.
 * [x] `convert`        Convert config files between different API versions
+
+## Author
+
+Masashi Shibata
+
+* Twitter: [@c\_bata\_](https://twitter.com/c_bata_/)
+* Github: [@c-bata](https://github.com/c-bata/)
 
 ## LICENSE
 
