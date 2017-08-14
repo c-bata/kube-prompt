@@ -13,6 +13,7 @@ var (
 )
 
 func main() {
+	fmt.Printf("kube-prompt %s (rev-%s)\n", version, revision)
 	defer fmt.Println("Goodbye!")
 	p := prompt.New(
 		kube.Executor,

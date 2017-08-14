@@ -26,10 +26,10 @@
   version = "v3.5.1"
 
 [[projects]]
-  branch = "master"
   name = "github.com/c-bata/go-prompt"
   packages = ["."]
-  revision = "c0d9fd4f527efbaa5602586fdb7fbb449c974c2b"
+  revision = "b5d7d9eae33759a6646cb41768966b593eef18f3"
+  version = "v0.1.0"
 
 [[projects]]
   branch = "master"
@@ -191,13 +191,13 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "e42485b6e20ae7d2304ec72e535b103ed350cc02"
+  revision = "c84c1ab9fd18cdd4c23dd021c10f5f46dea95e46"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
   packages = ["internal/gen","internal/triegen","internal/ucd","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable","width"]
-  revision = "b19bf474d317b857955b12035d2c5acb57ce8b01"
+  revision = "e56139fd9c5bc7244c76116c68e500765bb6db6b"
 
 [[projects]]
   name = "google.golang.org/appengine"
@@ -215,7 +215,7 @@
   branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "25c4ec802a7d637f88d584ab26798e94ad14c13b"
+  revision = "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
 
 [[projects]]
   name = "k8s.io/client-go"

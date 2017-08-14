@@ -6,15 +6,23 @@ import (
 	"github.com/c-bata/go-prompt"
 )
 
-func Completer(s string) []prompt.Suggest {
-	if s == "" {
+func Completer(d prompt.Document) []prompt.Suggest {
+	if d.TextBeforeCursor() == "" {
 		return []prompt.Suggest{}
 	}
-	args := strings.Split(s, " ")
-	l := len(args)
+	args := strings.Split(d.TextBeforeCursor(), " ")
+	w := d.GetWordBeforeCursor()
 
-	if strings.HasPrefix(args[l-1], "-") {
-		return optionCompleter(args, strings.HasPrefix(args[l-1], "--"))
+	// If PIPE is in text before the cursor, returns empty suggestions.
+	for i := range args {
+		if args[i] == "|" {
+			return []prompt.Suggest{}
+		}
+	}
+
+	// If word before the cursor starts with "-", returns CLI flag options.
+	if strings.HasPrefix(w, "-") {
+		return optionCompleter(args, strings.HasPrefix(w, "--"))
 	}
 
 	return argumentsCompleter(excludeOptions(args))
