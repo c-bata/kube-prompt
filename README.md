@@ -1,5 +1,8 @@
 # kube-prompt
 
+![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
+![Go Report Card](https://goreportcard.com/badge/github.com/c-bata/kube-prompt)
+
 An interactive kubernetes client featuring auto-complete using [go-prompt](https://github.com/c-bata/go-prompt).
 
 ![demo](https://github.com/c-bata/assets/raw/master/kube-prompt/kube-prompt.gif)
