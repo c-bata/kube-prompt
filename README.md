@@ -27,6 +27,13 @@ chmod +x kube-prompt
 sudo mv ./kube-prompt /usr/local/bin/kube-prompt
 ```
 
+#### Homebrew (macOS)
+
+```console
+$ brew tap c-bata/kube-prompt
+$ brew install kube-prompt
+```
+
 #### Build from source
 
 ```console
