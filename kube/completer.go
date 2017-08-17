@@ -194,6 +194,20 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(resourceTypes, args[1], true)
 		}
+		// TODO: Add suggestions for Deployments
+		if len(args) == 3 {
+			switch args[1] {
+			case "deployments":
+				{
+					return prompt.FilterContains(getDeploymentSuggestions(), args[2], true)
+				}
+			case "replicationcontrollers":
+				{
+					return prompt.FilterContains(getReplicationControllerSuggestions(), args[2], true)
+				}
+			}
+		}
+
 	case "namespace":
 		if len(args) == 2 {
 			return prompt.FilterContains(getNameSpaceSuggestions(), args[1], true)
