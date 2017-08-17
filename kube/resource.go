@@ -126,6 +126,39 @@ func getConfigMapSuggestions() []prompt.Suggest {
 	return s
 }
 
+/* Contexts */
+
+var (
+	contextList        atomic.Value
+	contextLastFetchAt time.Time
+)
+
+func fetchContextList() {
+	if time.Since(contextLastFetchAt) < thresholdFetchInterval {
+		return
+	}
+	// TODO: Get a list of config get-context
+	list := ExecuteAndReturnList("config get-contexts --no-headers -o name")
+
+	contextList.Store(list)
+}
+
+func getContextSuggestions() []prompt.Suggest {
+	go fetchContextList()
+	l, ok := contextList.Load().([]string)
+	if !ok || len(l) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l))
+	for i := range l {
+		s[i] = prompt.Suggest{
+			Text:        l[i],
+			Description: string(l[i]),
+		}
+	}
+	return s
+}
+
 /* Pod */
 
 var (

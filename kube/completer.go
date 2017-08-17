@@ -314,8 +314,17 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 			{Text: "use-context", Description: "Sets the current-context in a kubeconfig file"},
 			{Text: "view", Description: "Display merged kubeconfig settings or a specified kubeconfig file"},
 		}
+		second := args[1]
+
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(subCommands, args[1], true)
+		}
+		third := args[2]
+		if len(args) == 3 {
+			switch second {
+			case "use-context":
+				return prompt.FilterContains(getContextSuggestions(), third, true)
+			}
 		}
 	case "cluster-info":
 		subCommands := []prompt.Suggest{
