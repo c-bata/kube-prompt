@@ -33,9 +33,9 @@ build: main.go  ## Build a binary.
 cross: main.go  ## Build binaries for cross platform.
 	mkdir -p pkg
 	@for os in "darwin" "linux"; do \
-		for arc in "amd64" "386"; do \
-			GOOS=$${os} GOARC=$${arc} make build; \
-			zip pkg/kube-prompt_$(VERSION)_$${os}_$${arc}.zip kube-prompt; \
+		for arch in "amd64" "386"; do \
+			GOOS=$${os} GOARCH=$${arch} make build; \
+			zip pkg/kube-prompt_$(VERSION)_$${os}_$${arch}.zip kube-prompt; \
 		done; \
 	done
 
