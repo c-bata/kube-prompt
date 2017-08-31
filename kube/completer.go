@@ -70,6 +70,7 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 	first := args[0]
 	switch first {
 	case "get":
+		second := args[1]
 		if len(args) == 2 {
 			subcommands := []prompt.Suggest{
 				{Text: "componentstatuses"},
@@ -120,7 +121,53 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 				{Text: "sa"},
 				{Text: "svc"},
 			}
-			return prompt.FilterHasPrefix(subcommands, args[1], true)
+			return prompt.FilterHasPrefix(subcommands, second, true)
+		}
+
+		third := args[2]
+		if len(args) == 3 {
+			switch second {
+			case "componentstatuses", "cs":
+				return prompt.FilterContains(getComponentStatusCompletions(), third, true)
+			case "configmaps", "cm":
+				return prompt.FilterContains(getConfigMapSuggestions(), third, true)
+			case "daemonsets", "ds":
+				return prompt.FilterContains(getDaemonSetSuggestions(), third, true)
+			case "deploy", "deployments":
+				return prompt.FilterContains(getDeploymentSuggestions(), third, true)
+			case "endpoints", "ep":
+				return prompt.FilterContains(getEndpointsSuggestions(), third, true)
+			case "ingresses", "ing":
+				return prompt.FilterContains(getIngressSuggestions(), third, true)
+			case "limitranges", "limits":
+				return prompt.FilterContains(getLimitRangeSuggestions(), third, true)
+			case "namespaces", "ns":
+				return prompt.FilterContains(getNameSpaceSuggestions(), third, true)
+			case "no", "nodes":
+				return prompt.FilterContains(getNodeSuggestions(), third, true)
+			case "po", "pod", "pods":
+				return prompt.FilterContains(getPodSuggestions(), third, true)
+			case "persistentvolumeclaims", "pvc":
+				return prompt.FilterContains(getPersistentVolumeClaimSuggestions(), third, true)
+			case "persistentvolumes", "pv":
+				return prompt.FilterContains(getPersistentVolumeSuggestions(), third, true)
+			case "podsecuritypolicies", "psp":
+				return prompt.FilterContains(getPodSecurityPolicySuggestions(), third, true)
+			case "podtemplates":
+				return prompt.FilterContains(getPodTemplateSuggestions(), third, true)
+			case "replicasets", "rs":
+				return prompt.FilterContains(getReplicaSetSuggestions(), third, true)
+			case "replicationcontrollers", "rc":
+				return prompt.FilterContains(getReplicationControllerSuggestions(), third, true)
+			case "resourcequotas", "quota":
+				return prompt.FilterContains(getResourceQuotasSuggestions(), third, true)
+			case "secrets":
+				return prompt.FilterContains(getSecretSuggestions(), third, true)
+			case "sa", "serviceaccounts":
+				return prompt.FilterContains(getServiceAccountSuggestions(), third, true)
+			case "svc", "services":
+				return prompt.FilterContains(getServiceSuggestions(), third, true)
+			}
 		}
 	case "describe":
 		second := args[1]
