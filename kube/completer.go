@@ -60,6 +60,9 @@ var commands = []prompt.Suggest{
 	{Text: "version", Description: "Print the client and server version information."},
 	{Text: "explain", Description: "Documentation of resources."},
 	{Text: "convert", Description: "Convert config files between different API versions"},
+
+	// Custom command.
+	{Text: "exit", Description: "Exit this program"},
 }
 
 func argumentsCompleter(args []string) []prompt.Suggest {
