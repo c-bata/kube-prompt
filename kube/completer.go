@@ -330,11 +330,11 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 			return prompt.FilterContains(getPodSuggestions(), args[1], true)
 		}
 	case "port-forward":
-		if len(args) < 2 {
-			return []prompt.Suggest{}
+		if len(args) == 2 {
+			return prompt.FilterContains(getPodSuggestions(), args[1], true)
 		}
-		if args[len(args)-2] == "-p" || args[len(args)-2] == "--port" {
-			return prompt.FilterContains(getPodSuggestions(), args[len(args)-1], true)
+		if len(args) == 3 {
+			return prompt.FilterHasPrefix(getPortsFromPodName(args[1]), args[2], true)
 		}
 	case "rollout":
 		subCommands := []prompt.Suggest{

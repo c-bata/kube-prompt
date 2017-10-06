@@ -1,6 +1,8 @@
 package kube
 
 import (
+	"fmt"
+	"sort"
 	"sync/atomic"
 	"time"
 
@@ -156,6 +158,51 @@ func getPodSuggestions() []prompt.Suggest {
 		}
 	}
 	return s
+}
+
+func getPod(podName string) (v1.Pod, bool) {
+	l, ok := podList.Load().(*v1.PodList)
+	if !ok || len(l.Items) == 0 {
+		return v1.Pod{}, false
+	}
+	for i := range l.Items {
+		if podName == l.Items[i].Name {
+			return l.Items[i], true
+		}
+	}
+	return v1.Pod{}, false
+}
+
+func getPortsFromPodName(podName string) []prompt.Suggest {
+	pod, found := getPod(podName)
+	if !found {
+		return []prompt.Suggest{}
+	}
+
+	// Extract unique ports
+	portSet := make(map[int32]struct{})
+	for i := range pod.Spec.Containers {
+		ports := pod.Spec.Containers[i].Ports
+		for j := range ports {
+			portSet[ports[j].ContainerPort] = struct{}{}
+		}
+	}
+
+	// Sort
+	var ports []int
+	for k := range portSet {
+		ports = append(ports, int(k))
+	}
+	sort.Ints(ports)
+
+	// Prepare suggestions
+	suggests := make([]prompt.Suggest, 0, len(ports))
+	for i := range ports {
+		suggests = append(suggests, prompt.Suggest{
+			Text: fmt.Sprintf("%d:%d", ports[i], ports[i]),
+		})
+	}
+	return suggests
 }
 
 /* Daemon Sets */
