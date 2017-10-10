@@ -2,7 +2,9 @@ package kube
 
 import (
 	"fmt"
+	"log"
 	"sort"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -139,10 +141,11 @@ func fetchContextList() {
 	if time.Since(contextLastFetchAt) < thresholdFetchInterval {
 		return
 	}
-	// TODO: Get a list of config get-context
-	list := ExecuteAndReturnList("config get-contexts --no-headers -o name")
-
-	contextList.Store(list)
+	r, err := ExecuteAndGetResult("config get-contexts --no-headers -o name")
+	if err != nil {
+		log.Printf("[WARN] Got Error when fetchContextList: %s", err.Error())
+	}
+	contextList.Store(strings.Split(r, "\n"))
 }
 
 func getContextSuggestions() []prompt.Suggest {
@@ -154,8 +157,7 @@ func getContextSuggestions() []prompt.Suggest {
 	s := make([]prompt.Suggest, len(l))
 	for i := range l {
 		s[i] = prompt.Suggest{
-			Text:        l[i],
-			Description: string(l[i]),
+			Text: l[i],
 		}
 	}
 	return s

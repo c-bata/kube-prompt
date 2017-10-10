@@ -291,12 +291,10 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(resourceTypes, args[1], true)
 		}
-		second := args[1]
 
-		// TODO: Add suggestions for Deployments
-		third := args[2]
 		if len(args) == 3 {
-			switch second {
+			third := args[2]
+			switch args[1] {
 			case "componentstatuses", "cs":
 				return prompt.FilterContains(getComponentStatusCompletions(), third, true)
 			case "configmaps", "cm":
@@ -411,14 +409,12 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 			{Text: "use-context", Description: "Sets the current-context in a kubeconfig file"},
 			{Text: "view", Description: "Display merged kubeconfig settings or a specified kubeconfig file"},
 		}
-		second := args[1]
-
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(subCommands, args[1], true)
 		}
-		third := args[2]
 		if len(args) == 3 {
-			switch second {
+			third := args[2]
+			switch args[1] {
 			case "use-context":
 				return prompt.FilterContains(getContextSuggestions(), third, true)
 			}

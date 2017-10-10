@@ -1,11 +1,12 @@
 package kube
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
-	"bytes"
 )
 
 func Executor(s string) {
@@ -28,10 +29,10 @@ func Executor(s string) {
 	return
 }
 
-func ExecuteAndReturnList(s string) (list []string) {
+func ExecuteAndGetResult(s string) (string, error) {
 	s = strings.TrimSpace(s)
 	if s == "" {
-		return
+		return "", errors.New("you need to pass the something arguments")
 	}
 
 	out := &bytes.Buffer{}
@@ -39,10 +40,8 @@ func ExecuteAndReturnList(s string) (list []string) {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = out
 	if err := cmd.Run(); err != nil {
-		fmt.Printf("Got error: %s\n", err.Error())
+		return "", err
 	}
-
-	ss := string(out.Bytes())
-	return strings.Split(ss, "\n")
-
+	r := string(out.Bytes())
+	return r, nil
 }
