@@ -26,10 +26,10 @@
   version = "v3.5.1"
 
 [[projects]]
-  branch = "master"
   name = "github.com/c-bata/go-prompt"
   packages = ["."]
-  revision = "26a62ce99f88d50983edde6994dc9e9d28689bad"
+  revision = "c292a2f4b4fe8563883871456e19028ff9df0f26"
+  version = "v0.1.1"
 
 [[projects]]
   branch = "master"
