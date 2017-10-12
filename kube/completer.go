@@ -25,6 +25,11 @@ func Completer(d prompt.Document) []prompt.Suggest {
 		return optionCompleter(args, strings.HasPrefix(w, "--"))
 	}
 
+	// Return suggestions for option
+	if suggests, found := completeOptionArguments(d); found {
+		return suggests
+	}
+
 	return argumentsCompleter(excludeOptions(args))
 }
 
