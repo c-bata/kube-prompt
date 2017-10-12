@@ -5,8 +5,9 @@ import (
 	"log"
 	"strings"
 
-	"github.com/c-bata/go-prompt"
 	"path/filepath"
+
+	"github.com/c-bata/go-prompt"
 )
 
 func init() {
@@ -55,11 +56,14 @@ func fileCompleter(d prompt.Document) []prompt.Suggest {
 		log.Print("[ERROR] catch error " + err.Error())
 		return []prompt.Suggest{}
 	}
-	suggests := make([]prompt.Suggest, len(files))
-	for i := range files {
-		suggests[i] = prompt.Suggest{
-			Text: filepath.Join(dir, files[i].Name()),
+	suggests := make([]prompt.Suggest, 0, len(files))
+	for _, f := range files {
+		if !f.IsDir() &&
+			!strings.HasSuffix(f.Name(), ".yml") &&
+			!strings.HasSuffix(f.Name(), ".yaml") {
+			continue
 		}
+		suggests = append(suggests, prompt.Suggest{Text: filepath.Join(dir, f.Name())})
 	}
 	return prompt.FilterHasPrefix(suggests, path, false)
 }
