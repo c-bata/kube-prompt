@@ -15,12 +15,12 @@ Binaries are available from [github release](https://github.com/c-bata/kube-prom
 
 ```
 # macOS (darwin)
-wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.2/kube-prompt_v1.0.2_darwin_amd64.zip
-unzip kube-prompt_v1.0.2_darwin_amd64.zip
+wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.3/kube-prompt_v1.0.3_darwin_amd64.zip
+unzip kube-prompt_v1.0.3_darwin_amd64.zip
 
 # Linux
-wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.2/kube-prompt_v1.0.2_linux_amd64.zip
-unzip kube-prompt_v1.0.2_linux_amd64.zip
+wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.3/kube-prompt_v1.0.3_linux_amd64.zip
+unzip kube-prompt_v1.0.3_linux_amd64.zip
 
 # After that please put executable to your PATH:
 chmod +x kube-prompt
