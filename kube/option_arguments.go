@@ -3,9 +3,8 @@ package kube
 import (
 	"io/ioutil"
 	"log"
-	"strings"
-
 	"path/filepath"
+	"strings"
 
 	"github.com/c-bata/go-prompt"
 )
