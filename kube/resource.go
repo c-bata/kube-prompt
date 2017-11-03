@@ -5,6 +5,7 @@ import (
 	"log"
 	"sort"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -68,20 +69,62 @@ var resourceTypes = []prompt.Suggest{
 	{Text: "svc"},
 }
 
+func init() {
+	lastFetchedAt = new(sync.Map)
+	podList = new(sync.Map)
+	endpointList = new(sync.Map)
+	deploymentList = new(sync.Map)
+	daemonSetList = new(sync.Map)
+	eventList = new(sync.Map)
+	secretList = new(sync.Map)
+	ingressList = new(sync.Map)
+	limitRangeList = new(sync.Map)
+	persistentVolumeClaimsList = new(sync.Map)
+	podTemplateList = new(sync.Map)
+	replicaSetList = new(sync.Map)
+	replicationControllerList = new(sync.Map)
+	resourceQuotaList = new(sync.Map)
+	serviceAccountList = new(sync.Map)
+	serviceList = new(sync.Map)
+}
+
+/* LastFetchedAt */
+
+var (
+	lastFetchedAt *sync.Map
+)
+
+func shouldFetch(key string) bool {
+	v, ok := lastFetchedAt.Load(key)
+	if !ok {
+		log.Printf("[WARN] Not found %s in lastFetchedAt", key)
+		return true
+	}
+	t, ok := v.(time.Time)
+	if !ok {
+		return true
+	}
+	return time.Since(t) > thresholdFetchInterval
+}
+
+func updateLastFetchedAt(key string) {
+	lastFetchedAt.Store(key, time.Now())
+}
+
 /* Component Status */
 
 var (
-	componentStatusList          atomic.Value
-	componentStatusLastFetchedAt time.Time
+	componentStatusList atomic.Value
 )
 
 func fetchComponentStatusList() {
-	if time.Since(componentStatusLastFetchedAt) < thresholdFetchInterval {
+	key := "component_status"
+	if !shouldFetch(key) {
 		return
 	}
 	l, _ := getClient().ComponentStatuses().List(v1.ListOptions{})
 	componentStatusList.Store(l)
-	return
+	updateLastFetchedAt(key)
 }
 
 func getComponentStatusCompletions() []prompt.Suggest {
@@ -102,21 +145,21 @@ func getComponentStatusCompletions() []prompt.Suggest {
 /* Config Maps */
 
 var (
-	configMapsList          atomic.Value
-	configMapsLastFetchedAt time.Time
+	configMapsList atomic.Value
 )
 
-func fetchConfigMapList() {
-	if time.Since(configMapsLastFetchedAt) < thresholdFetchInterval {
+func fetchConfigMapList(namespace string) {
+	key := "config_map_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().ConfigMaps(api.NamespaceAll).List(v1.ListOptions{})
+	updateLastFetchedAt(key)
+	l, _ := getClient().ConfigMaps(namespace).List(v1.ListOptions{})
 	configMapsList.Store(l)
-	return
 }
 
 func getConfigMapSuggestions() []prompt.Suggest {
-	go fetchConfigMapList()
+	go fetchConfigMapList(api.NamespaceAll)
 	l, ok := configMapsList.Load().(*v1.ConfigMapList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
@@ -133,14 +176,15 @@ func getConfigMapSuggestions() []prompt.Suggest {
 /* Contexts */
 
 var (
-	contextList        atomic.Value
-	contextLastFetchAt time.Time
+	contextList atomic.Value
 )
 
 func fetchContextList() {
-	if time.Since(contextLastFetchAt) < thresholdFetchInterval {
+	key := "context"
+	if !shouldFetch(key) {
 		return
 	}
+	updateLastFetchedAt(key)
 	r, err := ExecuteAndGetResult("config get-contexts --no-headers -o name")
 	if err != nil {
 		log.Printf("[WARN] Got Error when fetchContextList: %s", err.Error())
@@ -166,22 +210,28 @@ func getContextSuggestions() []prompt.Suggest {
 /* Pod */
 
 var (
-	podList          atomic.Value
-	podLastFetchedAt time.Time
+	podList *sync.Map
 )
 
-func fetchPods() {
-	if time.Since(podLastFetchedAt) < thresholdFetchInterval {
+func fetchPods(namespace string) {
+	key := "pod_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().Pods(api.NamespaceAll).List(v1.ListOptions{})
-	podList.Store(l)
-	return
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().Pods(namespace).List(v1.ListOptions{})
+	podList.Store(namespace, l)
 }
 
 func getPodSuggestions() []prompt.Suggest {
-	go fetchPods()
-	l, ok := podList.Load().(*v1.PodList)
+	namespace := api.NamespaceAll
+	go fetchPods(namespace)
+	x, ok := podList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.PodList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -196,7 +246,12 @@ func getPodSuggestions() []prompt.Suggest {
 }
 
 func getPod(podName string) (v1.Pod, bool) {
-	l, ok := podList.Load().(*v1.PodList)
+	namespace := api.NamespaceAll
+	x, ok := podList.Load(namespace)
+	if !ok {
+		return v1.Pod{}, false
+	}
+	l, ok := x.(*v1.PodList)
 	if !ok || len(l.Items) == 0 {
 		return v1.Pod{}, false
 	}
@@ -243,22 +298,29 @@ func getPortsFromPodName(podName string) []prompt.Suggest {
 /* Daemon Sets */
 
 var (
-	daemonSetList          atomic.Value
-	daemonSetLastFetchedAt time.Time
+	daemonSetList *sync.Map
 )
 
-func fetchDaemonSetList() {
-	if time.Since(daemonSetLastFetchedAt) < thresholdFetchInterval {
+func fetchDaemonSetList(namespace string) {
+	key := "daemon_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().DaemonSets(api.NamespaceAll).List(v1.ListOptions{})
-	daemonSetList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().DaemonSets(namespace).List(v1.ListOptions{})
+	daemonSetList.Store(namespace, l)
 	return
 }
 
 func getDaemonSetSuggestions() []prompt.Suggest {
-	go fetchDaemonSetList()
-	l, ok := daemonSetList.Load().(*v1beta1.DaemonSetList)
+	namespace := api.NamespaceAll
+	go fetchDaemonSetList(namespace)
+	x, ok := daemonSetList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1beta1.DaemonSetList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -274,22 +336,29 @@ func getDaemonSetSuggestions() []prompt.Suggest {
 /* Deployment */
 
 var (
-	deploymentList          atomic.Value
-	deploymentLastFetchedAt time.Time
+	deploymentList *sync.Map
 )
 
-func fetchDeployments() {
-	if time.Since(deploymentLastFetchedAt) < thresholdFetchInterval {
+func fetchDeployments(namespace string) {
+	key := "deployment_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().Deployments(api.NamespaceAll).List(v1.ListOptions{})
-	deploymentList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().Deployments(namespace).List(v1.ListOptions{})
+	deploymentList.Store(namespace, l)
 	return
 }
 
 func getDeploymentSuggestions() []prompt.Suggest {
-	go fetchDeployments()
-	l, ok := deploymentList.Load().(*v1beta1.DeploymentList)
+	namespace := api.NamespaceAll
+	go fetchDeployments(namespace)
+	x, ok := deploymentList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1beta1.DeploymentList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -305,22 +374,29 @@ func getDeploymentSuggestions() []prompt.Suggest {
 /* Endpoint */
 
 var (
-	endpointList          atomic.Value
-	endpointLastFetchedAt time.Time
+	endpointList *sync.Map
 )
 
-func fetchEndpoints() {
-	if time.Since(endpointLastFetchedAt) < thresholdFetchInterval {
+func fetchEndpoints(namespace string) {
+	key := "endpoint_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().Endpoints(api.NamespaceAll).List(v1.ListOptions{})
-	endpointList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().Endpoints(namespace).List(v1.ListOptions{})
+	endpointList.Store(key, l)
 	return
 }
 
 func getEndpointsSuggestions() []prompt.Suggest {
-	go fetchEndpoints()
-	l, ok := endpointList.Load().(*v1.EndpointsList)
+	namespace := api.NamespaceAll
+	go fetchEndpoints(namespace)
+	x, ok := endpointList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.EndpointsList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -336,22 +412,29 @@ func getEndpointsSuggestions() []prompt.Suggest {
 /* Events */
 
 var (
-	eventList          atomic.Value
-	eventLastFetchedAt time.Time
+	eventList *sync.Map
 )
 
-func fetchEvents() {
-	if time.Since(eventLastFetchedAt) < thresholdFetchInterval {
+func fetchEvents(namespace string) {
+	key := "event_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().Events(api.NamespaceAll).List(v1.ListOptions{})
-	eventList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().Events(namespace).List(v1.ListOptions{})
+	eventList.Store(namespace, l)
 	return
 }
 
 func getEventsSuggestions() []prompt.Suggest {
-	go fetchEvents()
-	l, ok := eventList.Load().(*v1.EventList)
+	namespace := api.NamespaceAll
+	go fetchEvents(namespace)
+	x, ok := eventList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.EventList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -367,14 +450,16 @@ func getEventsSuggestions() []prompt.Suggest {
 /* Node */
 
 var (
-	nodeList          atomic.Value
-	nodeLastFetchedAt time.Time
+	nodeList atomic.Value
 )
 
 func fetchNodeList() {
-	if time.Since(nodeLastFetchedAt) < thresholdFetchInterval {
+	key := "node"
+	if !shouldFetch(key) {
 		return
 	}
+	updateLastFetchedAt(key)
+
 	l, _ := getClient().Nodes().List(v1.ListOptions{})
 	nodeList.Store(l)
 	return
@@ -398,22 +483,29 @@ func getNodeSuggestions() []prompt.Suggest {
 /* Secret */
 
 var (
-	secretList          atomic.Value
-	secretLastFetchedAt time.Time
+	secretList *sync.Map
 )
 
-func fetchSecretList() {
-	if time.Since(secretLastFetchedAt) < thresholdFetchInterval {
+func fetchSecretList(namespace string) {
+	key := "secret_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().Secrets(api.NamespaceAll).List(v1.ListOptions{})
-	secretList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().Secrets(namespace).List(v1.ListOptions{})
+	secretList.Store(namespace, l)
 	return
 }
 
 func getSecretSuggestions() []prompt.Suggest {
-	go fetchSecretList()
-	l, ok := secretList.Load().(*v1.SecretList)
+	namespace := api.NamespaceAll
+	go fetchSecretList(namespace)
+	x, ok := secretList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.SecretList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -429,22 +521,30 @@ func getSecretSuggestions() []prompt.Suggest {
 /* Ingress */
 
 var (
-	ingressList          atomic.Value
-	ingressLastFetchedAt time.Time
+	ingressList *sync.Map
 )
 
-func fetchIngressList() {
-	if time.Since(ingressLastFetchedAt) < thresholdFetchInterval {
+func fetchIngressList(namespace string) {
+	key := "ingress_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().Ingresses(api.NamespaceAll).List(v1.ListOptions{})
-	ingressList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().Ingresses(namespace).List(v1.ListOptions{})
+	ingressList.Store(namespace, l)
 	return
 }
 
 func getIngressSuggestions() []prompt.Suggest {
-	go fetchIngressList()
-	l, ok := ingressList.Load().(*v1.NamespaceList)
+	namespace := api.NamespaceAll
+	go fetchIngressList(namespace)
+
+	x, ok := ingressList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.NamespaceList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -460,22 +560,29 @@ func getIngressSuggestions() []prompt.Suggest {
 /* LimitRange */
 
 var (
-	limitRangeList          atomic.Value
-	limitRangeLastFetchedAt time.Time
+	limitRangeList *sync.Map
 )
 
-func fetchLimitRangeList() {
-	if time.Since(limitRangeLastFetchedAt) < thresholdFetchInterval {
+func fetchLimitRangeList(namespace string) {
+	key := "limit_range_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().LimitRanges(api.NamespaceAll).List(v1.ListOptions{})
-	limitRangeList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().LimitRanges(namespace).List(v1.ListOptions{})
+	limitRangeList.Store(namespace, l)
 	return
 }
 
 func getLimitRangeSuggestions() []prompt.Suggest {
-	go fetchLimitRangeList()
-	l, ok := limitRangeList.Load().(*v1.NamespaceList)
+	namespace := api.NamespaceAll
+	go fetchLimitRangeList(namespace)
+	x, ok := limitRangeList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.NamespaceList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -491,14 +598,16 @@ func getLimitRangeSuggestions() []prompt.Suggest {
 /* NameSpaces */
 
 var (
-	namespaceList          atomic.Value
-	namespaceLastFetchedAt time.Time
+	namespaceList atomic.Value
 )
 
 func fetchNameSpaceList() {
-	if time.Since(namespaceLastFetchedAt) < thresholdFetchInterval {
+	key := "namespace"
+	if !shouldFetch(key) {
 		return
 	}
+	updateLastFetchedAt(key)
+
 	l, _ := getClient().Namespaces().List(v1.ListOptions{})
 	namespaceList.Store(l)
 	return
@@ -522,22 +631,29 @@ func getNameSpaceSuggestions() []prompt.Suggest {
 /* Persistent Volume Claims */
 
 var (
-	persistentVolumeClaimsList          atomic.Value
-	persistentVolumeClaimsLastFetchedAt time.Time
+	persistentVolumeClaimsList *sync.Map
 )
 
-func fetchPersistentVolumeClaimsList() {
-	if time.Since(persistentVolumeClaimsLastFetchedAt) < thresholdFetchInterval {
+func fetchPersistentVolumeClaimsList(namespace string) {
+	key := "persistent_volume_claims" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().PersistentVolumeClaims(api.NamespaceAll).List(v1.ListOptions{})
-	persistentVolumeClaimsList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().PersistentVolumeClaims(namespace).List(v1.ListOptions{})
+	persistentVolumeClaimsList.Store(namespace, l)
 	return
 }
 
 func getPersistentVolumeClaimSuggestions() []prompt.Suggest {
-	go fetchPersistentVolumeClaimsList()
-	l, ok := persistentVolumeClaimsList.Load().(*v1.PersistentVolumeClaimList)
+	namespace := api.NamespaceAll
+	go fetchPersistentVolumeClaimsList(namespace)
+	x, ok := persistentVolumeClaimsList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.PersistentVolumeClaimList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -553,14 +669,16 @@ func getPersistentVolumeClaimSuggestions() []prompt.Suggest {
 /* Persistent Volumes */
 
 var (
-	persistentVolumesList          atomic.Value
-	persistentVolumesLastFetchedAt time.Time
+	persistentVolumesList atomic.Value
 )
 
 func fetchPersistentVolumeList() {
-	if time.Since(persistentVolumesLastFetchedAt) < thresholdFetchInterval {
+	key := "persistent_volume"
+	if !shouldFetch(key) {
 		return
 	}
+	updateLastFetchedAt(key)
+
 	l, _ := getClient().PersistentVolumes().List(v1.ListOptions{})
 	persistentVolumesList.Store(l)
 	return
@@ -584,14 +702,16 @@ func getPersistentVolumeSuggestions() []prompt.Suggest {
 /* Pod Security Policies */
 
 var (
-	podSecurityPolicyList          atomic.Value
-	podSecurityPolicyLastFetchedAt time.Time
+	podSecurityPolicyList atomic.Value
 )
 
 func fetchPodSecurityPolicyList() {
-	if time.Since(podSecurityPolicyLastFetchedAt) < thresholdFetchInterval {
+	key := "pod_security_policy"
+	if !shouldFetch(key) {
 		return
 	}
+	updateLastFetchedAt(key)
+
 	l, _ := getClient().PodSecurityPolicies().List(v1.ListOptions{})
 	podSecurityPolicyList.Store(l)
 	return
@@ -615,22 +735,29 @@ func getPodSecurityPolicySuggestions() []prompt.Suggest {
 /* Pod Templates */
 
 var (
-	podTemplateList          atomic.Value
-	podTemplateLastFetchedAt time.Time
+	podTemplateList *sync.Map
 )
 
-func fetchPodTemplateList() {
-	if time.Since(podTemplateLastFetchedAt) < thresholdFetchInterval {
+func fetchPodTemplateList(namespace string) {
+	key := "pod_template_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().PodTemplates(api.NamespaceAll).List(v1.ListOptions{})
-	podTemplateList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().PodTemplates(namespace).List(v1.ListOptions{})
+	podTemplateList.Store(namespace, l)
 	return
 }
 
 func getPodTemplateSuggestions() []prompt.Suggest {
-	go fetchPodTemplateList()
-	l, ok := podTemplateList.Load().(*v1.PodTemplateList)
+	namespace := api.NamespaceAll
+	go fetchPodTemplateList(namespace)
+	x, ok := podTemplateList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.PodTemplateList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -646,22 +773,29 @@ func getPodTemplateSuggestions() []prompt.Suggest {
 /* Replica Sets */
 
 var (
-	replicaSetList          atomic.Value
-	replicaSetLastFetchedAt time.Time
+	replicaSetList *sync.Map
 )
 
-func fetchReplicaSetList() {
-	if time.Since(replicaSetLastFetchedAt) < thresholdFetchInterval {
+func fetchReplicaSetList(namespace string) {
+	key := "replica_set_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().ReplicaSets(api.NamespaceAll).List(v1.ListOptions{})
-	replicaSetList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().ReplicaSets(namespace).List(v1.ListOptions{})
+	replicaSetList.Store(namespace, l)
 	return
 }
 
 func getReplicaSetSuggestions() []prompt.Suggest {
-	go fetchReplicaSetList()
-	l, ok := replicaSetList.Load().(*v1beta1.ReplicaSetList)
+	namespace := api.NamespaceAll
+	go fetchReplicaSetList(namespace)
+	x, ok := replicaSetList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1beta1.ReplicaSetList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -677,22 +811,29 @@ func getReplicaSetSuggestions() []prompt.Suggest {
 /* Replication Controller */
 
 var (
-	replicationControllerList          atomic.Value
-	replicationControllerLastFetchedAt time.Time
+	replicationControllerList *sync.Map
 )
 
-func fetchReplicationControllerList() {
-	if time.Since(replicationControllerLastFetchedAt) < thresholdFetchInterval {
+func fetchReplicationControllerList(namespace string) {
+	key := "replication_controller" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().ReplicationControllers(api.NamespaceAll).List(v1.ListOptions{})
-	replicationControllerList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().ReplicationControllers(namespace).List(v1.ListOptions{})
+	replicationControllerList.Store(namespace, l)
 	return
 }
 
 func getReplicationControllerSuggestions() []prompt.Suggest {
-	go fetchReplicationControllerList()
-	l, ok := replicationControllerList.Load().(*v1.ReplicationControllerList)
+	namespace := api.NamespaceAll
+	go fetchReplicationControllerList(namespace)
+	x, ok := replicationControllerList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.ReplicationControllerList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -708,22 +849,29 @@ func getReplicationControllerSuggestions() []prompt.Suggest {
 /* Resource quotas */
 
 var (
-	resourceQuotaList          atomic.Value
-	resourceQuotaLastFetchedAt time.Time
+	resourceQuotaList *sync.Map
 )
 
-func fetchResourceQuotaList() {
-	if time.Since(resourceQuotaLastFetchedAt) < thresholdFetchInterval {
+func fetchResourceQuotaList(namespace string) {
+	key := "resource_quota" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().ResourceQuotas(api.NamespaceAll).List(v1.ListOptions{})
-	resourceQuotaList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().ResourceQuotas(namespace).List(v1.ListOptions{})
+	resourceQuotaList.Store(namespace, l)
 	return
 }
 
 func getResourceQuotasSuggestions() []prompt.Suggest {
-	go fetchResourceQuotaList()
-	l, ok := resourceQuotaList.Load().(*v1.ResourceQuotaList)
+	namespace := api.NamespaceAll
+	go fetchResourceQuotaList(namespace)
+	x, ok := resourceQuotaList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.ResourceQuotaList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -739,22 +887,29 @@ func getResourceQuotasSuggestions() []prompt.Suggest {
 /* Service Account */
 
 var (
-	serviceAccountList          atomic.Value
-	serviceAccountLastFetchedAt time.Time
+	serviceAccountList *sync.Map
 )
 
-func fetchServiceAccountList() {
-	if time.Since(serviceAccountLastFetchedAt) < thresholdFetchInterval {
+func fetchServiceAccountList(namespace string) {
+	key := "service_account_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().ServiceAccounts(api.NamespaceAll).List(v1.ListOptions{})
-	serviceAccountList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().ServiceAccounts(namespace).List(v1.ListOptions{})
+	serviceAccountList.Store(namespace, l)
 	return
 }
 
 func getServiceAccountSuggestions() []prompt.Suggest {
-	go fetchServiceAccountList()
-	l, ok := serviceAccountList.Load().(*v1.ServiceAccountList)
+	namespace := api.NamespaceAll
+	go fetchServiceAccountList(namespace)
+	x, ok := serviceAccountList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.ServiceAccountList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -770,22 +925,29 @@ func getServiceAccountSuggestions() []prompt.Suggest {
 /* Service */
 
 var (
-	serviceList          atomic.Value
-	serviceLastFetchedAt time.Time
+	serviceList *sync.Map
 )
 
-func fetchServiceList() {
-	if time.Since(serviceLastFetchedAt) < thresholdFetchInterval {
+func fetchServiceList(namespace string) {
+	key := "service_" + namespace
+	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().Services(api.NamespaceAll).List(v1.ListOptions{})
-	serviceList.Store(l)
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().Services(namespace).List(v1.ListOptions{})
+	serviceList.Store(namespace, l)
 	return
 }
 
 func getServiceSuggestions() []prompt.Suggest {
-	go fetchServiceList()
-	l, ok := serviceList.Load().(*v1.ServiceAccountList)
+	namespace := api.NamespaceAll
+	go fetchServiceList(namespace)
+	x, ok := serviceList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*v1.ServiceAccountList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
