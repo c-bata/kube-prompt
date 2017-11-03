@@ -110,7 +110,7 @@ func fetchConfigMapList() {
 	if time.Since(configMapsLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().ConfigMaps(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().ConfigMaps(api.NamespaceAll).List(v1.ListOptions{})
 	configMapsList.Store(l)
 	return
 }
@@ -174,7 +174,7 @@ func fetchPods() {
 	if time.Since(podLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().Pods(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().Pods(api.NamespaceAll).List(v1.ListOptions{})
 	podList.Store(l)
 	return
 }
@@ -251,7 +251,7 @@ func fetchDaemonSetList() {
 	if time.Since(daemonSetLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().DaemonSets(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().DaemonSets(api.NamespaceAll).List(v1.ListOptions{})
 	daemonSetList.Store(l)
 	return
 }
@@ -282,7 +282,7 @@ func fetchDeployments() {
 	if time.Since(deploymentLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().Deployments(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().Deployments(api.NamespaceAll).List(v1.ListOptions{})
 	deploymentList.Store(l)
 	return
 }
@@ -313,7 +313,7 @@ func fetchEndpoints() {
 	if time.Since(endpointLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().Endpoints(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().Endpoints(api.NamespaceAll).List(v1.ListOptions{})
 	endpointList.Store(l)
 	return
 }
@@ -344,7 +344,7 @@ func fetchEvents() {
 	if time.Since(eventLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().Events(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().Events(api.NamespaceAll).List(v1.ListOptions{})
 	eventList.Store(l)
 	return
 }
@@ -406,7 +406,7 @@ func fetchSecretList() {
 	if time.Since(secretLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().Secrets(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().Secrets(api.NamespaceAll).List(v1.ListOptions{})
 	secretList.Store(l)
 	return
 }
@@ -437,7 +437,7 @@ func fetchIngressList() {
 	if time.Since(ingressLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().Ingresses(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().Ingresses(api.NamespaceAll).List(v1.ListOptions{})
 	ingressList.Store(l)
 	return
 }
@@ -468,7 +468,7 @@ func fetchLimitRangeList() {
 	if time.Since(limitRangeLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().LimitRanges(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().LimitRanges(api.NamespaceAll).List(v1.ListOptions{})
 	limitRangeList.Store(l)
 	return
 }
@@ -530,7 +530,7 @@ func fetchPersistentVolumeClaimsList() {
 	if time.Since(persistentVolumeClaimsLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().PersistentVolumeClaims(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().PersistentVolumeClaims(api.NamespaceAll).List(v1.ListOptions{})
 	persistentVolumeClaimsList.Store(l)
 	return
 }
@@ -623,7 +623,7 @@ func fetchPodTemplateList() {
 	if time.Since(podTemplateLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().PodTemplates(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().PodTemplates(api.NamespaceAll).List(v1.ListOptions{})
 	podTemplateList.Store(l)
 	return
 }
@@ -654,7 +654,7 @@ func fetchReplicaSetList() {
 	if time.Since(replicaSetLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().ReplicaSets(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().ReplicaSets(api.NamespaceAll).List(v1.ListOptions{})
 	replicaSetList.Store(l)
 	return
 }
@@ -685,7 +685,7 @@ func fetchReplicationControllerList() {
 	if time.Since(replicationControllerLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().ReplicationControllers(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().ReplicationControllers(api.NamespaceAll).List(v1.ListOptions{})
 	replicationControllerList.Store(l)
 	return
 }
@@ -716,7 +716,7 @@ func fetchResourceQuotaList() {
 	if time.Since(resourceQuotaLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().ResourceQuotas(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().ResourceQuotas(api.NamespaceAll).List(v1.ListOptions{})
 	resourceQuotaList.Store(l)
 	return
 }
@@ -747,7 +747,7 @@ func fetchServiceAccountList() {
 	if time.Since(serviceAccountLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().ServiceAccounts(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().ServiceAccounts(api.NamespaceAll).List(v1.ListOptions{})
 	serviceAccountList.Store(l)
 	return
 }
@@ -778,7 +778,7 @@ func fetchServiceList() {
 	if time.Since(serviceLastFetchedAt) < thresholdFetchInterval {
 		return
 	}
-	l, _ := getClient().Services(api.NamespaceDefault).List(v1.ListOptions{})
+	l, _ := getClient().Services(api.NamespaceAll).List(v1.ListOptions{})
 	serviceList.Store(l)
 	return
 }
