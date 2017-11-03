@@ -37,6 +37,8 @@ func completeOptionArguments(d prompt.Document) ([]prompt.Suggest, bool) {
 		switch option {
 		case "-f", "--filename":
 			return fileCompleter(d), true
+		case "--namespace":
+			return getNameSpaceSuggestions(), true
 		}
 	}
 	return []prompt.Suggest{}, false
