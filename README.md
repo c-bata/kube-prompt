@@ -7,6 +7,18 @@ An interactive kubernetes client featuring auto-complete using [go-prompt](https
 
 ![demo](https://github.com/c-bata/assets/raw/master/kube-prompt/kube-prompt.gif)
 
+kube-prompt accepts the same commands as the kubectl, except you don't need to provide the `kubectl` prefix.
+So it doesn't require the additional cost to use this cli.
+
+And you can integrate other commands via pipe (`|`).
+
+```
+>>> get pod | grep web
+web-1144924021-2spbr        1/1     Running     4       25d
+web-1144924021-5r1fg        1/1     Running     4       25d
+web-1144924021-pqmfq        1/1     Running     4       25d
+```
+
 ## Installation
 
 #### Binary installation (Recommended)
@@ -46,22 +58,6 @@ To create a multi-platform binary, use the cross command via make:
 
 ```console
 $ make cross
-```
-
-## Usage
-
-kube-prompt accepts the same commands as the kubectl, except you don't need to provide the `kubectl` prefix.
-So it doesn't require the additional cost to use this cli.
-
-![usage](https://github.com/c-bata/assets/raw/master/kube-prompt/usage.png)
-
-And you can integrate other commands via pipe (`|`).
-
-```
->>> get pod | grep web
-web-1144924021-2spbr        1/1     Running     4       25d
-web-1144924021-5r1fg        1/1     Running     4       25d
-web-1144924021-pqmfq        1/1     Running     4       25d
 ```
 
 ## Goal
