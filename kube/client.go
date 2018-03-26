@@ -17,8 +17,6 @@ func getClient() *kubernetes.Clientset {
 
 func NewClient() *kubernetes.Clientset {
 	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
-	loadingRules.ExplicitPath = clientcmd.RecommendedHomeFile
-
 	loader := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		loadingRules,
 		&clientcmd.ConfigOverrides{},
