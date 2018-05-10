@@ -86,6 +86,16 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = flagAnnotate
 	case "convert":
 		suggests = append(flagConvert, flagGlobal...)
+	case "top":
+		suggests = flagGlobal
+		if len(commandArgs) >= 2 {
+			switch commandArgs[1] {
+			case "no", "node", "nodes":
+				suggests = append(suggests, flagTopNode...)
+			case "po", "pod", "pods":
+				suggests = append(suggests, flagTopPod...)
+			}
+		}
 	case "config":
 		if len(commandArgs) == 2 {
 			switch commandArgs[1] {
@@ -555,6 +565,26 @@ var flagConvert = []prompt.Suggest{
 	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
 	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
 	{Text: "--validate", Description: "If true, use a schema to validate the input before sending it"},
+}
+
+var flagTopNode = []prompt.Suggest{
+	{Text: "--heapster-namespace", Description: "Namespace Heapster service is located in."},
+	{Text: "--heapster-port", Description: "Port name in service to use."},
+	{Text: "--heapster-scheme", Description: "Scheme (http or https) to connect to Heapster as."},
+	{Text: "--heapster-service", Description: "Name of Heapster service."},
+	{Text: "-l", Description: "Selector (label query) to filter on"},
+	{Text: "--selector", Description: "Selector (label query) to filter on"},
+}
+
+var flagTopPod = []prompt.Suggest{
+	{Text: "--all-namespaces", Description: "If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace."},
+	{Text: "--containers", Description: "If present, print usage of containers within a pod."},
+	{Text: "--heapster-namespace", Description: "Namespace Heapster service is located in."},
+	{Text: "--heapster-port", Description: "Port name in service to use."},
+	{Text: "--heapster-scheme", Description: "Scheme (http or https) to connect to Heapster as."},
+	{Text: "--heapster-service", Description: "Name of Heapster service."},
+	{Text: "-l", Description: "Selector (label query) to filter on"},
+	{Text: "--selector", Description: "Selector (label query) to filter on"},
 }
 
 var flagConfigView = []prompt.Suggest{
