@@ -95,6 +95,7 @@ Hopefully support following commands enough to operate kubernetes.
 * [x] `version`        Print the client and server version information.
 * [x] `explain`        Documentation of resources.
 * [x] `convert`        Convert config files between different API versions
+* [x] `top`            Display Resource (CPU/Memory/Storage) usage
 
 ## Author
 

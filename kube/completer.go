@@ -65,6 +65,7 @@ var commands = []prompt.Suggest{
 	{Text: "version", Description: "Print the client and server version information."},
 	{Text: "explain", Description: "Documentation of resources."},
 	{Text: "convert", Description: "Convert config files between different API versions"},
+	{Text: "top", Description: "Display Resource (CPU/Memory/Storage) usage"},
 
 	// Custom command.
 	{Text: "exit", Description: "Exit this program"},
@@ -433,6 +434,28 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 		}
 	case "explain":
 		return prompt.FilterHasPrefix(resourceTypes, args[1], true)
+	case "top":
+		second := args[1]
+		if len(args) == 2 {
+			subcommands := []prompt.Suggest{
+				{Text: "nodes"},
+				{Text: "pod"},
+				// aliases
+				{Text: "no"},
+				{Text: "po"},
+			}
+			return prompt.FilterHasPrefix(subcommands, second, true)
+		}
+
+		third := args[2]
+		if len(args) == 3 {
+			switch second {
+			case "no", "node", "nodes":
+				return prompt.FilterContains(getNodeSuggestions(), third, true)
+			case "po", "pod", "pods":
+				return prompt.FilterContains(getPodSuggestions(), third, true)
+			}
+		}
 	default:
 		return []prompt.Suggest{}
 	}

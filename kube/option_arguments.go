@@ -33,7 +33,7 @@ func completeOptionArguments(d prompt.Document) ([]prompt.Suggest, bool) {
 	switch cmd {
 	case "get", "describe", "create", "delete", "replace", "patch",
 		"edit", "apply", "expose", "rolling-update", "rollout",
-		"label", "annotate", "scale", "convert", "autoscale":
+		"label", "annotate", "scale", "convert", "autoscale", "top":
 		switch option {
 		case "-f", "--filename":
 			return fileCompleter(d), true
