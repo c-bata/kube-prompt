@@ -1,16 +1,24 @@
 package kube
 
 import (
-	"io/ioutil"
-	"log"
-	"path/filepath"
+	"os"
 	"strings"
 
 	"github.com/c-bata/go-prompt"
+	"github.com/c-bata/go-prompt/completer"
 )
 
-func init() {
-	fileListCache = map[string][]prompt.Suggest{}
+var yamlFileCompleter = completer.FilePathCompleter{
+	IgnoreCase: true,
+	Filter: func(fi os.FileInfo) bool {
+		if fi.IsDir() {
+			return true
+		}
+		if strings.HasSuffix(fi.Name(), ".yaml") || strings.HasSuffix(fi.Name(), ".yml") {
+			return true
+		}
+		return false
+	},
 }
 
 func getPreviousOption(d prompt.Document) (cmd, option string, found bool) {
@@ -36,41 +44,10 @@ func completeOptionArguments(d prompt.Document) ([]prompt.Suggest, bool) {
 		"label", "annotate", "scale", "convert", "autoscale":
 		switch option {
 		case "-f", "--filename":
-			return fileCompleter(d), true
+			return yamlFileCompleter.Complete(d), true
 		case "--namespace":
 			return getNameSpaceSuggestions(), true
 		}
 	}
 	return []prompt.Suggest{}, false
-}
-
-/* file list */
-
-var fileListCache map[string][]prompt.Suggest
-
-func fileCompleter(d prompt.Document) []prompt.Suggest {
-	path := d.GetWordBeforeCursor()
-	if strings.HasPrefix(path, "./") {
-		path = path[2:]
-	}
-	dir := filepath.Dir(path)
-	if cached, ok := fileListCache[dir]; ok {
-		return cached
-	}
-
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		log.Print("[ERROR] catch error " + err.Error())
-		return []prompt.Suggest{}
-	}
-	suggests := make([]prompt.Suggest, 0, len(files))
-	for _, f := range files {
-		if !f.IsDir() &&
-			!strings.HasSuffix(f.Name(), ".yml") &&
-			!strings.HasSuffix(f.Name(), ".yaml") {
-			continue
-		}
-		suggests = append(suggests, prompt.Suggest{Text: filepath.Join(dir, f.Name())})
-	}
-	return prompt.FilterHasPrefix(suggests, path, false)
 }
