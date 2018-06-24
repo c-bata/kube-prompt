@@ -15,7 +15,7 @@ var (
 
 func main() {
 	fmt.Printf("kube-prompt %s (rev-%s)\n", version, revision)
-	fmt.Println("Please use `exit` or `Ctrl-D` to exit this program..")
+	fmt.Println("Please use `exit` or `Ctrl-D` to exit this program.")
 	defer fmt.Println("Bye!")
 	p := prompt.New(
 		kube.Executor,
