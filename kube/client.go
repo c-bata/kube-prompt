@@ -2,6 +2,7 @@ package kube
 
 import (
 	"k8s.io/client-go/kubernetes"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp" // register gcp auth helper
 	"k8s.io/client-go/tools/clientcmd"
 )
 
