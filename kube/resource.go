@@ -13,6 +13,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/pkg/api"
+	batch_v1 "k8s.io/client-go/pkg/apis/batch/v1"
 )
 
 const thresholdFetchInterval = 10 * time.Second
@@ -28,6 +30,7 @@ var resourceTypes = []prompt.Suggest{
 	{Text: "horizontalpodautoscalers"},
 	{Text: "ingresses"},
 	{Text: "jobs"},
+	{Text: "cronjobs"},
 	{Text: "limitranges"},
 	{Text: "namespaces"},
 	{Text: "networkpolicies"},
@@ -86,6 +89,7 @@ func init() {
 	resourceQuotaList = new(sync.Map)
 	serviceAccountList = new(sync.Map)
 	serviceList = new(sync.Map)
+	jobList = new(sync.Map)
 }
 
 /* LastFetchedAt */
@@ -951,6 +955,44 @@ func getServiceSuggestions() []prompt.Suggest {
 	for i := range l.Items {
 		s[i] = prompt.Suggest{
 			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
+/* Job */
+
+var (
+	jobList *sync.Map
+)
+
+func fetchJobs(namespace string) {
+	key := "job_" + namespace
+	if !shouldFetch(key) {
+		return
+	}
+	updateLastFetchedAt(key)
+
+	l, _ := getClient().BatchV1().Jobs(namespace).List(metav1.ListOptions{})
+	jobList.Store(namespace, l)
+}
+
+func getJobSuggestions() []prompt.Suggest {
+	namespace := api.NamespaceAll
+	go fetchJobs(namespace)
+	x, ok := jobList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*batch_v1.JobList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text:        l.Items[i].Name,
+			Description: l.Items[i].Status.StartTime.String(),
 		}
 	}
 	return s
