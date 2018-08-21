@@ -10,9 +10,10 @@ import (
 	"time"
 
 	"github.com/c-bata/go-prompt"
-	"k8s.io/client-go/pkg/api"
-	"k8s.io/client-go/pkg/api/v1"
-	"k8s.io/client-go/pkg/apis/extensions/v1beta1"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	policyv1beta1 "k8s.io/api/policy/v1beta1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const thresholdFetchInterval = 10 * time.Second
@@ -122,14 +123,14 @@ func fetchComponentStatusList() {
 	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().ComponentStatuses().List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().ComponentStatuses().List(metav1.ListOptions{})
 	componentStatusList.Store(l)
 	updateLastFetchedAt(key)
 }
 
 func getComponentStatusCompletions() []prompt.Suggest {
 	go fetchComponentStatusList()
-	l, ok := componentStatusList.Load().(*v1.ComponentStatusList)
+	l, ok := componentStatusList.Load().(*corev1.ComponentStatusList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -154,13 +155,13 @@ func fetchConfigMapList(namespace string) {
 		return
 	}
 	updateLastFetchedAt(key)
-	l, _ := getClient().ConfigMaps(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().ConfigMaps(namespace).List(metav1.ListOptions{})
 	configMapsList.Store(l)
 }
 
 func getConfigMapSuggestions() []prompt.Suggest {
-	go fetchConfigMapList(api.NamespaceAll)
-	l, ok := configMapsList.Load().(*v1.ConfigMapList)
+	go fetchConfigMapList(metav1.NamespaceAll)
+	l, ok := configMapsList.Load().(*corev1.ConfigMapList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -220,18 +221,18 @@ func fetchPods(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().Pods(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().Pods(namespace).List(metav1.ListOptions{})
 	podList.Store(namespace, l)
 }
 
 func getPodSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchPods(namespace)
 	x, ok := podList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.PodList)
+	l, ok := x.(*corev1.PodList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -245,22 +246,22 @@ func getPodSuggestions() []prompt.Suggest {
 	return s
 }
 
-func getPod(podName string) (v1.Pod, bool) {
-	namespace := api.NamespaceAll
+func getPod(podName string) (corev1.Pod, bool) {
+	namespace := metav1.NamespaceAll
 	x, ok := podList.Load(namespace)
 	if !ok {
-		return v1.Pod{}, false
+		return corev1.Pod{}, false
 	}
-	l, ok := x.(*v1.PodList)
+	l, ok := x.(*corev1.PodList)
 	if !ok || len(l.Items) == 0 {
-		return v1.Pod{}, false
+		return corev1.Pod{}, false
 	}
 	for i := range l.Items {
 		if podName == l.Items[i].Name {
 			return l.Items[i], true
 		}
 	}
-	return v1.Pod{}, false
+	return corev1.Pod{}, false
 }
 
 func getPortsFromPodName(podName string) []prompt.Suggest {
@@ -308,19 +309,19 @@ func fetchDaemonSetList(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().DaemonSets(namespace).List(v1.ListOptions{})
+	l, _ := getClient().AppsV1().DaemonSets(namespace).List(metav1.ListOptions{})
 	daemonSetList.Store(namespace, l)
 	return
 }
 
 func getDaemonSetSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchDaemonSetList(namespace)
 	x, ok := daemonSetList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1beta1.DaemonSetList)
+	l, ok := x.(appsv1.DaemonSetList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -346,19 +347,19 @@ func fetchDeployments(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().Deployments(namespace).List(v1.ListOptions{})
+	l, _ := getClient().AppsV1().Deployments(namespace).List(metav1.ListOptions{})
 	deploymentList.Store(namespace, l)
 	return
 }
 
 func getDeploymentSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchDeployments(namespace)
 	x, ok := deploymentList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1beta1.DeploymentList)
+	l, ok := x.(*appsv1.DeploymentList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -384,19 +385,19 @@ func fetchEndpoints(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().Endpoints(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().Endpoints(namespace).List(metav1.ListOptions{})
 	endpointList.Store(key, l)
 	return
 }
 
 func getEndpointsSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchEndpoints(namespace)
 	x, ok := endpointList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.EndpointsList)
+	l, ok := x.(*corev1.EndpointsList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -422,19 +423,19 @@ func fetchEvents(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().Events(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().Events(namespace).List(metav1.ListOptions{})
 	eventList.Store(namespace, l)
 	return
 }
 
 func getEventsSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchEvents(namespace)
 	x, ok := eventList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.EventList)
+	l, ok := x.(*corev1.EventList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -460,14 +461,14 @@ func fetchNodeList() {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().Nodes().List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().Nodes().List(metav1.ListOptions{})
 	nodeList.Store(l)
 	return
 }
 
 func getNodeSuggestions() []prompt.Suggest {
 	go fetchNodeList()
-	l, ok := nodeList.Load().(*v1.NodeList)
+	l, ok := nodeList.Load().(*corev1.NodeList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -493,19 +494,19 @@ func fetchSecretList(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().Secrets(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().Secrets(namespace).List(metav1.ListOptions{})
 	secretList.Store(namespace, l)
 	return
 }
 
 func getSecretSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchSecretList(namespace)
 	x, ok := secretList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.SecretList)
+	l, ok := x.(*corev1.SecretList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -531,20 +532,20 @@ func fetchIngressList(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().Ingresses(namespace).List(v1.ListOptions{})
+	l, _ := getClient().ExtensionsV1beta1().Ingresses(namespace).List(metav1.ListOptions{})
 	ingressList.Store(namespace, l)
 	return
 }
 
 func getIngressSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchIngressList(namespace)
 
 	x, ok := ingressList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.NamespaceList)
+	l, ok := x.(*corev1.NamespaceList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -570,19 +571,19 @@ func fetchLimitRangeList(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().LimitRanges(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().LimitRanges(namespace).List(metav1.ListOptions{})
 	limitRangeList.Store(namespace, l)
 	return
 }
 
 func getLimitRangeSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchLimitRangeList(namespace)
 	x, ok := limitRangeList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.NamespaceList)
+	l, ok := x.(*corev1.NamespaceList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -608,14 +609,14 @@ func fetchNameSpaceList() {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().Namespaces().List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().Namespaces().List(metav1.ListOptions{})
 	namespaceList.Store(l)
 	return
 }
 
 func getNameSpaceSuggestions() []prompt.Suggest {
 	go fetchNameSpaceList()
-	l, ok := namespaceList.Load().(*v1.NamespaceList)
+	l, ok := namespaceList.Load().(*corev1.NamespaceList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -641,19 +642,19 @@ func fetchPersistentVolumeClaimsList(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().PersistentVolumeClaims(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().PersistentVolumeClaims(namespace).List(metav1.ListOptions{})
 	persistentVolumeClaimsList.Store(namespace, l)
 	return
 }
 
 func getPersistentVolumeClaimSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchPersistentVolumeClaimsList(namespace)
 	x, ok := persistentVolumeClaimsList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.PersistentVolumeClaimList)
+	l, ok := x.(*corev1.PersistentVolumeClaimList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -679,14 +680,14 @@ func fetchPersistentVolumeList() {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().PersistentVolumes().List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().PersistentVolumes().List(metav1.ListOptions{})
 	persistentVolumesList.Store(l)
 	return
 }
 
 func getPersistentVolumeSuggestions() []prompt.Suggest {
 	go fetchPersistentVolumeList()
-	l, ok := persistentVolumesList.Load().(*v1.PersistentVolumeList)
+	l, ok := persistentVolumesList.Load().(*corev1.PersistentVolumeList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -712,14 +713,14 @@ func fetchPodSecurityPolicyList() {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().PodSecurityPolicies().List(v1.ListOptions{})
+	l, _ := getClient().ExtensionsV1beta1().PodSecurityPolicies().List(metav1.ListOptions{})
 	podSecurityPolicyList.Store(l)
 	return
 }
 
 func getPodSecurityPolicySuggestions() []prompt.Suggest {
 	go fetchPodSecurityPolicyList()
-	l, ok := podSecurityPolicyList.Load().(*v1beta1.PodSecurityPolicyList)
+	l, ok := podSecurityPolicyList.Load().(policyv1beta1.PodSecurityPolicyList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -745,19 +746,19 @@ func fetchPodTemplateList(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().PodTemplates(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().PodTemplates(namespace).List(metav1.ListOptions{})
 	podTemplateList.Store(namespace, l)
 	return
 }
 
 func getPodTemplateSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchPodTemplateList(namespace)
 	x, ok := podTemplateList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.PodTemplateList)
+	l, ok := x.(*corev1.PodTemplateList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -783,19 +784,19 @@ func fetchReplicaSetList(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().ReplicaSets(namespace).List(v1.ListOptions{})
+	l, _ := getClient().AppsV1beta2().ReplicaSets(namespace).List(metav1.ListOptions{})
 	replicaSetList.Store(namespace, l)
 	return
 }
 
 func getReplicaSetSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchReplicaSetList(namespace)
 	x, ok := replicaSetList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1beta1.ReplicaSetList)
+	l, ok := x.(appsv1.ReplicaSetList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -821,19 +822,19 @@ func fetchReplicationControllerList(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().ReplicationControllers(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().ReplicationControllers(namespace).List(metav1.ListOptions{})
 	replicationControllerList.Store(namespace, l)
 	return
 }
 
 func getReplicationControllerSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchReplicationControllerList(namespace)
 	x, ok := replicationControllerList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.ReplicationControllerList)
+	l, ok := x.(*corev1.ReplicationControllerList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -859,19 +860,19 @@ func fetchResourceQuotaList(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().ResourceQuotas(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().ResourceQuotas(namespace).List(metav1.ListOptions{})
 	resourceQuotaList.Store(namespace, l)
 	return
 }
 
 func getResourceQuotasSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchResourceQuotaList(namespace)
 	x, ok := resourceQuotaList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.ResourceQuotaList)
+	l, ok := x.(*corev1.ResourceQuotaList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -897,19 +898,19 @@ func fetchServiceAccountList(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().ServiceAccounts(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().ServiceAccounts(namespace).List(metav1.ListOptions{})
 	serviceAccountList.Store(namespace, l)
 	return
 }
 
 func getServiceAccountSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchServiceAccountList(namespace)
 	x, ok := serviceAccountList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.ServiceAccountList)
+	l, ok := x.(*corev1.ServiceAccountList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
@@ -935,19 +936,19 @@ func fetchServiceList(namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().Services(namespace).List(v1.ListOptions{})
+	l, _ := getClient().CoreV1().Services(namespace).List(metav1.ListOptions{})
 	serviceList.Store(namespace, l)
 	return
 }
 
 func getServiceSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchServiceList(namespace)
 	x, ok := serviceList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*v1.ServiceAccountList)
+	l, ok := x.(*corev1.ServiceAccountList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
