@@ -19,9 +19,15 @@ web-1144924021-5r1fg        1/1     Running     4       25d
 web-1144924021-pqmfq        1/1     Running     4       25d
 ```
 
+**Looking for co-maintainers**
+
+I'm looking for one or more co-maintainers that can help me.
+If you are interested, please reply to [this issue](https://github.com/c-bata/kube-prompt/issues/28).
+
+
 ## Installation
 
-#### Binary installation (Recommended)
+#### Downloading standalone binary
 
 Binaries are available from [github release](https://github.com/c-bata/kube-prompt/releases).
 
@@ -39,14 +45,14 @@ chmod +x kube-prompt
 sudo mv ./kube-prompt /usr/local/bin/kube-prompt
 ```
 
-#### Homebrew (macOS)
+#### Using Homebrew (macOS)
 
 ```console
 $ brew tap c-bata/kube-prompt
 $ brew install kube-prompt
 ```
 
-#### Build from source
+#### Building from source
 
 ```console
 $ go get -u github.com/golang/dep/cmd/dep
