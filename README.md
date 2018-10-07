@@ -52,6 +52,12 @@ $ brew tap c-bata/kube-prompt
 $ brew install kube-prompt
 ```
 
+#### Arch Linux
+
+An unofficial [AUR package](https://aur.archlinux.org/packages/kube-prompt) `kube-prompt`
+is available. Install instructions can be found on the [Arch 
+wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages).
+
 #### Building from source
 
 ```console
