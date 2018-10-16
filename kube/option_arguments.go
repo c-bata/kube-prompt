@@ -45,7 +45,7 @@ func completeOptionArguments(d prompt.Document) ([]prompt.Suggest, bool) {
 		switch option {
 		case "-f", "--filename":
 			return yamlFileCompleter.Complete(d), true
-		case "--namespace":
+		case "-n", "--namespace":
 			return getNameSpaceSuggestions(), true
 		}
 	}
