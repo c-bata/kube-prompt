@@ -10,11 +10,10 @@ import (
 
 	prompt "github.com/c-bata/go-prompt"
 	appsv1 "k8s.io/api/apps/v1"
+	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/pkg/api"
-	batch_v1 "k8s.io/client-go/pkg/apis/batch/v1"
 )
 
 const thresholdFetchInterval = 10 * time.Second
@@ -978,13 +977,13 @@ func fetchJobs(namespace string) {
 }
 
 func getJobSuggestions() []prompt.Suggest {
-	namespace := api.NamespaceAll
+	namespace := metav1.NamespaceAll
 	go fetchJobs(namespace)
 	x, ok := jobList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*batch_v1.JobList)
+	l, ok := x.(*batchv1.JobList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
