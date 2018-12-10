@@ -2,11 +2,12 @@ package kube
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/c-bata/kube-prompt/internal/debug"
 )
 
 func Executor(s string) {
@@ -29,10 +30,11 @@ func Executor(s string) {
 	return
 }
 
-func ExecuteAndGetResult(s string) (string, error) {
+func ExecuteAndGetResult(s string) string {
 	s = strings.TrimSpace(s)
 	if s == "" {
-		return "", errors.New("you need to pass the something arguments")
+		debug.Log("you need to pass the something arguments")
+		return ""
 	}
 
 	out := &bytes.Buffer{}
@@ -40,8 +42,9 @@ func ExecuteAndGetResult(s string) (string, error) {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = out
 	if err := cmd.Run(); err != nil {
-		return "", err
+		debug.Log(err.Error())
+		return ""
 	}
 	r := string(out.Bytes())
-	return r, nil
+	return r
 }

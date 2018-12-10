@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/c-bata/go-prompt"
+	prompt "github.com/c-bata/go-prompt"
 	"github.com/c-bata/go-prompt/completer"
+	"github.com/c-bata/kube-prompt/internal/debug"
 	"github.com/c-bata/kube-prompt/kube"
 )
 
@@ -14,6 +15,7 @@ var (
 )
 
 func main() {
+	defer debug.Teardown()
 	fmt.Printf("kube-prompt %s (rev-%s)\n", version, revision)
 	fmt.Println("Please use `exit` or `Ctrl-D` to exit this program.")
 	defer fmt.Println("Bye!")

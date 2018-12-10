@@ -2,14 +2,13 @@ package kube
 
 import (
 	"fmt"
-	"log"
 	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
-	"github.com/c-bata/go-prompt"
+	prompt "github.com/c-bata/go-prompt"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	policyv1beta1 "k8s.io/api/policy/v1beta1"
@@ -98,7 +97,6 @@ var (
 func shouldFetch(key string) bool {
 	v, ok := lastFetchedAt.Load(key)
 	if !ok {
-		log.Printf("[WARN] Not found %s in lastFetchedAt", key)
 		return true
 	}
 	t, ok := v.(time.Time)
@@ -186,10 +184,7 @@ func fetchContextList() {
 		return
 	}
 	updateLastFetchedAt(key)
-	r, err := ExecuteAndGetResult("config get-contexts --no-headers -o name")
-	if err != nil {
-		log.Printf("[WARN] Got Error when fetchContextList: %s", err.Error())
-	}
+	r := ExecuteAndGetResult("config get-contexts --no-headers -o name")
 	contextList.Store(strings.Split(r, "\n"))
 }
 
