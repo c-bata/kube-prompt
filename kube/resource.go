@@ -946,7 +946,7 @@ func getServiceSuggestions() []prompt.Suggest {
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*corev1.ServiceAccountList)
+	l, ok := x.(*corev1.ServiceList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
