@@ -9,9 +9,11 @@ import (
 	"time"
 
 	prompt "github.com/c-bata/go-prompt"
+	"github.com/c-bata/kube-prompt/internal/debug"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
 	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -523,7 +525,7 @@ var (
 	ingressList *sync.Map
 )
 
-func fetchIngressList(namespace string) {
+func fetchIngresses(namespace string) {
 	key := "ingress_" + namespace
 	if !shouldFetch(key) {
 		return
@@ -532,19 +534,22 @@ func fetchIngressList(namespace string) {
 
 	l, _ := getClient().ExtensionsV1beta1().Ingresses(namespace).List(metav1.ListOptions{})
 	ingressList.Store(namespace, l)
-	return
 }
 
 func getIngressSuggestions() []prompt.Suggest {
 	namespace := metav1.NamespaceAll
-	go fetchIngressList(namespace)
+	go fetchIngresses(namespace)
 
 	x, ok := ingressList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(*corev1.NamespaceList)
-	if !ok || len(l.Items) == 0 {
+	l, ok := x.(*extensionsv1beta1.IngressList)
+	if !ok {
+		debug.Log("must not reach here")
+		return []prompt.Suggest{}
+	}
+	if len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
 	s := make([]prompt.Suggest, len(l.Items))
