@@ -91,6 +91,7 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 				{Text: "horizontalpodautoscalers"},
 				{Text: "ingresses"},
 				{Text: "jobs"},
+				{Text: "cronjobs"},
 				{Text: "limitranges"},
 				{Text: "namespaces"},
 				{Text: "networkpolicies"},
@@ -176,6 +177,8 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 				return prompt.FilterContains(getServiceAccountSuggestions(), third, true)
 			case "svc", "services":
 				return prompt.FilterContains(getServiceSuggestions(), third, true)
+			case "job", "jobs":
+				return prompt.FilterContains(getJobSuggestions(), third, true)
 			}
 		}
 	case "describe":
@@ -227,6 +230,8 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 				return prompt.FilterContains(getServiceAccountSuggestions(), third, true)
 			case "svc", "services":
 				return prompt.FilterContains(getServiceSuggestions(), third, true)
+			case "job", "jobs":
+				return prompt.FilterContains(getJobSuggestions(), third, true)
 			}
 		}
 	case "create":
@@ -291,6 +296,8 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 				return prompt.FilterContains(getServiceAccountSuggestions(), third, true)
 			case "svc", "services":
 				return prompt.FilterContains(getServiceSuggestions(), third, true)
+			case "job", "jobs":
+				return prompt.FilterContains(getJobSuggestions(), third, true)
 			}
 		}
 	case "edit":
@@ -341,6 +348,8 @@ func argumentsCompleter(args []string) []prompt.Suggest {
 				return prompt.FilterContains(getServiceAccountSuggestions(), third, true)
 			case "svc", "services":
 				return prompt.FilterContains(getServiceSuggestions(), third, true)
+			case "job", "jobs":
+				return prompt.FilterContains(getJobSuggestions(), third, true)
 			}
 		}
 
