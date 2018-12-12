@@ -23,11 +23,15 @@ lint: ## Run golint and go vet.
 
 .PHONY: test
 test:  ## Run the tests.
-	@go test ./kube/...
+	@go test ./...
 
 .PHONY: build
 build: main.go  ## Build a binary.
 	go build -ldflags "$(LDFLAGS)"
+
+.PHONY: code-gen
+code-gen: ## Generate source codes.
+	./_tools/codegen.sh
 
 .PHONY: cross
 cross: main.go  ## Build binaries for cross platform.
