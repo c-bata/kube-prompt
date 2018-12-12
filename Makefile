@@ -23,11 +23,17 @@ lint: ## Run golint and go vet.
 
 .PHONY: test
 test:  ## Run the tests.
-	@go test ./kube/...
+	@go test ./...
 
 .PHONY: build
 build: main.go  ## Build a binary.
 	go build -ldflags "$(LDFLAGS)"
+
+.PHONY: code-gen
+code-gen: ## Generate source codes.
+	rm ./kube/*.gen.go
+	kubectl expose --help | go run _tools/resource-gen/main.go -o ./kube/option_expose.gen.go -var flagExpose
+	goimports -w ./kube/option_expose.gen.go
 
 .PHONY: cross
 cross: main.go  ## Build binaries for cross platform.
