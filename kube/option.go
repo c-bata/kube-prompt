@@ -1,9 +1,11 @@
 package kube
 
 import (
+	"os"
 	"strings"
 
 	prompt "github.com/c-bata/go-prompt"
+	"github.com/c-bata/go-prompt/completer"
 )
 
 func optionCompleter(args []string, long bool) []prompt.Suggest {
@@ -34,8 +36,6 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = editOptions
 	case "apply":
 		suggests = applyOptions
-	case "namespace":
-		suggests = flagGlobal
 	case "logs":
 		suggests = logsOptions
 	case "rolling-update":
@@ -53,21 +53,22 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 	case "run", "run-container":
 		suggests = runOptions
 	case "expose":
-		suggests = append(exposeOptions, flagGlobal...)
+		suggests = exposeOptions
 	case "autoscale":
 		suggests = autoscaleOptions
 	case "rollout":
-		suggests = flagGlobal
 		if len(commandArgs) == 2 {
 			switch commandArgs[1] {
 			case "history":
-				suggests = append(suggests, flagRolloutHistory...)
+				suggests = rolloutHistoryOptions
 			case "pause":
-				suggests = append(suggests, flagRolloutPause...)
+				suggests = rolloutPauseOptions
 			case "resume":
-				suggests = append(suggests, flagRolloutResume...)
+				suggests = rolloutResumeOptions
+			case "status":
+				suggests = rolloutStatusOptions
 			case "undo":
-				suggests = append(suggests, flagRolloutUndo...)
+				suggests = rolloutUndoOptions
 			}
 		}
 	case "label":
@@ -87,34 +88,27 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 	case "convert":
 		suggests = convertOptions
 	case "top":
-		suggests = flagGlobal
 		if len(commandArgs) >= 2 {
 			switch commandArgs[1] {
 			case "no", "node", "nodes":
-				suggests = append(suggests, flagTopNode...)
+				suggests = topNodeOptions
 			case "po", "pod", "pods":
-				suggests = append(suggests, flagTopPod...)
+				suggests = topPodOptions
 			}
 		}
 	case "config":
 		if len(commandArgs) == 2 {
 			switch commandArgs[1] {
+			case "get-contexts":
+				suggests = configGetContextsOptions
 			case "view":
-				suggests = flagConfigView
+				suggests = configViewOptions
 			case "set-cluster":
-				suggests = flagConfigSetCluster
+				suggests = configSetClusterOptions
 			case "set-credentials":
-				suggests = flagConfigSetCredentials
-			case "set-context":
-				suggests = flagConfigSetContext
+				suggests = configSetCredentialsOptions
 			case "set":
-				suggests = flagConfigSet
-			case "unset":
-				suggests = flagConfigUnset
-			case "current-context":
-				suggests = flagConfigCurrentContext
-			case "use-context":
-				suggests = flagConfigUseContext
+				suggests = configSetOptions
 			}
 		}
 	default:
@@ -136,118 +130,48 @@ var optionHelp = []prompt.Suggest{
 	{Text: "--help"},
 }
 
-var flagGlobal = []prompt.Suggest{
-	{Text: "--alsologtostderr", Description: "log to standard error as well as files"},
-	{Text: "--certificate-authority", Description: "Path to a cert. file for the certificate authority."},
-	{Text: "--client-certificate", Description: "Path to a client certificate file for TLS."},
-	{Text: "--client-key", Description: "Path to a client key file for TLS."},
-	{Text: "--cluster", Description: "The name of the kubeconfig cluster to use"},
-	{Text: "--context", Description: "The name of the kubeconfig context to use"},
-	{Text: "--insecure-skip-tls-verify", Description: "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure."},
-	{Text: "--kubeconfig", Description: "Path to the kubeconfig file to use for CLI requests."},
-	{Text: "--log-backtrace-at", Description: "when logging hits line file:N, emit a stack trace"},
-	{Text: "--log-dir", Description: "If non-empty, write log files in this directory"},
-	{Text: "--log-flush-frequency", Description: "Maximum number of seconds between log flushes"},
-	{Text: "--logtostderr", Description: "log to standard error instead of files"},
-	{Text: "--match-server-version", Description: "Require server version to match client version"},
-	{Text: "--namespace", Description: "If present, the namespace scope for this CLI request."},
-	{Text: "--password", Description: "Password for basic authentication to the API server."},
-	{Text: "-s", Description: "The address and port of the Kubernetes API server"},
-	{Text: "--server", Description: "The address and port of the Kubernetes API server"},
-	{Text: "--stderrthreshold", Description: "logs at or above this threshold go to stderr"},
-	{Text: "--token", Description: "Bearer token for authentication to the API server."},
-	{Text: "--user", Description: "The name of the kubeconfig user to use"},
-	{Text: "--username", Description: "Username for basic authentication to the API server."},
-	{Text: "--v", Description: "log level for V logs"},
-	{Text: "--vmodule", Description: "comma-separated list of pattern=N settings for file-filtered logging"},
+/* Option arguments */
+
+var yamlFileCompleter = completer.FilePathCompleter{
+	IgnoreCase: true,
+	Filter: func(fi os.FileInfo) bool {
+		if fi.IsDir() {
+			return true
+		}
+		if strings.HasSuffix(fi.Name(), ".yaml") || strings.HasSuffix(fi.Name(), ".yml") {
+			return true
+		}
+		return false
+	},
 }
 
-var flagRolloutHistory = []prompt.Suggest{
-	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
-	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
-	{Text: "--revision", Description: "See the details, including podTemplate of the revision specified"},
+func getPreviousOption(d prompt.Document) (cmd, option string, found bool) {
+	args := strings.Split(d.TextBeforeCursor(), " ")
+	l := len(args)
+	if l >= 2 {
+		option = args[l-2]
+	}
+	if strings.HasPrefix(option, "-") {
+		return args[0], option, true
+	}
+	return "", "", false
 }
 
-var flagRolloutPause = []prompt.Suggest{
-	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
-	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
+func completeOptionArguments(d prompt.Document) ([]prompt.Suggest, bool) {
+	cmd, option, found := getPreviousOption(d)
+	if !found {
+		return []prompt.Suggest{}, false
+	}
+	switch cmd {
+	case "get", "describe", "create", "delete", "replace", "patch",
+		"edit", "apply", "expose", "rolling-update", "rollout",
+		"label", "annotate", "scale", "convert", "autoscale", "top":
+		switch option {
+		case "-f", "--filename":
+			return yamlFileCompleter.Complete(d), true
+		case "-n", "--namespace":
+			return getNameSpaceSuggestions(), true
+		}
+	}
+	return []prompt.Suggest{}, false
 }
-
-var flagRolloutResume = []prompt.Suggest{
-	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
-	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
-}
-
-var flagRolloutUndo = []prompt.Suggest{
-	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
-	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
-	{Text: "--to-revision", Description: "The revision to rollback to. Default to 0 (last revision)."},
-}
-
-var flagTopNode = []prompt.Suggest{
-	{Text: "--heapster-namespace", Description: "Namespace Heapster service is located in."},
-	{Text: "--heapster-port", Description: "Port name in service to use."},
-	{Text: "--heapster-scheme", Description: "Scheme (http or https) to connect to Heapster as."},
-	{Text: "--heapster-service", Description: "Name of Heapster service."},
-	{Text: "-l", Description: "Selector (label query) to filter on"},
-	{Text: "--selector", Description: "Selector (label query) to filter on"},
-}
-
-var flagTopPod = []prompt.Suggest{
-	{Text: "--all-namespaces", Description: "If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace."},
-	{Text: "--containers", Description: "If present, print usage of containers within a pod."},
-	{Text: "--heapster-namespace", Description: "Namespace Heapster service is located in."},
-	{Text: "--heapster-port", Description: "Port name in service to use."},
-	{Text: "--heapster-scheme", Description: "Scheme (http or https) to connect to Heapster as."},
-	{Text: "--heapster-service", Description: "Name of Heapster service."},
-	{Text: "-l", Description: "Selector (label query) to filter on"},
-	{Text: "--selector", Description: "Selector (label query) to filter on"},
-}
-
-var flagConfigView = []prompt.Suggest{
-	{Text: "--allow-missing-template-keys", Description: "If true, ignore any errors in templates when a field or map key is missing in the template. Only applies to golang and jsonpath output formats."},
-	{Text: "--flatten", Description: "flatten the resulting kubeconfig file into self-contained output (useful for creating portable kubeconfig files)"},
-	{Text: "--merge", Description: "merge the full hierarchy of kubeconfig files"},
-	{Text: "--minify", Description: "remove all information not used by current-context from the output"},
-	{Text: "--no-headers", Description: "When using the default or custom-column output format, don't print headers."},
-	{Text: "-o", Description: "Output format. One of: json|yaml|wide|name|custom-columns=...|custom-columns-file=...|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=..."},
-	{Text: "--output", Description: "Output format. One of: json|yaml|wide|name|custom-columns=...|custom-columns-file=...|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=..."},
-	{Text: "--output-version", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
-	{Text: "--raw", Description: "display raw byte data"},
-	{Text: "--show-all", Description: "When printing, show all resources (default hide terminated pods.)"},
-	{Text: "-a", Description: "When printing, show all resources (default hide terminated pods.)"},
-	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
-	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
-	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
-}
-
-var flagConfigSetCluster = []prompt.Suggest{
-	{Text: "--api-version", Description: "api-version for the cluster entry in kubeconfig"},
-	{Text: "--certificate-authority", Description: "path to certificate-authority for the cluster entry in kubeconfig"},
-	{Text: "--embed-certs", Description: "embed-certs for the cluster entry in kubeconfig"},
-	{Text: "--insecure-skip-tls-verify", Description: "insecure-skip-tls-verify for the cluster entry in kubeconfig"},
-	{Text: "--server", Description: "server for the cluster entry in kubeconfig"},
-}
-
-var flagConfigSetCredentials = []prompt.Suggest{
-	{Text: "--client-certificate", Description: "path to client-certificate for the user entry in kubeconfig"},
-	{Text: "--client-key", Description: "path to client-key for the user entry in kubeconfig"},
-	{Text: "--embed-certs", Description: "embed client cert/key for the user entry in kubeconfig"},
-	{Text: "--password", Description: "password for the user entry in kubeconfig"},
-	{Text: "--token", Description: "token for the user entry in kubeconfig"},
-	{Text: "--username", Description: "username for the user entry in kubeconfig"},
-}
-
-var flagConfigSetContext = []prompt.Suggest{
-	{Text: "--cluster", Description: "cluster for the context entry in kubeconfig"},
-	{Text: "--namespace", Description: "namespace for the context entry in kubeconfig"},
-	{Text: "--user", Description: "user for the context entry in kubeconfig"},
-}
-
-var flagConfigSet = []prompt.Suggest{}
-
-var flagConfigUnset = []prompt.Suggest{}
-
-var flagConfigCurrentContext = []prompt.Suggest{}
-
-var flagConfigUseContext = []prompt.Suggest{}

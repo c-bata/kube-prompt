@@ -2,12 +2,11 @@ package optionconv_test
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 
-	"github.com/c-bata/kube-prompt/internal/optionconv"
-
 	prompt "github.com/c-bata/go-prompt"
-	"gotest.tools/assert"
+	"github.com/c-bata/kube-prompt/internal/optionconv"
 )
 
 func ExampleGetOptionsFromHelpText() {
@@ -71,9 +70,10 @@ Usage:
 [--name=name] [--external-ip=external-ip-of-service] [--type=type] [options]
 
 Use "kubectl options" for a list of global command-line options (applies to all commands).`
-	fmt.Println(optionconv.GetOptionsFromHelpText(input))
+	got, _ := optionconv.GetOptionsFromHelpText(input)
+	fmt.Println(got)
 	// Output:
-	//       --allow-missing-template-keys=true: If true, ignore any errors in templates when a field or map key is missing in
+	// --allow-missing-template-keys=true: If true, ignore any errors in templates when a field or map key is missing in
 	// the template. Only applies to golang and jsonpath output formats.
 	//       --cluster-ip='': ClusterIP to be assigned to the service. Leave empty to auto-allocate, or set to 'None' to create
 	// a headless service.
@@ -143,5 +143,7 @@ func TestConvertToSuggestions(t *testing.T) {
 		{Text: "--generator", Description: "The name of the API generator to use. There are 2 generators: 'service/v1' and 'service/v2'. The only difference between them is that service port in v1 is named 'default', while it is left unnamed in v2. Default is 'service/v2'."},
 		{Text: "--port", Description: "The port that the service should serve on. Copied from the resource being exposed, if unspecified"},
 	}
-	assert.Equal(t, expected, actual)
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("expected:\n%#v\n\ngot:\n%#v\n", expected, actual)
+	}
 }
