@@ -61,5 +61,4 @@ func main() {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-	fmt.Fprintln(os.Stderr, "succeeded")
 }

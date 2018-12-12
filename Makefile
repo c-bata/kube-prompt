@@ -31,9 +31,7 @@ build: main.go  ## Build a binary.
 
 .PHONY: code-gen
 code-gen: ## Generate source codes.
-	rm ./kube/*.gen.go
-	kubectl expose --help | go run _tools/resource-gen/main.go -o ./kube/option_expose.gen.go -var flagExpose
-	goimports -w ./kube/option_expose.gen.go
+	./_tools/codegen.sh
 
 .PHONY: cross
 cross: main.go  ## Build binaries for cross platform.
