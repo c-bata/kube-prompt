@@ -39,7 +39,7 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 	case "logs":
 		suggests = logsOptions
 	case "rolling-update":
-		suggests = flagRollingUpdate
+		suggests = rollingUpdateOptions
 	case "scale", "resize":
 		suggests = scaleOptions
 	case "attach":
@@ -47,15 +47,15 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 	case "exec":
 		suggests = execOptions
 	case "port-forward":
-		suggests = append(flagPortForward, flagGlobal...)
+		suggests = portForwardOptions
 	case "proxy":
 		suggests = proxyOptions
 	case "run", "run-container":
 		suggests = runOptions
 	case "expose":
 		suggests = append(exposeOptions, flagGlobal...)
-	case "auto-scale":
-		suggests = append(flagAutoScale, flagGlobal...)
+	case "autoscale":
+		suggests = autoscaleOptions
 	case "rollout":
 		suggests = flagGlobal
 		if len(commandArgs) == 2 {
@@ -73,7 +73,7 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 	case "label":
 		suggests = labelOptions
 	case "cluster-info":
-		suggests = flagClusterInfo
+		suggests = clusterInfoOptions
 	case "explain":
 		suggests = explainOptions
 	case "cordon":
@@ -161,34 +161,6 @@ var flagGlobal = []prompt.Suggest{
 	{Text: "--v", Description: "log level for V logs"},
 	{Text: "--vmodule", Description: "comma-separated list of pattern=N settings for file-filtered logging"},
 }
-var flagRollingUpdate = []prompt.Suggest{
-	{Text: "--container", Description: "Container name which will have its image upgraded. Only relevant when --image is specified, ignored otherwise. Required when using --image on a multi-container pod"},
-	{Text: "--deployment-label-key", Description: "The key to use to differentiate between two different controllers, default 'deployment'.  Only relevant when --image is specified, ignored otherwise"},
-	{Text: "--dry-run", Description: "If true, print out the changes that would be made, but don't actually make them."},
-	{Text: "-f", Description: "Filename or URL to file to use to create the new replication controller."},
-	{Text: "--filename", Description: "Filename or URL to file to use to create the new replication controller."},
-	{Text: "--image", Description: "Image to use for upgrading the replication controller. Must be distinct from the existing image (either new image or new image tag).  Can not be used with --filename/-f"},
-	{Text: "--no-headers", Description: "When using the default output, don't print headers."},
-	{Text: "-o", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template and jsonpath template."},
-	{Text: "--output", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template and jsonpath template."},
-	{Text: "--output-version", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
-	{Text: "--poll-interval", Description: "Time delay between polling for replication controller status after the update. Valid time units are 'ns', 'us' (or 'µs'), 'ms', 's', 'm', 'h'."},
-	{Text: "--rollback", Description: "If true, this is a request to abort an existing rollout that is partially rolled out. It effectively reverses current and next and runs a rollout"},
-	{Text: "--schema-cache-dir", Description: "If non-empty, load/store cached API schemas in this directory, default is '$HOME/.kube/schema'"},
-	{Text: "-a", Description: "When printing, show all resources (default hide terminated pods.)"},
-	{Text: "--show-all", Description: "When printing, show all resources (default hide terminated pods.)"},
-	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
-	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
-	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
-	{Text: "--timeout", Description: "Max time to wait for a replication controller to update before giving up. Valid time units are 'ns', 'us' (or 'µs'), 'ms', 's', 'm', 'h'."},
-	{Text: "--update-period", Description: "Time to wait between updating pods. Valid time units are 'ns', 'us' (or 'µs'), 'ms', 's', 'm', 'h'."},
-	{Text: "--validate", Description: "If true, use a schema to validate the input before sending it"},
-}
-
-var flagPortForward = []prompt.Suggest{
-	{Text: "-p", Description: "Pod name"},
-	{Text: "--pod", Description: "Pod name"},
-}
 
 var flagRolloutHistory = []prompt.Suggest{
 	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
@@ -210,32 +182,6 @@ var flagRolloutUndo = []prompt.Suggest{
 	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
 	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to get from a server."},
 	{Text: "--to-revision", Description: "The revision to rollback to. Default to 0 (last revision)."},
-}
-
-var flagClusterInfo = []prompt.Suggest{
-	{Text: "--include-extended-apis", Description: "If true, include definitions of new APIs via calls to the API server. [default true]"},
-}
-
-var flagAutoScale = []prompt.Suggest{
-	{Text: "--cpu-percent", Description: "The target average CPU utilization (represented as a percent of requested CPU) over all the pods. If it's not specified or negative, the server will apply a default value."},
-	{Text: "--dry-run", Description: "If true, only print the object that would be sent, without creating it."},
-	{Text: "-f", Description: "Filename, directory, or URL to a file identifying the resource to autoscale."},
-	{Text: "--filename", Description: "Filename, directory, or URL to a file identifying the resource to autoscale."},
-	{Text: "--generator", Description: "The name of the API generator to use. Currently there is only 1 generator."},
-	{Text: "--max", Description: "The upper limit for the number of pods that can be set by the autoscaler. Required."},
-	{Text: "--min", Description: "The lower limit for the number of pods that can be set by the autoscaler. If it's not specified or negative, the server will apply a default value."},
-	{Text: "--name", Description: "The name for the newly created object. If not specified, the name of the input resource will be used."},
-	{Text: "--no-headers", Description: "When using the default output, don't print headers."},
-	{Text: "-o", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
-	{Text: "--output", Description: "Output format. One of: json|yaml|wide|name|go-template=...|go-template-file=...|jsonpath=...|jsonpath-file=... See golang template [http://golang.org/pkg/text/template/#pkg-overview] and jsonpath template [http://releases.k8s.io/release-1.2/docs/user-guide/jsonpath.md]."},
-	{Text: "--output-version", Description: "Output the formatted object with the given group version (for ex: 'extensions/v1beta1')."},
-	{Text: "--record", Description: "Record current kubectl command in the resource annotation."},
-	{Text: "--save-config", Description: "If true, the configuration of current object will be saved in its annotation. This is useful when you want to perform kubectl apply on this object in the future."},
-	{Text: "-a", Description: "When printing, show all resources (default hide terminated pods.)"},
-	{Text: "--show-all", Description: "When printing, show all resources (default hide terminated pods.)"},
-	{Text: "--show-labels", Description: "When printing, show all labels as the last column (default hide labels column)"},
-	{Text: "--sort-by", Description: "If non-empty, sort list types using this field specification.  The field specification is expressed as a JSONPath expression (e.g. '{.metadata.name}'). The field in the API resource specified by this JSONPath expression must be an integer or a string."},
-	{Text: "--template", Description: "Template string or path to template file to use when -o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview]."},
 }
 
 var flagTopNode = []prompt.Suggest{

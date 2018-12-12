@@ -21,12 +21,15 @@ subcmds=(
     "edit"
     "apply"
     "logs"
+    "rolling-update"
     "scale"
     "attach"
     "exec"
+    "port-forward"
     "proxy"
     "run"
     "expose"
+    "autoscale"
     "label"
     "explain"
     "cordon"
@@ -34,9 +37,11 @@ subcmds=(
     "uncordon"
     "annotate"
     "convert"
+    "cluster-info"
 )
 
 for cmd in "${subcmds[@]}"; do
-  kubectl ${cmd} --help | ./bin/option-gen -o ${KUBE_DIR}/option_${cmd}.gen.go -var ${cmd}Options
-  goimports -w ${KUBE_DIR}/option_${cmd}.gen.go
+  camelized=`echo ${cmd} | gsed -r 's/-(.)/\U\1\E/g'`
+  kubectl ${cmd} --help | ./bin/option-gen -o ${KUBE_DIR}/option_${cmd//-/_}.gen.go -var ${camelized}Options
+  goimports -w ${KUBE_DIR}/option_${cmd//-/_}.gen.go
 done
