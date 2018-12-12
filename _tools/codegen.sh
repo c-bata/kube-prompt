@@ -5,8 +5,11 @@ KUBE_DIR=$(cd $(dirname $(dirname $0)); pwd)/kube
 
 # clean generated files
 rm ${KUBE_DIR}/*.gen.go
+mkdir -p bin
 
 set -e
+
+go build -o ./bin/option-gen ./_tools/option-gen/main.go
 
 subcmds=(
     "get"
@@ -34,6 +37,6 @@ subcmds=(
 )
 
 for cmd in "${subcmds[@]}"; do
-  kubectl ${cmd} --help | go run ${DIR}/resource-gen/main.go -o ${KUBE_DIR}/option_${cmd}.gen.go -var ${cmd}Options
+  kubectl ${cmd} --help | ./bin/option-gen -o ${KUBE_DIR}/option_${cmd}.gen.go -var ${cmd}Options
   goimports -w ${KUBE_DIR}/option_${cmd}.gen.go
 done
