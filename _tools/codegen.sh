@@ -30,6 +30,11 @@ subcmds=(
     "run"
     "expose"
     "autoscale"
+    "rollout history"
+    "rollout pause"
+    "rollout resume"
+    "rollout status"
+    "rollout undo"
     "label"
     "explain"
     "cordon"
@@ -37,11 +42,19 @@ subcmds=(
     "uncordon"
     "annotate"
     "convert"
+    "top node"
+    "top pod"
     "cluster-info"
+    "config get-contexts"
+    "config set"
+    "config set-cluster"
+    "config set-credentials"
+    "config view"
 )
 
 for cmd in "${subcmds[@]}"; do
-  camelized=`echo ${cmd} | gsed -r 's/-(.)/\U\1\E/g'`
-  kubectl ${cmd} --help | ./bin/option-gen -o ${KUBE_DIR}/option_${cmd//-/_}.gen.go -var ${camelized}Options
-  goimports -w ${KUBE_DIR}/option_${cmd//-/_}.gen.go
+  camelized=`echo ${cmd} | gsed -r 's/[- ](.)/\U\1\E/g'`
+  snaked=`echo ${cmd} | gsed -r 's/[- ]/_/g'`
+  kubectl ${cmd} --help | ./bin/option-gen -o ${KUBE_DIR}/option_${snaked}.gen.go -var ${camelized}Options
+  goimports -w ${KUBE_DIR}/option_${snaked}.gen.go
 done
