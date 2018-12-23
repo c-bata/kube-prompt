@@ -48,8 +48,7 @@ sudo mv ./kube-prompt /usr/local/bin/kube-prompt
 #### Using Homebrew (macOS)
 
 ```console
-$ brew tap c-bata/kube-prompt
-$ brew install kube-prompt
+$ brew install c-bata/kube-prompt/kube-prompt
 ```
 
 #### Arch Linux
