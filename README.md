@@ -31,19 +31,36 @@ If you are interested, please reply to [this issue](https://github.com/c-bata/ku
 
 Binaries are available from [github release](https://github.com/c-bata/kube-prompt/releases).
 
+<details>
+<summary>macOS (darwin) - amd64</summary>
 ```
-# macOS (darwin)
 wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.5/kube-prompt_v1.0.5_darwin_amd64.zip
 unzip kube-prompt_v1.0.5_darwin_amd64.zip
-
-# Linux
-wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.5/kube-prompt_v1.0.5_linux_amd64.zip
-unzip kube-prompt_v1.0.5_linux_amd64.zip
-
-# After that please put executable to your PATH:
 chmod +x kube-prompt
 sudo mv ./kube-prompt /usr/local/bin/kube-prompt
 ```
+</details>
+
+<details>
+<summary>Linux - amd64</summary>
+```
+wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.5/kube-prompt_v1.0.5_linux_amd64.zip
+unzip kube-prompt_v1.0.5_linux_amd64.zip
+chmod +x kube-prompt
+sudo mv ./kube-prompt /usr/local/bin/kube-prompt
+```
+</details>
+
+
+<details>
+<summary>Linux - i386</summary>
+```
+wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.5/kube-prompt_v1.0.5_linux_386.zip
+unzip kube-prompt_v1.0.5_linux_386.zip
+chmod +x kube-prompt
+sudo mv ./kube-prompt /usr/local/bin/kube-prompt
+```
+</details>
 
 #### Using Homebrew (macOS)
 
