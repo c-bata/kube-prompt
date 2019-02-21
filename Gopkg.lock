@@ -94,6 +94,22 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:d47549022c929925679aec031329f59f250d704f69ee44a194998cdb8d873393"
+  name = "github.com/gophercloud/gophercloud"
+  packages = [
+    ".",
+    "openstack",
+    "openstack/identity/v2/tenants",
+    "openstack/identity/v2/tokens",
+    "openstack/identity/v3/tokens",
+    "openstack/utils",
+    "pagination",
+  ]
+  pruneopts = "UT"
+  revision = "f27ceddc323ff01fdd909ac8377fb06b12db7f4f"
+
+[[projects]]
+  branch = "master"
   digest = "1:86c1210529e69d69860f2bb3ee9ccce0b595aa3f9165e7dd1388e5c612915888"
   name = "github.com/gregjones/httpcache"
   packages = [
@@ -396,7 +412,7 @@
   revision = "103fd098999dc9c0c88536f5c9ad2e5da39373ae"
 
 [[projects]]
-  digest = "1:2091c7ba1437b9eaa0eccd5f4c86c03922879de5ba091cd99fde9accbb5ec1f7"
+  digest = "1:f1a3328da14a916b0e32b334b2aa024a17b592eadb98ab34984dcbaca2db477a"
   name = "k8s.io/client-go"
   packages = [
     "discovery",
@@ -437,6 +453,8 @@
     "pkg/version",
     "plugin/pkg/client/auth/exec",
     "plugin/pkg/client/auth/gcp",
+    "plugin/pkg/client/auth/oidc",
+    "plugin/pkg/client/auth/openstack",
     "rest",
     "rest/watch",
     "third_party/forked/golang/template",
@@ -466,11 +484,15 @@
     "github.com/c-bata/go-prompt",
     "github.com/c-bata/go-prompt/completer",
     "k8s.io/api/apps/v1",
+    "k8s.io/api/batch/v1",
     "k8s.io/api/core/v1",
+    "k8s.io/api/extensions/v1beta1",
     "k8s.io/api/policy/v1beta1",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/plugin/pkg/client/auth/gcp",
+    "k8s.io/client-go/plugin/pkg/client/auth/oidc",
+    "k8s.io/client-go/plugin/pkg/client/auth/openstack",
     "k8s.io/client-go/tools/clientcmd",
   ]
   solver-name = "gps-cdcl"
