@@ -142,3 +142,36 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 	}
 	return []prompt.Suggest{}, false
 }
+
+func excludeOptions(args []string) []string {
+	l := len(args)
+	filtered := make([]string, 0, l)
+
+	shouldSkipNext := []string{
+		"-f",
+		"--filename",
+		"-n",
+		"--namespace",
+	}
+
+	var skipNextArg bool
+	for i := 0; i < len(args); i++ {
+		if skipNextArg {
+			skipNextArg = false
+			continue
+		}
+
+		for _, s := range shouldSkipNext {
+			if s == args[i] {
+				skipNextArg = true
+				continue
+			}
+		}
+		if strings.HasPrefix(args[i], "-") {
+			continue
+		}
+
+		filtered = append(filtered, args[i])
+	}
+	return filtered
+}
