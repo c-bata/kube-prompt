@@ -6,7 +6,7 @@ import (
 
 	prompt "github.com/c-bata/go-prompt"
 	"github.com/c-bata/go-prompt/completer"
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
@@ -48,7 +48,7 @@ func NewCompleter() (*Completer, error) {
 
 type Completer struct {
 	namespace     string
-	namespaceList *v1.NamespaceList
+	namespaceList *corev1.NamespaceList
 	client        *kubernetes.Clientset
 }
 
@@ -138,7 +138,11 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 		case "-f", "--filename":
 			return yamlFileCompleter.Complete(d), true
 		case "-n", "--namespace":
-			return getNameSpaceSuggestions(c.namespaceList), true
+			return prompt.FilterHasPrefix(
+				getNameSpaceSuggestions(c.namespaceList),
+				d.GetWordBeforeCursor(),
+				true,
+			), true
 		}
 	}
 	return []prompt.Suggest{}, false
