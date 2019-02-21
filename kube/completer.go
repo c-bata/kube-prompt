@@ -76,7 +76,25 @@ func (c *Completer) Complete(d prompt.Document) []prompt.Suggest {
 		return suggests
 	}
 
-	return c.argumentsCompleter(excludeOptions(args))
+	namespace := checkNamespaceArg(args)
+	if namespace == "" {
+		namespace = c.namespace
+	}
+	return c.argumentsCompleter(namespace, excludeOptions(args))
+}
+
+func checkNamespaceArg(args []string) string {
+	var found bool
+	for i := 0; i < len(args); i++ {
+		if found {
+			return args[i]
+		}
+		if args[i] == "--namespace" || args[i] == "-n" {
+			found = true
+			continue
+		}
+	}
+	return ""
 }
 
 /* Option arguments */
