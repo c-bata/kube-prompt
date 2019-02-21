@@ -1,11 +1,9 @@
 package kube
 
 import (
-	"os"
 	"strings"
 
 	prompt "github.com/c-bata/go-prompt"
-	"github.com/c-bata/go-prompt/completer"
 )
 
 func optionCompleter(args []string, long bool) []prompt.Suggest {
@@ -115,6 +113,7 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = optionHelp
 	}
 
+	suggests = append(suggests, globalOptions...)
 	if long {
 		return prompt.FilterContains(
 			prompt.FilterHasPrefix(suggests, "--", false),
@@ -130,48 +129,11 @@ var optionHelp = []prompt.Suggest{
 	{Text: "--help"},
 }
 
-/* Option arguments */
-
-var yamlFileCompleter = completer.FilePathCompleter{
-	IgnoreCase: true,
-	Filter: func(fi os.FileInfo) bool {
-		if fi.IsDir() {
-			return true
-		}
-		if strings.HasSuffix(fi.Name(), ".yaml") || strings.HasSuffix(fi.Name(), ".yml") {
-			return true
-		}
-		return false
-	},
-}
-
-func getPreviousOption(d prompt.Document) (cmd, option string, found bool) {
-	args := strings.Split(d.TextBeforeCursor(), " ")
-	l := len(args)
-	if l >= 2 {
-		option = args[l-2]
-	}
-	if strings.HasPrefix(option, "-") {
-		return args[0], option, true
-	}
-	return "", "", false
-}
-
-func completeOptionArguments(d prompt.Document) ([]prompt.Suggest, bool) {
-	cmd, option, found := getPreviousOption(d)
-	if !found {
-		return []prompt.Suggest{}, false
-	}
-	switch cmd {
-	case "get", "describe", "create", "delete", "replace", "patch",
-		"edit", "apply", "expose", "rolling-update", "rollout",
-		"label", "annotate", "scale", "convert", "autoscale", "top":
-		switch option {
-		case "-f", "--filename":
-			return yamlFileCompleter.Complete(d), true
-		case "-n", "--namespace":
-			return getNameSpaceSuggestions(), true
-		}
-	}
-	return []prompt.Suggest{}, false
+var globalOptions = []prompt.Suggest{
+	{Text: "--namespace", Description: "temporarily set the namespace for a request"},
+	{Text: "-n", Description: "temporarily set the namespace for a request"},
+	{Text: "--server", Description: "specify the address and port of the Kubernetes API server"},
+	{Text: "-s", Description: "specify the address and port of the Kubernetes API server"},
+	{Text: "--user", Description: "take the user if this flag exists."},
+	{Text: "--cluster", Description: "take the cluster if this flag exists."},
 }

@@ -16,62 +16,10 @@ import (
 	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
 	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 )
 
 const thresholdFetchInterval = 10 * time.Second
-
-var resourceTypes = []prompt.Suggest{
-	{Text: "clusters"}, // valid only for federation apiservers
-	{Text: "componentstatuses"},
-	{Text: "configmaps"},
-	{Text: "daemonsets"},
-	{Text: "deployments"},
-	{Text: "endpoints"},
-	{Text: "events"},
-	{Text: "horizontalpodautoscalers"},
-	{Text: "ingresses"},
-	{Text: "jobs"},
-	{Text: "cronjobs"},
-	{Text: "limitranges"},
-	{Text: "namespaces"},
-	{Text: "networkpolicies"},
-	{Text: "nodes"},
-	{Text: "persistentvolumeclaims"},
-	{Text: "persistentvolumes"},
-	{Text: "pod"},
-	{Text: "podsecuritypolicies"},
-	{Text: "podtemplates"},
-	{Text: "replicasets"},
-	{Text: "replicationcontrollers"},
-	{Text: "resourcequotas"},
-	{Text: "secrets"},
-	{Text: "serviceaccounts"},
-	{Text: "services"},
-	{Text: "statefulsets"},
-	{Text: "storageclasses"},
-	{Text: "thirdpartyresources"},
-
-	// aliases
-	{Text: "cs"},
-	{Text: "cm"},
-	{Text: "ds"},
-	{Text: "deploy"},
-	{Text: "ep"},
-	{Text: "hpa"},
-	{Text: "ing"},
-	{Text: "limits"},
-	{Text: "ns"},
-	{Text: "no"},
-	{Text: "pvc"},
-	{Text: "pv"},
-	{Text: "po"},
-	{Text: "psp"},
-	{Text: "rs"},
-	{Text: "rc"},
-	{Text: "quota"},
-	{Text: "sa"},
-	{Text: "svc"},
-}
 
 func init() {
 	lastFetchedAt = new(sync.Map)
@@ -121,18 +69,18 @@ var (
 	componentStatusList atomic.Value
 )
 
-func fetchComponentStatusList() {
+func fetchComponentStatusList(client *kubernetes.Clientset) {
 	key := "component_status"
 	if !shouldFetch(key) {
 		return
 	}
-	l, _ := getClient().CoreV1().ComponentStatuses().List(metav1.ListOptions{})
+	l, _ := client.CoreV1().ComponentStatuses().List(metav1.ListOptions{})
 	componentStatusList.Store(l)
 	updateLastFetchedAt(key)
 }
 
-func getComponentStatusCompletions() []prompt.Suggest {
-	go fetchComponentStatusList()
+func getComponentStatusCompletions(client *kubernetes.Clientset) []prompt.Suggest {
+	go fetchComponentStatusList(client)
 	l, ok := componentStatusList.Load().(*corev1.ComponentStatusList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
@@ -152,18 +100,18 @@ var (
 	configMapsList atomic.Value
 )
 
-func fetchConfigMapList(namespace string) {
+func fetchConfigMapList(client *kubernetes.Clientset, namespace string) {
 	key := "config_map_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
-	l, _ := getClient().CoreV1().ConfigMaps(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().ConfigMaps(namespace).List(metav1.ListOptions{})
 	configMapsList.Store(l)
 }
 
-func getConfigMapSuggestions() []prompt.Suggest {
-	go fetchConfigMapList(metav1.NamespaceAll)
+func getConfigMapSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchConfigMapList(client, namespace)
 	l, ok := configMapsList.Load().(*corev1.ConfigMapList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
@@ -214,20 +162,19 @@ var (
 	podList *sync.Map
 )
 
-func fetchPods(namespace string) {
+func fetchPods(client *kubernetes.Clientset, namespace string) {
 	key := "pod_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().Pods(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().Pods(namespace).List(metav1.ListOptions{})
 	podList.Store(namespace, l)
 }
 
-func getPodSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchPods(namespace)
+func getPodSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchPods(client, namespace)
 	x, ok := podList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -246,8 +193,7 @@ func getPodSuggestions() []prompt.Suggest {
 	return s
 }
 
-func getPod(podName string) (corev1.Pod, bool) {
-	namespace := metav1.NamespaceAll
+func getPod(namespace, podName string) (corev1.Pod, bool) {
 	x, ok := podList.Load(namespace)
 	if !ok {
 		return corev1.Pod{}, false
@@ -264,8 +210,8 @@ func getPod(podName string) (corev1.Pod, bool) {
 	return corev1.Pod{}, false
 }
 
-func getPortsFromPodName(podName string) []prompt.Suggest {
-	pod, found := getPod(podName)
+func getPortsFromPodName(namespace string, podName string) []prompt.Suggest {
+	pod, found := getPod(namespace, podName)
 	if !found {
 		return []prompt.Suggest{}
 	}
@@ -302,21 +248,20 @@ var (
 	daemonSetList *sync.Map
 )
 
-func fetchDaemonSetList(namespace string) {
+func fetchDaemonSetList(client *kubernetes.Clientset, namespace string) {
 	key := "daemon_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().AppsV1().DaemonSets(namespace).List(metav1.ListOptions{})
+	l, _ := client.AppsV1().DaemonSets(namespace).List(metav1.ListOptions{})
 	daemonSetList.Store(namespace, l)
 	return
 }
 
-func getDaemonSetSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchDaemonSetList(namespace)
+func getDaemonSetSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchDaemonSetList(client, namespace)
 	x, ok := daemonSetList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -340,21 +285,20 @@ var (
 	deploymentList *sync.Map
 )
 
-func fetchDeployments(namespace string) {
+func fetchDeployments(client *kubernetes.Clientset, namespace string) {
 	key := "deployment_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().AppsV1().Deployments(namespace).List(metav1.ListOptions{})
+	l, _ := client.AppsV1().Deployments(namespace).List(metav1.ListOptions{})
 	deploymentList.Store(namespace, l)
 	return
 }
 
-func getDeploymentSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchDeployments(namespace)
+func getDeploymentSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchDeployments(client, namespace)
 	x, ok := deploymentList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -378,21 +322,20 @@ var (
 	endpointList *sync.Map
 )
 
-func fetchEndpoints(namespace string) {
+func fetchEndpoints(client *kubernetes.Clientset, namespace string) {
 	key := "endpoint_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().Endpoints(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().Endpoints(namespace).List(metav1.ListOptions{})
 	endpointList.Store(key, l)
 	return
 }
 
-func getEndpointsSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchEndpoints(namespace)
+func getEndpointsSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchEndpoints(client, namespace)
 	x, ok := endpointList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -416,21 +359,20 @@ var (
 	eventList *sync.Map
 )
 
-func fetchEvents(namespace string) {
+func fetchEvents(client *kubernetes.Clientset, namespace string) {
 	key := "event_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().Events(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().Events(namespace).List(metav1.ListOptions{})
 	eventList.Store(namespace, l)
 	return
 }
 
-func getEventsSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchEvents(namespace)
+func getEventsSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchEvents(client, namespace)
 	x, ok := eventList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -454,20 +396,20 @@ var (
 	nodeList atomic.Value
 )
 
-func fetchNodeList() {
+func fetchNodeList(client *kubernetes.Clientset) {
 	key := "node"
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().Nodes().List(metav1.ListOptions{})
+	l, _ := client.CoreV1().Nodes().List(metav1.ListOptions{})
 	nodeList.Store(l)
 	return
 }
 
-func getNodeSuggestions() []prompt.Suggest {
-	go fetchNodeList()
+func getNodeSuggestions(client *kubernetes.Clientset) []prompt.Suggest {
+	go fetchNodeList(client)
 	l, ok := nodeList.Load().(*corev1.NodeList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
@@ -487,21 +429,20 @@ var (
 	secretList *sync.Map
 )
 
-func fetchSecretList(namespace string) {
+func fetchSecretList(client *kubernetes.Clientset, namespace string) {
 	key := "secret_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().Secrets(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().Secrets(namespace).List(metav1.ListOptions{})
 	secretList.Store(namespace, l)
 	return
 }
 
-func getSecretSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchSecretList(namespace)
+func getSecretSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchSecretList(client, namespace)
 	x, ok := secretList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -525,20 +466,19 @@ var (
 	ingressList *sync.Map
 )
 
-func fetchIngresses(namespace string) {
+func fetchIngresses(client *kubernetes.Clientset, namespace string) {
 	key := "ingress_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().ExtensionsV1beta1().Ingresses(namespace).List(metav1.ListOptions{})
+	l, _ := client.ExtensionsV1beta1().Ingresses(namespace).List(metav1.ListOptions{})
 	ingressList.Store(namespace, l)
 }
 
-func getIngressSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchIngresses(namespace)
+func getIngressSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchIngresses(client, namespace)
 
 	x, ok := ingressList.Load(namespace)
 	if !ok {
@@ -567,21 +507,20 @@ var (
 	limitRangeList *sync.Map
 )
 
-func fetchLimitRangeList(namespace string) {
+func fetchLimitRangeList(client *kubernetes.Clientset, namespace string) {
 	key := "limit_range_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().LimitRanges(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().LimitRanges(namespace).List(metav1.ListOptions{})
 	limitRangeList.Store(namespace, l)
 	return
 }
 
-func getLimitRangeSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchLimitRangeList(namespace)
+func getLimitRangeSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchLimitRangeList(client, namespace)
 	x, ok := limitRangeList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -601,32 +540,14 @@ func getLimitRangeSuggestions() []prompt.Suggest {
 
 /* NameSpaces */
 
-var (
-	namespaceList atomic.Value
-)
-
-func fetchNameSpaceList() {
-	key := "namespace"
-	if !shouldFetch(key) {
-		return
-	}
-	updateLastFetchedAt(key)
-
-	l, _ := getClient().CoreV1().Namespaces().List(metav1.ListOptions{})
-	namespaceList.Store(l)
-	return
-}
-
-func getNameSpaceSuggestions() []prompt.Suggest {
-	go fetchNameSpaceList()
-	l, ok := namespaceList.Load().(*corev1.NamespaceList)
-	if !ok || len(l.Items) == 0 {
+func getNameSpaceSuggestions(namespaceList *corev1.NamespaceList) []prompt.Suggest {
+	if namespaceList == nil || len(namespaceList.Items) == 0 {
 		return []prompt.Suggest{}
 	}
-	s := make([]prompt.Suggest, len(l.Items))
-	for i := range l.Items {
+	s := make([]prompt.Suggest, len(namespaceList.Items))
+	for i := range namespaceList.Items {
 		s[i] = prompt.Suggest{
-			Text: l.Items[i].Name,
+			Text: namespaceList.Items[i].Name,
 		}
 	}
 	return s
@@ -638,21 +559,20 @@ var (
 	persistentVolumeClaimsList *sync.Map
 )
 
-func fetchPersistentVolumeClaimsList(namespace string) {
+func fetchPersistentVolumeClaimsList(client *kubernetes.Clientset, namespace string) {
 	key := "persistent_volume_claims" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().PersistentVolumeClaims(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().PersistentVolumeClaims(namespace).List(metav1.ListOptions{})
 	persistentVolumeClaimsList.Store(namespace, l)
 	return
 }
 
-func getPersistentVolumeClaimSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchPersistentVolumeClaimsList(namespace)
+func getPersistentVolumeClaimSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchPersistentVolumeClaimsList(client, namespace)
 	x, ok := persistentVolumeClaimsList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -676,20 +596,20 @@ var (
 	persistentVolumesList atomic.Value
 )
 
-func fetchPersistentVolumeList() {
+func fetchPersistentVolumeList(client *kubernetes.Clientset) {
 	key := "persistent_volume"
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().PersistentVolumes().List(metav1.ListOptions{})
+	l, _ := client.CoreV1().PersistentVolumes().List(metav1.ListOptions{})
 	persistentVolumesList.Store(l)
 	return
 }
 
-func getPersistentVolumeSuggestions() []prompt.Suggest {
-	go fetchPersistentVolumeList()
+func getPersistentVolumeSuggestions(client *kubernetes.Clientset) []prompt.Suggest {
+	go fetchPersistentVolumeList(client)
 	l, ok := persistentVolumesList.Load().(*corev1.PersistentVolumeList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
@@ -709,20 +629,20 @@ var (
 	podSecurityPolicyList atomic.Value
 )
 
-func fetchPodSecurityPolicyList() {
+func fetchPodSecurityPolicyList(client *kubernetes.Clientset) {
 	key := "pod_security_policy"
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().ExtensionsV1beta1().PodSecurityPolicies().List(metav1.ListOptions{})
+	l, _ := client.ExtensionsV1beta1().PodSecurityPolicies().List(metav1.ListOptions{})
 	podSecurityPolicyList.Store(l)
 	return
 }
 
-func getPodSecurityPolicySuggestions() []prompt.Suggest {
-	go fetchPodSecurityPolicyList()
+func getPodSecurityPolicySuggestions(client *kubernetes.Clientset) []prompt.Suggest {
+	go fetchPodSecurityPolicyList(client)
 	l, ok := podSecurityPolicyList.Load().(policyv1beta1.PodSecurityPolicyList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
@@ -742,21 +662,20 @@ var (
 	podTemplateList *sync.Map
 )
 
-func fetchPodTemplateList(namespace string) {
+func fetchPodTemplateList(client *kubernetes.Clientset, namespace string) {
 	key := "pod_template_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().PodTemplates(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().PodTemplates(namespace).List(metav1.ListOptions{})
 	podTemplateList.Store(namespace, l)
 	return
 }
 
-func getPodTemplateSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchPodTemplateList(namespace)
+func getPodTemplateSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchPodTemplateList(client, namespace)
 	x, ok := podTemplateList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -780,21 +699,20 @@ var (
 	replicaSetList *sync.Map
 )
 
-func fetchReplicaSetList(namespace string) {
+func fetchReplicaSetList(client *kubernetes.Clientset, namespace string) {
 	key := "replica_set_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().AppsV1beta2().ReplicaSets(namespace).List(metav1.ListOptions{})
+	l, _ := client.AppsV1beta2().ReplicaSets(namespace).List(metav1.ListOptions{})
 	replicaSetList.Store(namespace, l)
 	return
 }
 
-func getReplicaSetSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchReplicaSetList(namespace)
+func getReplicaSetSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchReplicaSetList(client, namespace)
 	x, ok := replicaSetList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -818,21 +736,20 @@ var (
 	replicationControllerList *sync.Map
 )
 
-func fetchReplicationControllerList(namespace string) {
+func fetchReplicationControllerList(client *kubernetes.Clientset, namespace string) {
 	key := "replication_controller" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().ReplicationControllers(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().ReplicationControllers(namespace).List(metav1.ListOptions{})
 	replicationControllerList.Store(namespace, l)
 	return
 }
 
-func getReplicationControllerSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchReplicationControllerList(namespace)
+func getReplicationControllerSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchReplicationControllerList(client, namespace)
 	x, ok := replicationControllerList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -856,21 +773,20 @@ var (
 	resourceQuotaList *sync.Map
 )
 
-func fetchResourceQuotaList(namespace string) {
+func fetchResourceQuotaList(client *kubernetes.Clientset, namespace string) {
 	key := "resource_quota" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().ResourceQuotas(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().ResourceQuotas(namespace).List(metav1.ListOptions{})
 	resourceQuotaList.Store(namespace, l)
 	return
 }
 
-func getResourceQuotasSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchResourceQuotaList(namespace)
+func getResourceQuotasSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchResourceQuotaList(client, namespace)
 	x, ok := resourceQuotaList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -894,21 +810,20 @@ var (
 	serviceAccountList *sync.Map
 )
 
-func fetchServiceAccountList(namespace string) {
+func fetchServiceAccountList(client *kubernetes.Clientset, namespace string) {
 	key := "service_account_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().ServiceAccounts(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().ServiceAccounts(namespace).List(metav1.ListOptions{})
 	serviceAccountList.Store(namespace, l)
 	return
 }
 
-func getServiceAccountSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchServiceAccountList(namespace)
+func getServiceAccountSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchServiceAccountList(client, namespace)
 	x, ok := serviceAccountList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -932,21 +847,20 @@ var (
 	serviceList *sync.Map
 )
 
-func fetchServiceList(namespace string) {
+func fetchServiceList(client *kubernetes.Clientset, namespace string) {
 	key := "service_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().CoreV1().Services(namespace).List(metav1.ListOptions{})
+	l, _ := client.CoreV1().Services(namespace).List(metav1.ListOptions{})
 	serviceList.Store(namespace, l)
 	return
 }
 
-func getServiceSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchServiceList(namespace)
+func getServiceSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchServiceList(client, namespace)
 	x, ok := serviceList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
@@ -970,20 +884,19 @@ var (
 	jobList *sync.Map
 )
 
-func fetchJobs(namespace string) {
+func fetchJobs(client *kubernetes.Clientset, namespace string) {
 	key := "job_" + namespace
 	if !shouldFetch(key) {
 		return
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := getClient().BatchV1().Jobs(namespace).List(metav1.ListOptions{})
+	l, _ := client.BatchV1().Jobs(namespace).List(metav1.ListOptions{})
 	jobList.Store(namespace, l)
 }
 
-func getJobSuggestions() []prompt.Suggest {
-	namespace := metav1.NamespaceAll
-	go fetchJobs(namespace)
+func getJobSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchJobs(client, namespace)
 	x, ok := jobList.Load(namespace)
 	if !ok {
 		return []prompt.Suggest{}
