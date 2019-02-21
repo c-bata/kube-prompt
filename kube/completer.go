@@ -76,14 +76,15 @@ func (c *Completer) Complete(d prompt.Document) []prompt.Suggest {
 		return suggests
 	}
 
-	namespace := checkNamespaceArg(args)
+	namespace := checkNamespaceArg(d)
 	if namespace == "" {
 		namespace = c.namespace
 	}
 	return c.argumentsCompleter(namespace, excludeOptions(args))
 }
 
-func checkNamespaceArg(args []string) string {
+func checkNamespaceArg(d prompt.Document) string {
+	args := strings.Split(d.Text, " ")
 	var found bool
 	for i := 0; i < len(args); i++ {
 		if found {
