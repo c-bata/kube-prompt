@@ -113,6 +113,7 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 		suggests = optionHelp
 	}
 
+	suggests = append(suggests, globalOptions...)
 	if long {
 		return prompt.FilterContains(
 			prompt.FilterHasPrefix(suggests, "--", false),
@@ -126,4 +127,13 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 var optionHelp = []prompt.Suggest{
 	{Text: "-h"},
 	{Text: "--help"},
+}
+
+var globalOptions = []prompt.Suggest{
+	{Text: "--namespace", Description: "temporarily set the namespace for a request"},
+	{Text: "-n", Description: "temporarily set the namespace for a request"},
+	{Text: "--server", Description: "specify the address and port of the Kubernetes API server"},
+	{Text: "-s", Description: "specify the address and port of the Kubernetes API server"},
+	{Text: "--user", Description: "take the user if this flag exists."},
+	{Text: "--cluster", Description: "take the cluster if this flag exists."},
 }

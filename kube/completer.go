@@ -152,6 +152,11 @@ func excludeOptions(args []string) []string {
 		"--filename",
 		"-n",
 		"--namespace",
+		"-s",
+		"--server",
+		"--kubeconfig",
+		"--cluster",
+		"--user",
 	}
 
 	var skipNextArg bool
