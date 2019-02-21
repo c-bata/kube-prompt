@@ -8,6 +8,8 @@ import (
 	"github.com/c-bata/go-prompt/completer"
 	"github.com/c-bata/kube-prompt/internal/debug"
 	"github.com/c-bata/kube-prompt/kube"
+
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
 var (
