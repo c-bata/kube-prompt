@@ -6,12 +6,6 @@ LDFLAGS := -X 'main.version=$(VERSION)' \
 
 .DEFAULT_GOAL := help
 
-.PHONY: setup
-setup:  ## Setup for required tools.
-	go get github.com/golang/lint/golint
-	go get golang.org/x/tools/cmd/goimports
-	go get -u github.com/golang/dep/cmd/dep
-
 .PHONY: fmt
 fmt: ## Formatting source codes.
 	@goimports -w ./kube
@@ -27,7 +21,7 @@ test:  ## Run the tests.
 
 .PHONY: build
 build: main.go  ## Build a binary.
-	go build -ldflags "$(LDFLAGS)"
+	GO111MODULE=on go build -ldflags "$(LDFLAGS)"
 
 .PHONY: code-gen
 code-gen: ## Generate source codes.
