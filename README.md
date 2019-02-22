@@ -95,9 +95,7 @@ wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packa
 #### Building from source
 
 ```console
-$ go get -u github.com/golang/dep/cmd/dep
-$ dep ensure # download dependency package
-$ go build .
+$ GO111MODULE=on go build .
 ```
 
 To create a multi-platform binary, use the cross command via make:
