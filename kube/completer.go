@@ -180,8 +180,13 @@ func excludeOptions(args []string) ([]string, bool) {
 		}
 
 		for _, s := range shouldSkipNext {
-			if s == args[i] {
-				skipNextArg = true
+			if strings.HasPrefix(args[i], s) {
+				if strings.Contains(args[i], "=") {
+					// we can specify option value like '-o=json'
+					skipNextArg = false
+				} else {
+					skipNextArg = true
+				}
 				continue
 			}
 		}
