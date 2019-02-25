@@ -162,6 +162,8 @@ func excludeOptions(args []string) []string {
 		"--kubeconfig",
 		"--cluster",
 		"--user",
+		"--output",
+		"-o",
 	}
 
 	var skipNextArg bool
