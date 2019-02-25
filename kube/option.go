@@ -16,7 +16,7 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 	}
 
 	var suggests []prompt.Suggest
-	commandArgs := excludeOptions(args)
+	commandArgs, _ := excludeOptions(args)
 	switch commandArgs[0] {
 	case "get":
 		suggests = getOptions

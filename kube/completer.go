@@ -80,7 +80,13 @@ func (c *Completer) Complete(d prompt.Document) []prompt.Suggest {
 	if namespace == "" {
 		namespace = c.namespace
 	}
-	return c.argumentsCompleter(namespace, excludeOptions(args))
+	commandArgs, skipNext := excludeOptions(args)
+	if skipNext {
+		// when type 'get pod -o ', we don't want to complete pods. we want to type 'json' or other.
+		// So we need to skip argumentCompleter.
+		return []prompt.Suggest{}
+	}
+	return c.argumentsCompleter(namespace, commandArgs)
 }
 
 func checkNamespaceArg(d prompt.Document) string {
@@ -148,7 +154,7 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 	return []prompt.Suggest{}, false
 }
 
-func excludeOptions(args []string) []string {
+func excludeOptions(args []string) ([]string, bool) {
 	l := len(args)
 	filtered := make([]string, 0, l)
 
@@ -185,5 +191,5 @@ func excludeOptions(args []string) []string {
 
 		filtered = append(filtered, args[i])
 	}
-	return filtered
+	return filtered, skipNextArg
 }
