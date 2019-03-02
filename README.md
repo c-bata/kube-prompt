@@ -19,10 +19,6 @@ web-1144924021-5r1fg        1/1     Running     4       25d
 web-1144924021-pqmfq        1/1     Running     4       25d
 ```
 
-**Other implementations**
-
-* [kube-shell](https://github.com/cloudnativelabs/kube-shell): An integrated shell for working with the Kubernetes written in Python using [python-prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit).
-
 ## Installation
 
 #### Downloading standalone binary
@@ -101,6 +97,10 @@ To create a multi-platform binary, use the cross command via make:
 ```console
 $ make cross
 ```
+
+## Similar projects
+
+* [kube-shell](https://github.com/cloudnativelabs/kube-shell): An integrated shell for working with the Kubernetes written in Python using [python-prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit).
 
 ## Goal
 
