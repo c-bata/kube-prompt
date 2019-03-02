@@ -19,11 +19,9 @@ web-1144924021-5r1fg        1/1     Running     4       25d
 web-1144924021-pqmfq        1/1     Running     4       25d
 ```
 
-**Looking for co-maintainers**
+**Other implementations**
 
-I'm looking for one or more co-maintainers that can help me.
-If you are interested, please reply to [this issue](https://github.com/c-bata/kube-prompt/issues/28).
-
+* [kube-shell](https://github.com/cloudnativelabs/kube-shell): An integrated shell for working with the Kubernetes written in Python using [python-prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit).
 
 ## Installation
 
