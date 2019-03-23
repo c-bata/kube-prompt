@@ -1,5 +1,7 @@
 # kube-prompt
 
+set GOPATH=D:\prog\GoPortWin1.9.4-r.1\go\bin
+
 ![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
 ![Go Report Card](https://goreportcard.com/badge/github.com/c-bata/kube-prompt)
 

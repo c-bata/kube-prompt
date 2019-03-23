@@ -36,7 +36,7 @@ func NewCompleter() (*Completer, error) {
 
 	namespaces, err := client.CoreV1().Namespaces().List(metav1.ListOptions{})
 	if err != nil {
-		return nil, err
+		//return nil, err
 	}
 
 	return &Completer{

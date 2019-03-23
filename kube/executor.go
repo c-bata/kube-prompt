@@ -19,8 +19,8 @@ func Executor(s string) {
 		os.Exit(0)
 		return
 	}
-
-	cmd := exec.Command("/bin/sh", "-c", "kubectl "+s)
+	splitArgs := strings.Split(s, " ")
+	cmd := exec.Command("oc", splitArgs[0:]...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -38,7 +38,8 @@ func ExecuteAndGetResult(s string) string {
 	}
 
 	out := &bytes.Buffer{}
-	cmd := exec.Command("/bin/sh", "-c", "kubectl "+s)
+	splitArgs := strings.Split(s, " ")
+	cmd := exec.Command("oc",  splitArgs[0:]...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = out
 	if err := cmd.Run(); err != nil {
