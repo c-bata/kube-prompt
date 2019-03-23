@@ -9,6 +9,16 @@ import (
 
 	"github.com/c-bata/kube-prompt/internal/debug"
 )
+func ProcessCmd(s string) *exec.Cmd {
+	cli := os.Getenv("KUBE_CLI") // oc or kubectl
+	if len(cli) == 0 {
+		cli ="kubectl"
+	}
+
+	splitArgs := strings.Split(s, " ")
+	cmd := exec.Command(cli, splitArgs[0:]...)
+	return cmd
+}
 
 func Executor(s string) {
 	s = strings.TrimSpace(s)
@@ -19,8 +29,7 @@ func Executor(s string) {
 		os.Exit(0)
 		return
 	}
-	splitArgs := strings.Split(s, " ")
-	cmd := exec.Command("oc", splitArgs[0:]...)
+	cmd := ProcessCmd(s)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -38,8 +47,7 @@ func ExecuteAndGetResult(s string) string {
 	}
 
 	out := &bytes.Buffer{}
-	splitArgs := strings.Split(s, " ")
-	cmd := exec.Command("oc",  splitArgs[0:]...)
+	cmd := ProcessCmd(s)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = out
 	if err := cmd.Run(); err != nil {

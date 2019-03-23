@@ -1,7 +1,5 @@
 # kube-prompt
 
-set GOPATH=D:\prog\GoPortWin1.9.4-r.1\go\bin
-
 ![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
 ![Go Report Card](https://goreportcard.com/badge/github.com/c-bata/kube-prompt)
 
@@ -91,6 +89,7 @@ wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packa
 #### Building from source
 
 ```console
+$ go get .
 $ GO111MODULE=on go build .
 ```
 

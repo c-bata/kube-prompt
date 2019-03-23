@@ -40,6 +40,11 @@ cross: main.go  ## Build binaries for cross platform.
 		GOOS=linux GOARCH=$${arch} make build; \
 		zip pkg/kube-prompt_$(VERSION)_linux_$${arch}.zip kube-prompt; \
 	done;
+	@# Windows
+	@for arch in "amd64" "386" "arm64"; do \
+		GOOS=windows GOARCH=$${arch} make build; \
+		zip pkg/kube-prompt_$(VERSION)_windows_$${arch}.zip kube-prompt; \
+	done;
 
 .PHONY: help
 help: ## Show help text
