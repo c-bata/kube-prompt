@@ -19,6 +19,16 @@ web-1144924021-5r1fg        1/1     Running     4       25d
 web-1144924021-pqmfq        1/1     Running     4       25d
 ```
 
+
+### Command Line Options
+#### `-h`, `--help`
+Display help message with all command line options.
+#### `--prefix` (default "`>>>`")
+Sets your prompt prefix to the provided string.
+```console
+$ kube-prompt --prefix "foo$"
+```
+
 ## Installation
 
 #### Downloading standalone binary
