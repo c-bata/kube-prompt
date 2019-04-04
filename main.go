@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -26,6 +27,9 @@ func main() {
 		os.Exit(1)
 	}
 
+	propmtPrefix := flag.String("prefix", ">>>", "kube-prompt prefix")
+	flag.Parse()
+
 	defer debug.Teardown()
 	fmt.Printf("kube-prompt %s (rev-%s)\n", version, revision)
 	fmt.Println("Please use `exit` or `Ctrl-D` to exit this program.")
@@ -34,7 +38,7 @@ func main() {
 		kube.Executor,
 		c.Complete,
 		prompt.OptionTitle("kube-prompt: interactive kubernetes client"),
-		prompt.OptionPrefix(">>> "),
+		prompt.OptionPrefix(*propmtPrefix + " "),
 		prompt.OptionInputTextColor(prompt.Yellow),
 		prompt.OptionCompletionWordSeparator(completer.FilePathCompletionSeparator),
 	)
