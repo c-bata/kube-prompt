@@ -23,6 +23,7 @@ jobs:
       env:
         GO111MODULE: on
         GOPATH: /home/runner/work/
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         export CREATE_EVENT_REF_TYPE=$(jq --raw-output .ref_type "$GITHUB_EVENT_PATH")
         export TAGNAME=$(jq --raw-output .ref "$GITHUB_EVENT_PATH")
@@ -36,5 +37,5 @@ jobs:
         ls pkg/
         echo "========================================================="
         go get -u github.com/tcnksm/ghr
-        $GOPATH/bin/ghr -t ${GITHUB_TOKEN} -t ${TAGNAME} -b "ʕ◔ϖ◔ʔ Release ${TAGNAME}" -draft ${TAGNAME} pkg/
+        $GOPATH/bin/ghr -n ${TAGNAME} -b "ʕ◔ϖ◔ʔ Release ${TAGNAME}" -draft ${TAGNAME} pkg/
 
