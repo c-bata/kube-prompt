@@ -2,12 +2,8 @@ module github.com/c-bata/kube-prompt
 
 require (
 	github.com/c-bata/go-prompt v0.0.0-20181209194345-6d81ea6f2610
-	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/gogo/protobuf v1.1.1 // indirect
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
-	github.com/google/btree v0.0.0-20180124185431-e89373fe6b4a // indirect
 	github.com/googleapis/gnostic v0.2.0 // indirect
-	github.com/gregjones/httpcache v0.0.0-20180305231024-9cad4c3443a7 // indirect
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.3 // indirect
 	github.com/mattn/go-runewidth v0.0.3 // indirect
