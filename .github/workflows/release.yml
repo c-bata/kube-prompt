@@ -25,10 +25,16 @@ jobs:
         GOPATH: /home/runner/work/
       run: |
         export CREATE_EVENT_REF_TYPE=$(jq --raw-output .ref_type "$GITHUB_EVENT_PATH")
-        if [ "$CREATE_EVENT_REF_TYPE" != "tag" ]; then echo "ref_type is not a tag: ${CREATE_EVENT_REF_TYPE}" && exit 78; fi
         export CREATE_EVENT_REF=$(jq --raw-output .ref "$GITHUB_EVENT_PATH")
+        echo "========================================================="
+        echo "DEBUG:" $CREATE_EVENT_REF $CREATE_EVENT_REF_TYPE
+        echo "========================================================="
+        if [ "$CREATE_EVENT_REF_TYPE" != "tag" ]; then echo "ref_type is not a tag: ${CREATE_EVENT_REF_TYPE}" && exit 78; fi
         make cross
+        echo "========================================================="
+        echo "DEBUG: ls pkg/"
         ls pkg/
+        echo "========================================================="
         go get -u github.com/tcnksm/ghr
         $GOPATH/bin/ghr -t ${GITHUB_TOKEN} ${CREATE_EVENT_REF} pkg/
 
