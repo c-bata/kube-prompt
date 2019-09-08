@@ -37,7 +37,7 @@ cross: main.go  ## Build binaries for cross platform.
 		zip pkg/kube-prompt_$(VERSION)_darwin_$${arch}.zip kube-prompt; \
 	done;
 	@# linux
-	@for arch in "amd64" "386" "arm64"; do \
+	@for arch in "amd64" "386" "arm64" "arm"; do \
 		GOOS=linux GOARCH=$${arch} make build; \
 		zip pkg/kube-prompt_$(VERSION)_linux_$${arch}.zip kube-prompt; \
 	done;
