@@ -149,6 +149,12 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 				d.GetWordBeforeCursor(),
 				true,
 			), true
+		case "-c", "--container":
+			return prompt.FilterHasPrefix(
+				getContainerNamesFromCachedPods(c.client, c.namespace),
+				d.GetWordBeforeCursor(),
+				true,
+			), true
 		}
 	}
 	return []prompt.Suggest{}, false
@@ -170,6 +176,8 @@ func excludeOptions(args []string) ([]string, bool) {
 		"--user",
 		"--output",
 		"-o",
+		"--container",
+		"-c",
 	}
 
 	var skipNextArg bool

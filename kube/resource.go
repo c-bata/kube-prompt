@@ -242,6 +242,34 @@ func getPortsFromPodName(namespace string, podName string) []prompt.Suggest {
 	return suggests
 }
 
+func getContainerNamesFromCachedPods(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	go fetchPods(client, namespace)
+
+	x, ok := podList.Load(namespace)
+	if !ok {
+		return []prompt.Suggest{}
+	}
+	l, ok := x.(*corev1.PodList)
+	if !ok || len(l.Items) == 0 {
+		return []prompt.Suggest{}
+	}
+	// container name -> pod name
+	set := make(map[string]string, len(l.Items))
+	for i := range l.Items {
+		for j := range l.Items[i].Spec.Containers {
+			set[l.Items[i].Spec.Containers[j].Name] = l.Items[i].Name
+		}
+	}
+	s := make([]prompt.Suggest, 0, len(set))
+	for key := range set {
+		s = append(s, prompt.Suggest{
+			Text: key,
+			Description: "Pod Name: " + set[key],
+		})
+	}
+	return s
+}
+
 /* Daemon Sets */
 
 var (
