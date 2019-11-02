@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	prompt "github.com/c-bata/go-prompt"
+	"github.com/c-bata/go-prompt"
 	"github.com/c-bata/go-prompt/completer"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -136,22 +136,59 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 	if !found {
 		return []prompt.Suggest{}, false
 	}
+
+	// namespace
+	if option == "-n" || option == "--namespace" {
+		return prompt.FilterHasPrefix(
+			getNameSpaceSuggestions(c.namespaceList),
+			d.GetWordBeforeCursor(),
+			true,
+		), true
+	}
+
+	// filename
 	switch cmd {
 	case "get", "describe", "create", "delete", "replace", "patch",
 		"edit", "apply", "expose", "rolling-update", "rollout",
 		"label", "annotate", "scale", "convert", "autoscale", "top":
-		switch option {
-		case "-f", "--filename":
+		if option == "-f" || option == "--filename" {
 			return yamlFileCompleter.Complete(d), true
-		case "-n", "--namespace":
+		}
+	}
+
+	// container
+	switch cmd {
+	case "exec", "logs", "run", "attach", "port-forward", "cp":
+		if option == "-c" || option == "--container" {
+			cmdArgs := getCommandArgs(d)
+			var suggestions []prompt.Suggest
+			if cmdArgs == nil || len(cmdArgs) < 2 {
+				suggestions = getContainerNamesFromCachedPods(c.client, c.namespace)
+			} else {
+				suggestions = getContainerName(c.client, c.namespace, cmdArgs[1])
+			}
 			return prompt.FilterHasPrefix(
-				getNameSpaceSuggestions(c.namespaceList),
+				suggestions,
 				d.GetWordBeforeCursor(),
 				true,
 			), true
 		}
 	}
 	return []prompt.Suggest{}, false
+}
+
+func getCommandArgs(d prompt.Document) []string {
+	args := strings.Split(d.TextBeforeCursor(), " ")
+
+	// If PIPE is in text before the cursor, returns empty.
+	for i := range args {
+		if args[i] == "|" {
+			return nil
+		}
+	}
+
+	commandArgs, _ := excludeOptions(args)
+	return commandArgs
 }
 
 func excludeOptions(args []string) ([]string, bool) {
@@ -170,6 +207,8 @@ func excludeOptions(args []string) ([]string, bool) {
 		"--user",
 		"--output",
 		"-o",
+		"--container",
+		"-c",
 	}
 
 	var skipNextArg bool
