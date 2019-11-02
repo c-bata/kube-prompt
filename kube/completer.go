@@ -136,21 +136,30 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 	if !found {
 		return []prompt.Suggest{}, false
 	}
+
+	// namespace
+	if option == "-n" || option == "--namespace" {
+		return prompt.FilterHasPrefix(
+			getNameSpaceSuggestions(c.namespaceList),
+			d.GetWordBeforeCursor(),
+			true,
+		), true
+	}
+
+	// filename
 	switch cmd {
 	case "get", "describe", "create", "delete", "replace", "patch",
 		"edit", "apply", "expose", "rolling-update", "rollout",
-		"label", "annotate", "scale", "convert", "autoscale", "top", "logs":
-		switch option {
-		case "-f", "--filename":
+		"label", "annotate", "scale", "convert", "autoscale", "top":
+		if option == "-f" || option == "--filename" {
 			return yamlFileCompleter.Complete(d), true
-		case "-n", "--namespace":
-			return prompt.FilterHasPrefix(
-				getNameSpaceSuggestions(c.namespaceList),
-				d.GetWordBeforeCursor(),
-				true,
-			), true
-		case "-c", "--container":
+		}
+	}
 
+	// container
+	switch cmd {
+	case "exec", "logs", "run", "attach", "port-forward", "cp":
+		if option == "-c" || option == "--container" {
 			cmdArgs := getCommandArgs(d)
 			var suggestions []prompt.Suggest
 			if cmdArgs == nil || len(cmdArgs) < 2 {
