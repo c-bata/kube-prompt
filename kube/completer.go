@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	prompt "github.com/c-bata/go-prompt"
+	"github.com/c-bata/go-prompt"
 	"github.com/c-bata/go-prompt/completer"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -139,7 +139,7 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 	switch cmd {
 	case "get", "describe", "create", "delete", "replace", "patch",
 		"edit", "apply", "expose", "rolling-update", "rollout",
-		"label", "annotate", "scale", "convert", "autoscale", "top":
+		"label", "annotate", "scale", "convert", "autoscale", "top", "logs":
 		switch option {
 		case "-f", "--filename":
 			return yamlFileCompleter.Complete(d), true

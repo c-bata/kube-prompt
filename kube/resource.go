@@ -263,7 +263,7 @@ func getContainerNamesFromCachedPods(client *kubernetes.Clientset, namespace str
 	s := make([]prompt.Suggest, 0, len(set))
 	for key := range set {
 		s = append(s, prompt.Suggest{
-			Text: key,
+			Text:        key,
 			Description: "Pod Name: " + set[key],
 		})
 	}
