@@ -270,6 +270,23 @@ func getContainerNamesFromCachedPods(client *kubernetes.Clientset, namespace str
 	return s
 }
 
+func getContainerName(client *kubernetes.Clientset, namespace string, podName string) []prompt.Suggest {
+	go fetchPods(client, namespace)
+
+	pod, found := getPod(namespace, podName)
+	if !found {
+		return []prompt.Suggest{}
+	}
+	s := make([]prompt.Suggest, len(pod.Spec.Containers))
+	for i := range pod.Spec.Containers {
+		s[i] = prompt.Suggest{
+			Text:        pod.Spec.Containers[i].Name,
+			Description: "",
+		}
+	}
+	return s
+}
+
 /* Daemon Sets */
 
 var (

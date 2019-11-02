@@ -150,14 +150,36 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 				true,
 			), true
 		case "-c", "--container":
+
+			cmdArgs := getCommandArgs(d)
+			var suggestions []prompt.Suggest
+			if cmdArgs == nil || len(cmdArgs) < 2 {
+				suggestions = getContainerNamesFromCachedPods(c.client, c.namespace)
+			} else {
+				suggestions = getContainerName(c.client, c.namespace, cmdArgs[1])
+			}
 			return prompt.FilterHasPrefix(
-				getContainerNamesFromCachedPods(c.client, c.namespace),
+				suggestions,
 				d.GetWordBeforeCursor(),
 				true,
 			), true
 		}
 	}
 	return []prompt.Suggest{}, false
+}
+
+func getCommandArgs(d prompt.Document) []string {
+	args := strings.Split(d.TextBeforeCursor(), " ")
+
+	// If PIPE is in text before the cursor, returns empty.
+	for i := range args {
+		if args[i] == "|" {
+			return nil
+		}
+	}
+
+	commandArgs, _ := excludeOptions(args)
+	return commandArgs
 }
 
 func excludeOptions(args []string) ([]string, bool) {
