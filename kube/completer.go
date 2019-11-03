@@ -193,23 +193,11 @@ func getCommandArgs(d prompt.Document) []string {
 
 func excludeOptions(args []string) ([]string, bool) {
 	l := len(args)
-	filtered := make([]string, 0, l)
-
-	shouldSkipNext := []string{
-		"-f",
-		"--filename",
-		"-n",
-		"--namespace",
-		"-s",
-		"--server",
-		"--kubeconfig",
-		"--cluster",
-		"--user",
-		"--output",
-		"-o",
-		"--container",
-		"-c",
+	if l == 0 {
+		return nil, false
 	}
+	cmd := args[0]
+	filtered := make([]string, 0, l)
 
 	var skipNextArg bool
 	for i := 0; i < len(args); i++ {
@@ -218,7 +206,21 @@ func excludeOptions(args []string) ([]string, bool) {
 			continue
 		}
 
-		for _, s := range shouldSkipNext {
+		if cmd == "logs" && args[i] == "-f" {
+			continue
+		}
+
+		for _, s := range []string{
+			"-f", "--filename",
+			"-n", "--namespace",
+			"-s", "--server",
+			"--kubeconfig",
+			"--cluster",
+			"--user",
+			"-o", "--output",
+			"-c",
+			"--container",
+		} {
 			if strings.HasPrefix(args[i], s) {
 				if strings.Contains(args[i], "=") {
 					// we can specify option value like '-o=json'
