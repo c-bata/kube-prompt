@@ -30,11 +30,16 @@ func main() {
 	fmt.Printf("kube-prompt %s (rev-%s)\n", version, revision)
 	fmt.Println("Please use `exit` or `Ctrl-D` to exit this program.")
 	defer fmt.Println("Bye!")
+
+	kube.LivePrefixState.LivePrefix = kube.GetKubeContext()
+	kube.LivePrefixState.IsEnable = true
+
 	p := prompt.New(
 		kube.Executor,
 		c.Complete,
 		prompt.OptionTitle("kube-prompt: interactive kubernetes client"),
 		prompt.OptionPrefix(">>> "),
+		prompt.OptionLivePrefix(kube.ChangeLivePrefix),
 		prompt.OptionInputTextColor(prompt.Yellow),
 		prompt.OptionCompletionWordSeparator(completer.FilePathCompletionSeparator),
 	)
