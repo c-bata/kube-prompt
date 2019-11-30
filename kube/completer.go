@@ -1,8 +1,10 @@
 package kube
 
 import (
+	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/c-bata/go-prompt"
 	"github.com/c-bata/go-prompt/completer"
@@ -13,37 +15,58 @@ import (
 )
 
 func NewCompleter() (*Completer, error) {
-	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
-	loader := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
-		loadingRules,
-		&clientcmd.ConfigOverrides{},
+	var (
+		c    = &Completer{}
+		host string
 	)
 
-	config, err := loader.ClientConfig()
-	if err != nil {
-		return nil, err
-	}
+	go func() {
+		ticker := time.NewTicker(time.Second * 3)
+		for {
+			loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+			loader := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+				loadingRules,
+				&clientcmd.ConfigOverrides{},
+			)
 
-	namespace, _, err := loader.Namespace()
-	if err != nil {
-		return nil, err
-	}
+			config, err := loader.ClientConfig()
+			if err != nil {
+				fmt.Println("error", err)
+				os.Exit(1)
+			}
 
-	client, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		return nil, err
-	}
+			namespace, _, err := loader.Namespace()
+			if err != nil {
+				fmt.Println("error", err)
+				os.Exit(1)
+			}
 
-	namespaces, err := client.CoreV1().Namespaces().List(metav1.ListOptions{})
-	if err != nil {
-		return nil, err
-	}
+			if c.namespace != namespace {
+				c.namespace = namespace
+			}
 
-	return &Completer{
-		namespace:     namespace,
-		namespaceList: namespaces,
-		client:        client,
-	}, nil
+			if host != config.Host {
+				client, err := kubernetes.NewForConfig(config)
+				if err != nil {
+					fmt.Println("error", err)
+					os.Exit(1)
+				}
+
+				namespaces, err := client.CoreV1().Namespaces().List(metav1.ListOptions{})
+				if err != nil {
+					fmt.Println("error", err)
+					os.Exit(1)
+				}
+				c.namespaceList = namespaces
+				c.client = client
+			}
+
+			<-ticker.C
+		}
+
+	}()
+
+	return c, nil
 }
 
 type Completer struct {
