@@ -138,6 +138,7 @@ func fetchContextList() {
 	}
 	updateLastFetchedAt(key)
 	r := ExecuteAndGetResult("config get-contexts --no-headers -o name")
+	r = strings.TrimRight(r, "\n")
 	contextList.Store(strings.Split(r, "\n"))
 }
 
