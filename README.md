@@ -29,7 +29,7 @@ Binaries are available from [github release](https://github.com/c-bata/kube-prom
 <summary>macOS (darwin) - amd64</summary>
 
 ```
-wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.9/kube-prompt_1.0.9_darwin_amd64.zip
+wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.10/kube-prompt_1.0.9_darwin_amd64.zip
 unzip kube-prompt_1.0.9_darwin_amd64.zip
 chmod +x kube-prompt
 sudo mv ./kube-prompt /usr/local/bin/kube-prompt
@@ -41,7 +41,7 @@ sudo mv ./kube-prompt /usr/local/bin/kube-prompt
 <summary>Linux - amd64</summary>
 
 ```
-wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.9/kube-prompt_1.0.9_linux_amd64.zip
+wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.10/kube-prompt_1.0.9_linux_amd64.zip
 unzip kube-prompt_1.0.9_linux_amd64.zip
 chmod +x kube-prompt
 sudo mv ./kube-prompt /usr/local/bin/kube-prompt
@@ -54,8 +54,8 @@ sudo mv ./kube-prompt /usr/local/bin/kube-prompt
 <summary>Linux - i386</summary>
 
 ```
-wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.9/kube-prompt_v1.0.9_linux_386.zip
-unzip kube-prompt_v1.0.9_linux_386.zip
+wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.10/kube-prompt_v1.0.10_linux_386.zip
+unzip kube-prompt_v1.0.10_linux_386.zip
 chmod +x kube-prompt
 sudo mv ./kube-prompt /usr/local/bin/kube-prompt
 ```
@@ -66,8 +66,8 @@ sudo mv ./kube-prompt /usr/local/bin/kube-prompt
 <summary>Linux - arm64</summary>
 
 ```
-wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.9/kube-prompt_v1.0.9_linux_arm64.zip
-unzip kube-prompt_v1.0.9_linux_arm64.zip
+wget https://github.com/c-bata/kube-prompt/releases/download/v1.0.10/kube-prompt_v1.0.10_linux_arm64.zip
+unzip kube-prompt_v1.0.10_linux_arm64.zip
 chmod +x kube-prompt
 sudo mv ./kube-prompt /usr/local/bin/kube-prompt
 ```
