@@ -37,7 +37,7 @@ func NewCompleter() (*Completer, error) {
 
 	namespaces, err := client.CoreV1().Namespaces().List(metav1.ListOptions{})
 	if err != nil {
-		if err.(*errors.StatusError).Status().Code == 403 {
+		if statusError, ok := err.(*errors.StatusError); ok && statusError.Status().Code == 403 {
 			namespaces = nil
 		} else {
 			return nil, err
