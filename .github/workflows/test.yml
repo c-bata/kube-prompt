@@ -24,7 +24,7 @@ jobs:
         GO111MODULE: on
         GOPATH: /home/runner/work/
       run: |
-        go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+        go get -u github.com/golangci/golangci-lint/cmd/golangci-lint@v1.24.0
         GOCILINT=${GOPATH}/bin/golangci-lint make lint
 
   test:
