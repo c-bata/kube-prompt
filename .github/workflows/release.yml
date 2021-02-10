@@ -25,12 +25,10 @@ jobs:
         GOPATH: /home/runner/work/
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        export CREATE_EVENT_REF_TYPE=$(jq --raw-output .ref_type "$GITHUB_EVENT_PATH")
         export TAGNAME=$(jq --raw-output .ref "$GITHUB_EVENT_PATH")
         echo "========================================================="
-        echo "DEBUG:" $TAGNAME $CREATE_EVENT_REF_TYPE
+        echo "DEBUG:" $TAGNAME
         echo "========================================================="
-        if [ "$CREATE_EVENT_REF_TYPE" != "tag" ]; then echo "ref_type is not a tag: ${CREATE_EVENT_REF_TYPE}" && exit 78; fi
         make cross
         echo "========================================================="
         echo "DEBUG: ls pkg/"
