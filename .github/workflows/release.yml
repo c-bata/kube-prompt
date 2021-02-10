@@ -25,7 +25,7 @@ jobs:
         GOPATH: /home/runner/work/
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        export TAGNAME=$(jq --raw-output .ref "$GITHUB_EVENT_PATH")
+        export TAGNAME=$(jq --raw-output .ref "$GITHUB_EVENT_PATH" | sed -e "s/refs\/tags\///")
         echo "========================================================="
         echo "DEBUG:" $TAGNAME
         echo "========================================================="
