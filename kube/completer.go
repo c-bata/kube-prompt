@@ -35,6 +35,11 @@ func NewCompleter() (*Completer, error) {
 		return nil, err
 	}
 
+	err = loadApiResources(client)
+	if err != nil {
+		return nil, err
+	}
+
 	namespaces, err := client.CoreV1().Namespaces().List(metav1.ListOptions{})
 	if err != nil {
 		if statusError, ok := err.(*errors.StatusError); ok && statusError.Status().Code == 403 {

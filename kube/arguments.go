@@ -93,6 +93,8 @@ var resourceTypes = []prompt.Suggest{
 	{Text: "svc"},
 }
 
+var subcommands = resourceTypes[1:]
+
 func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt.Suggest {
 	if len(args) <= 1 {
 		return prompt.FilterHasPrefix(commands, args[0], true)
@@ -103,56 +105,6 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 	case "get":
 		second := args[1]
 		if len(args) == 2 {
-			subcommands := []prompt.Suggest{
-				{Text: "componentstatuses"},
-				{Text: "configmaps"},
-				{Text: "daemonsets"},
-				{Text: "deployments"},
-				{Text: "endpoints"},
-				{Text: "events"},
-				{Text: "horizontalpodautoscalers"},
-				{Text: "ingresses"},
-				{Text: "jobs"},
-				{Text: "cronjobs"},
-				{Text: "limitranges"},
-				{Text: "namespaces"},
-				{Text: "networkpolicies"},
-				{Text: "nodes"},
-				{Text: "persistentvolumeclaims"},
-				{Text: "persistentvolumes"},
-				{Text: "pod"},
-				{Text: "podsecuritypolicies"},
-				{Text: "podtemplates"},
-				{Text: "replicasets"},
-				{Text: "replicationcontrollers"},
-				{Text: "resourcequotas"},
-				{Text: "secrets"},
-				{Text: "serviceaccounts"},
-				{Text: "services"},
-				{Text: "statefulsets"},
-				{Text: "storageclasses"},
-				{Text: "thirdpartyresources"},
-				// aliases
-				{Text: "cs"},
-				{Text: "cm"},
-				{Text: "ds"},
-				{Text: "deploy"},
-				{Text: "ep"},
-				{Text: "hpa"},
-				{Text: "ing"},
-				{Text: "limits"},
-				{Text: "ns"},
-				{Text: "no"},
-				{Text: "pvc"},
-				{Text: "pv"},
-				{Text: "po"},
-				{Text: "psp"},
-				{Text: "rs"},
-				{Text: "rc"},
-				{Text: "quota"},
-				{Text: "sa"},
-				{Text: "svc"},
-			}
 			return prompt.FilterHasPrefix(subcommands, second, true)
 		}
 
