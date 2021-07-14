@@ -51,6 +51,13 @@ verifySupported() {
     echo "Either curl or wget is required"
     exit 1
   fi
+  
+  if ! type "unzip" >/dev/null; then
+    echo "unzip is required"
+    echo "please run \`brew install unzip\` or \`sudo apt install -y unzip\`"
+    exit 1
+  fi
+
 }
 
 # getDownloadURL checks the latest available version.
@@ -58,26 +65,25 @@ getDownloadURL() {
   version=$VERSION
 #   https://github.com/c-bata/kube-prompt/releases/download/v0.9.38/kube-prompt-v0.9.38-darwin-amd64.zip
   if [ -n "$version" ]; then
-    DOWNLOAD_URL="https://github.com/$PROJECT_GH/releases/download/$version/kube-prompt-$version-${OS}${SPLIT_CHAR}${ARCH}${ZIP_TYPE}"
+    DOWNLOAD_URL="https://github.com/$PROJECT_GH/releases/download/$version/kube-prompt${SPLIT_CHAR}$version${SPLIT_CHAR}${OS}${SPLIT_CHAR}${ARCH}${ZIP_TYPE}"
   else
     # Use the GitHub API to find the download url for this project.
     #    https://api.github.com/repos/c-bata/kube-prompt/releases/latest
     #    https://api.github.com/repos/c-bata/kube-prompt/releases
-    url="https://api.github.com/repos/$PROJECT_GH/releases"
+    url="https://api.github.com/repos/$PROJECT_GH/releases/latest"
     if type "curl" >/dev/null; then
-      # reponse=$(curl -s $url)
-      echo "DOWNLOAD_URLs=\$(curl -s $url |grep ${OS}${SPLIT_CHAT}${ARCH} |grep ${ZIP_TYPE}| awk '/\"browser_download_url\":/{gsub( /[,\"]/,\"\", \$2); print \$2}')"
-      echo "DOWNLOAD_URL=\`echo \$DOWNLOAD_URLs|head -1|awk '{print $1}'\`"
+      # echo "DOWNLOAD_URLs=\$(curl -s $url |grep ${OS}${SPLIT_CHAT}${ARCH} |grep ${ZIP_TYPE}| awk '/\"browser_download_url\":/{gsub( /[,\"]/,\"\", \$2); print \$2}')"
+      # echo "DOWNLOAD_URL=\`echo \$DOWNLOAD_URLs|head -1|awk '{print $1}'\`"
       DOWNLOAD_URLs=$(curl -s $url |grep ${OS}${SPLIT_CHAT}${ARCH} |grep ${ZIP_TYPE}| awk '/"browser_download_url":/{gsub( /[,"]/,"", $2); print $2}')
       DOWNLOAD_URL=`echo $DOWNLOAD_URLs|head -1|awk '{print $1}'`
-      if [ -z "$DOWNLOAD_URL" ]; then
-        echo "no url get, try manually"
-        exit 1
-      fi
     elif type "wget" >/dev/null; then
       DOWNLOAD_URLs=$(wget -q -O - $url  |grep ${OS}${SPLIT_CHAT}${ARCH} |grep ${ZIP_TYPE}| awk '/"browser_download_url":/{gsub( /[,"]/,"", $2); print $2}')
       DOWNLOAD_URL=`echo $DOWNLOAD_URLs|head -1|awk '{print $1}'`
     fi
+  fi
+  if [ -z "$DOWNLOAD_URL" ]; then
+    echo "no DOWNLOAD_URL get, try manually"
+    exit 1
   fi
 }
 
@@ -97,24 +103,12 @@ downloadFile() {
 installFile() {
   FILE_TMP="/tmp/$PROJECT_NAME"
   mkdir -p "$FILE_TMP"
-  if [ "${ZIP_TYPE}" = '.zip' ]; then
-    if ! command -v unzip; then
-        echo 'please install unzip'
-        command -v apt && sudo -S apt install -y unzip
-    fi
-    if command -v unzip; then
-        echo "Preparing to install into ~"
-        unzip -o "$PLUGIN_TMP_FILE" -d "$FILE_TMP"
-        chmod +x $FILE_TMP/kube-prompt
-        sudo -S mv $FILE_TMP/kube-prompt /usr/local/bin/kube-prompt
-    fi
-#   else
-#     tar xf "$PLUGIN_TMP_FILE" -C "$FILE_TMP"
-#     FILE_TMP_BIN="$FILE_TMP/$PROJECT_NAME"
-#     echo "Preparing to install into ~"
-#     # mkdir -p "$SHELL_FOLDER/cqhttp"
-#     cp "$FILE_TMP_BIN" ~  
-  fi
+  
+  echo "Preparing to install into ~"
+  unzip -o "$PLUGIN_TMP_FILE" -d "$FILE_TMP"
+  chmod +x $FILE_TMP/kube-prompt
+  echo "MV FROM $FILE_TMP/kube-prompt TO /usr/local/bin/kube-prompt"
+  sudo -S mv $FILE_TMP/kube-prompt /usr/local/bin/kube-prompt
 }
 
 # fail_trap is executed if an error occurs.
@@ -122,7 +116,7 @@ fail_trap() {
   result=$?
   if [ "$result" != "0" ]; then
     echo "Failed to install $PROJECT_NAME"
-    printf '\tFor support, go to https://github.com/c-bata/kube-prompt or 17682318150 \n'
+    printf '\tFor support, go to https://github.com/c-bata/kube-prompt\n'
   fi
   exit $result
 }
