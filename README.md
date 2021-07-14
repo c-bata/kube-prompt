@@ -25,6 +25,11 @@ web-1144924021-pqmfq        1/1     Running     4       25d
 
 Binaries are available from [github release](https://github.com/c-bata/kube-prompt/releases).
 
+* Universal Way (Beat)
+```
+sh install.sh
+```
+
 <details>
 <summary>macOS (darwin) - amd64</summary>
 
