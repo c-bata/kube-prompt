@@ -201,6 +201,8 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 				return prompt.FilterContains(getServiceSuggestions(c.client, namespace), third, true)
 			case "job", "jobs":
 				return prompt.FilterContains(getJobSuggestions(c.client, namespace), third, true)
+			case "statefulsets":
+				return prompt.FilterContains(getStatefulsetsSuggestions(c.client, namespace), third, true)
 			}
 		}
 	case "describe":
@@ -254,6 +256,8 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 				return prompt.FilterContains(getServiceSuggestions(c.client, namespace), third, true)
 			case "job", "jobs":
 				return prompt.FilterContains(getJobSuggestions(c.client, namespace), third, true)
+			case "statefulsets":
+				return prompt.FilterContains(getStatefulsetsSuggestions(c.client, namespace), third, true)
 			}
 		}
 	case "create":
@@ -320,6 +324,8 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 				return prompt.FilterContains(getServiceSuggestions(c.client, namespace), third, true)
 			case "job", "jobs":
 				return prompt.FilterContains(getJobSuggestions(c.client, namespace), third, true)
+			case "statefulsets":
+				return prompt.FilterContains(getStatefulsetsSuggestions(c.client, namespace), third, true)
 			}
 		}
 	case "edit":
@@ -372,6 +378,8 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 				return prompt.FilterContains(getServiceSuggestions(c.client, namespace), third, true)
 			case "job", "jobs":
 				return prompt.FilterContains(getJobSuggestions(c.client, namespace), third, true)
+			case "statefulsets":
+				return prompt.FilterContains(getStatefulsetsSuggestions(c.client, namespace), third, true)
 			}
 		}
 
