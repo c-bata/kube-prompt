@@ -194,6 +194,17 @@ func getPodSuggestions(client *kubernetes.Clientset, namespace string) []prompt.
 	return s
 }
 
+func getStatefulsetsSuggestions(client *kubernetes.Clientset, namespace string) []prompt.Suggest {
+	l, _ := client.AppsV1().StatefulSets(namespace).List(metav1.ListOptions{})
+	s := make([]prompt.Suggest, len(l.Items))
+	for i := range l.Items {
+		s[i] = prompt.Suggest{
+			Text: l.Items[i].Name,
+		}
+	}
+	return s
+}
+
 func getPod(namespace, podName string) (corev1.Pod, bool) {
 	x, ok := podList.Load(namespace)
 	if !ok {
