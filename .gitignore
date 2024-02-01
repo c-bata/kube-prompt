@@ -16,3 +16,4 @@ pkg/
 
 # glide
 vendor/
+.DS_Store
