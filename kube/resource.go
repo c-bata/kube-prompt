@@ -75,7 +75,7 @@ func fetchComponentStatusList(client *kubernetes.Clientset) {
 	if !shouldFetch(key) {
 		return
 	}
-	l, _ := client.CoreV1().ComponentStatuses().List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().ComponentStatuses().List(context.Background(), metav1.ListOptions{})
 	componentStatusList.Store(l)
 	updateLastFetchedAt(key)
 }
@@ -107,7 +107,7 @@ func fetchConfigMapList(client *kubernetes.Clientset, namespace string) {
 		return
 	}
 	updateLastFetchedAt(key)
-	l, _ := client.CoreV1().ConfigMaps(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().ConfigMaps(namespace).List(context.Background(), metav1.ListOptions{})
 	configMapsList.Store(l)
 }
 
@@ -171,7 +171,7 @@ func fetchPods(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().Pods(namespace).List(context.Background(), metav1.ListOptions{})
 	podList.Store(namespace, l)
 }
 
@@ -302,7 +302,7 @@ func fetchDaemonSetList(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.AppsV1().DaemonSets(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.AppsV1().DaemonSets(namespace).List(context.Background(), metav1.ListOptions{})
 	daemonSetList.Store(namespace, l)
 	return
 }
@@ -339,7 +339,7 @@ func fetchDeployments(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.AppsV1().Deployments(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.AppsV1().Deployments(namespace).List(context.Background(), metav1.ListOptions{})
 	deploymentList.Store(namespace, l)
 	return
 }
@@ -376,7 +376,7 @@ func fetchEndpoints(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().Endpoints(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().Endpoints(namespace).List(context.Background(), metav1.ListOptions{})
 	endpointList.Store(key, l)
 	return
 }
@@ -413,7 +413,7 @@ func fetchEvents(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().Events(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().Events(namespace).List(context.Background(), metav1.ListOptions{})
 	eventList.Store(namespace, l)
 	return
 }
@@ -450,7 +450,7 @@ func fetchNodeList(client *kubernetes.Clientset) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().Nodes().List(context.Background(), metav1.ListOptions{})
 	nodeList.Store(l)
 	return
 }
@@ -483,7 +483,7 @@ func fetchSecretList(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().Secrets(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().Secrets(namespace).List(context.Background(), metav1.ListOptions{})
 	secretList.Store(namespace, l)
 	return
 }
@@ -520,7 +520,7 @@ func fetchIngresses(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.ExtensionsV1beta1().Ingresses(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.ExtensionsV1beta1().Ingresses(namespace).List(context.Background(), metav1.ListOptions{})
 	ingressList.Store(namespace, l)
 }
 
@@ -561,7 +561,7 @@ func fetchLimitRangeList(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().LimitRanges(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().LimitRanges(namespace).List(context.Background(), metav1.ListOptions{})
 	limitRangeList.Store(namespace, l)
 	return
 }
@@ -613,7 +613,7 @@ func fetchPersistentVolumeClaimsList(client *kubernetes.Clientset, namespace str
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().PersistentVolumeClaims(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().PersistentVolumeClaims(namespace).List(context.Background(), metav1.ListOptions{})
 	persistentVolumeClaimsList.Store(namespace, l)
 	return
 }
@@ -650,7 +650,7 @@ func fetchPersistentVolumeList(client *kubernetes.Clientset) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().PersistentVolumes().List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().PersistentVolumes().List(context.Background(), metav1.ListOptions{})
 	persistentVolumesList.Store(l)
 	return
 }
@@ -683,7 +683,7 @@ func fetchPodSecurityPolicyList(client *kubernetes.Clientset) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.ExtensionsV1beta1().PodSecurityPolicies().List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.ExtensionsV1beta1().PodSecurityPolicies().List(context.Background(), metav1.ListOptions{})
 	podSecurityPolicyList.Store(l)
 	return
 }
@@ -716,7 +716,7 @@ func fetchPodTemplateList(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().PodTemplates(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().PodTemplates(namespace).List(context.Background(), metav1.ListOptions{})
 	podTemplateList.Store(namespace, l)
 	return
 }
@@ -753,7 +753,7 @@ func fetchReplicaSetList(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.AppsV1beta2().ReplicaSets(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.AppsV1beta2().ReplicaSets(namespace).List(context.Background(), metav1.ListOptions{})
 	replicaSetList.Store(namespace, l)
 	return
 }
@@ -790,7 +790,7 @@ func fetchReplicationControllerList(client *kubernetes.Clientset, namespace stri
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().ReplicationControllers(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().ReplicationControllers(namespace).List(context.Background(), metav1.ListOptions{})
 	replicationControllerList.Store(namespace, l)
 	return
 }
@@ -827,7 +827,7 @@ func fetchResourceQuotaList(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().ResourceQuotas(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().ResourceQuotas(namespace).List(context.Background(), metav1.ListOptions{})
 	resourceQuotaList.Store(namespace, l)
 	return
 }
@@ -864,7 +864,7 @@ func fetchServiceAccountList(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().ServiceAccounts(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().ServiceAccounts(namespace).List(context.Background(), metav1.ListOptions{})
 	serviceAccountList.Store(namespace, l)
 	return
 }
@@ -901,7 +901,7 @@ func fetchServiceList(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.CoreV1().Services(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.CoreV1().Services(namespace).List(context.Background(), metav1.ListOptions{})
 	serviceList.Store(namespace, l)
 	return
 }
@@ -938,7 +938,7 @@ func fetchJobs(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.BatchV1().Jobs(namespace).List(context.TODO(), metav1.ListOptions{})
+	l, _ := client.BatchV1().Jobs(namespace).List(context.Background(), metav1.ListOptions{})
 	jobList.Store(namespace, l)
 }
 
