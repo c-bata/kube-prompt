@@ -16,7 +16,7 @@ jobs:
         check-latest: true
         go-version-file: go.mod
 
-    - uses: actions/checkout@4
+    - uses: actions/checkout@v4
 
     - name: Build
       env:
