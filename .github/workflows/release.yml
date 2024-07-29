@@ -9,14 +9,13 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
 
     - uses: actions/setup-go@v5
       id: go
       with:
         check-latest: true
         go-version-file: go.mod
-
-    - uses: actions/checkout@v4
 
     - name: Build
       env:
