@@ -1,17 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
-	prompt "github.com/c-bata/go-prompt"
+	"github.com/c-bata/go-prompt"
 	"github.com/c-bata/go-prompt/completer"
 	"github.com/c-bata/kube-prompt/internal/debug"
 	"github.com/c-bata/kube-prompt/kube"
 
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
-	_ "k8s.io/client-go/plugin/pkg/client/auth/openstack"
 )
 
 var (
@@ -20,7 +20,7 @@ var (
 )
 
 func main() {
-	c, err := kube.NewCompleter()
+	c, err := kube.NewCompleter(context.TODO())
 	if err != nil {
 		fmt.Println("error", err)
 		os.Exit(1)
