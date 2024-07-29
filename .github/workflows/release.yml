@@ -19,7 +19,6 @@ jobs:
 
     - name: Build
       env:
-        GO111MODULE: on
         GOPATH: /home/runner/work
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
@@ -32,7 +31,7 @@ jobs:
         echo "DEBUG: ls pkg/"
         ls pkg/
         echo "========================================================="
-        go get -u github.com/tcnksm/ghr
+        go install github.com/tcnksm/ghr
         ls -la $GOPATH
         ls -la $GOPATH/bin
         $GOPATH/bin/ghr -n ${TAGNAME} -b "ʕ◔ϖ◔ʔ Release ${TAGNAME}" -draft ${TAGNAME} pkg/
