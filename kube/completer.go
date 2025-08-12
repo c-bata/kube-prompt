@@ -1,6 +1,7 @@
 package kube
 
 import (
+	"context"
 	"os"
 	"strings"
 
@@ -13,7 +14,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-func NewCompleter() (*Completer, error) {
+func NewCompleter(ctx context.Context) (*Completer, error) {
 	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 	loader := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		loadingRules,
@@ -35,7 +36,7 @@ func NewCompleter() (*Completer, error) {
 		return nil, err
 	}
 
-	namespaces, err := client.CoreV1().Namespaces().List(metav1.ListOptions{})
+	namespaces, err := client.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		if statusError, ok := err.(*errors.StatusError); ok && statusError.Status().Code == 403 {
 			namespaces = nil
@@ -77,7 +78,7 @@ func (c *Completer) Complete(d prompt.Document) []prompt.Suggest {
 	}
 
 	// Return suggestions for option
-	if suggests, found := c.completeOptionArguments(d); found {
+	if suggests, found := c.completeOptionArguments(context.TODO(), d); found {
 		return suggests
 	}
 
@@ -91,7 +92,7 @@ func (c *Completer) Complete(d prompt.Document) []prompt.Suggest {
 		// So we need to skip argumentCompleter.
 		return []prompt.Suggest{}
 	}
-	return c.argumentsCompleter(namespace, commandArgs)
+	return c.argumentsCompleter(context.TODO(), namespace, commandArgs)
 }
 
 func checkNamespaceArg(d prompt.Document) string {
@@ -136,7 +137,7 @@ func getPreviousOption(d prompt.Document) (cmd, option string, found bool) {
 	return "", "", false
 }
 
-func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest, bool) {
+func (c *Completer) completeOptionArguments(ctx context.Context, d prompt.Document) ([]prompt.Suggest, bool) {
 	cmd, option, found := getPreviousOption(d)
 	if !found {
 		return []prompt.Suggest{}, false
@@ -168,9 +169,9 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 			cmdArgs := getCommandArgs(d)
 			var suggestions []prompt.Suggest
 			if cmdArgs == nil || len(cmdArgs) < 2 {
-				suggestions = getContainerNamesFromCachedPods(c.client, c.namespace)
+				suggestions = getContainerNamesFromCachedPods(ctx, c.client, c.namespace)
 			} else {
-				suggestions = getContainerName(c.client, c.namespace, cmdArgs[1])
+				suggestions = getContainerName(ctx, c.client, c.namespace, cmdArgs[1])
 			}
 			return prompt.FilterHasPrefix(
 				suggestions,
