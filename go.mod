@@ -1,11 +1,13 @@
 module github.com/c-bata/kube-prompt
 
 require (
-	github.com/c-bata/go-prompt v0.2.6
+	github.com/c-bata/go-prompt v0.0.0-00010101000000-000000000000
 	k8s.io/api v0.30.3
 	k8s.io/apimachinery v0.30.3
 	k8s.io/client-go v0.30.3
 )
+
+replace github.com/c-bata/go-prompt => github.com/c-bata/go-prompt v0.2.7-0.20250812090649-d000795a4f93
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
